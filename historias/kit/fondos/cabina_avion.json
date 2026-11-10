@@ -1,0 +1,1 @@
+{"id": "cabina_avion", "hora": "interior", "capas": {"fondo": [{"mod": "cabina", "tormenta": 0, "relampago": 0, "ventanas": [[150, 390, 0.95], [-250, 360, 1.1]]}]}, "notas": "tormenta 0..1 oscurece ventanas; asientos con C.asientoFrente + C.brazosAsiento + C.cinturonFrente a piso y=1000"}

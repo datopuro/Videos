@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__CARICATURA__</script>
+<script>
+const D = __DATA__;
+C.datos(D);
+const g = C.lienzo();
+
+const RECETA_JULIANE = { id: 'juliane', cuerpo: { complexion: 'delgada' }, piel: '#f3d6bd', pelo: { estilo: 'largo', color: '#9a7148' }, ropa: { arriba: { tipo: 'vestido', color: '#f2b134' }, abajo: { tipo: 'short' }, pies: { color: '#f4efe6' } } };
+const julianeAvion = C.personajeB({ ...RECETA_JULIANE, accesorios: [{ tipo: 'lentes' }] });
+const julianeSelva = C.personajeB({ ...RECETA_JULIANE, ropa: { ...RECETA_JULIANE.ropa, pies: { color: '#f4efe6', descalzo: 'i' } } });
+const mama = C.personajeB({ id: 'mama', cuerpo: { complexion: 'medio' }, piel: '#f0d2b8', pelo: { estilo: 'corto', color: '#5b4636' }, ropa: { arriba: { tipo: 'camisa', color: '#5f7fa8' }, abajo: { tipo: 'falda', color: '#3a3f4f' }, pies: { color: '#3a2c25' } } });
+const CB = C.CARAS_B;
+
+const SUBS = [
+  [0.0, 2.6, 'El 25 de diciembre de 1971,'],
+  [2.6, 6.0, 'una chica de 17 años abre los ojos en medio de la selva amazónica.'],
+  [6.0, 8.0, 'Está acostada en el lodo,'],
+  [8.0, 10.8, 'todavía amarrada a una fila de asientos de avión.'],
+  [10.8, 13.6, 'Arriba de ella solo hay árboles.'],
+  [13.6, 15.4, 'No hay avión.'],
+  [15.4, 17.2, 'No hay nadie.'],
+  [17.2, 19.8, 'Se llama Juliane Koepcke.'],
+  [19.8, 23.4, 'Y para entender cómo llegó ahí, hay que regresar un día.'],
+  [23.4, 25.6, 'Es Nochebuena.'],
+  [25.6, 27.6, 'Juliane y su mamá vuelan hacia la selva de Perú.'],
+  [27.6, 30.6, 'Al rato de despegar, el avión entra a una tormenta.'],
+  [30.6, 33.8, 'Y por la ventana, Juliane ve una luz brillantísima en el ala.'],
+  [33.8, 35.5, 'Un rayo.']
+];
+const T = { aereo: 0, despierta: 3.6, abre: 4.1, revela: 8.0, arriba: 10.8, sola: 13.6, nadie: 15.4, nombre: 17.2, regresa: 19.8, fecha: 21.6, avion: 23.4, tormenta: 27.6, regalos: 29.1, ventana: 30.6, rayo: 34.2, fin: 35.5 };
+
+const SUELO_SELVA = 900;
+const selva = (semilla, tono) => C.lugar({
+  hora: 'tarde',
+  capas: {
+    cielo: [{ mod: 'rect', x: -2000, y: -2000, w: 6000, h: 5000, color: tono || '#9fbfae', lw: 0 }],
+    lejos: [{ mod: 'selva_lejos', semilla: semilla + 1, color: '#7fa392', base: 760, alto: 520 }, { mod: 'selva_lejos', semilla: semilla + 2, color: '#5f8a72', base: 820, alto: 380 }],
+    fondo: [{ mod: 'selva_troncos', semilla: semilla + 3, base: 860, ancho: 50, sep: 300, colores: ['#4d4a3a', '#5a5442', '#433f31'] }],
+    medio: [{ mod: 'selva_troncos', semilla: semilla + 4, base: SUELO_SELVA + 20, ancho: 90, sep: 620, lianas: 0.8 }, { mod: 'suelo_selva', y: SUELO_SELVA, semilla: semilla + 5 }, { mod: 'helecho', x: 200, base: SUELO_SELVA + 30, escala: 1.1 }, { mod: 'helecho', x: 1650, base: SUELO_SELVA + 20, escala: 0.9, color: '#477f3e' }],
+    frente: [{ mod: 'hoja_grande', x: -80, y: 1130, ang: -38, escala: 1.6 }, { mod: 'hoja_grande', x: 2010, y: 1180, ang: 210, escala: 1.4, color: '#1d4426' }, { mod: 'helecho', x: 1880, base: 1150, escala: 1.8, color: '#2c5a2c' }]
+  }
+});
+const selvaA = selva(10), selvaB = selva(30, '#8fb0a0');
+selvaA.rec.capas.frente = [{ mod: 'helecho', x: 1880, base: 1150, escala: 1.8, color: '#2c5a2c' }, { mod: 'hoja_grande', x: 2010, y: 1180, ang: 210, escala: 1.4, color: '#1d4426' }];
+const aereo = C.lugar({ hora: 'tarde', capas: { medio: [{ mod: 'dosel', semilla: 5, claro: { x: 1110, y: 600, r: 120 }, dibujarClaro: (g) => filaArriba(g, 1110, 600) }] } });
+const arriba = C.lugar({ hora: 'tarde', capas: { medio: [{ mod: 'dosel_abajo', semilla: 8 }] } });
+const avion = (tor, rel) => C.lugar({ hora: 'interior', capas: { fondo: [{ mod: 'avion_interior', piso: 990, vx0: 80, vsep: 520, vy: 250, tormenta: tor, relampago: rel, ala: 1120 }] } });
+
+function filaArriba(g, x, y) {
+  g.save(); g.translate(x, y); g.rotate(-0.35);
+  for (let i = 0; i < 3; i++) { g.beginPath(); g.rect(-75 + i * 50, -22, 46, 44); g.fillStyle = '#4a5f8a'; g.fill(); g.lineWidth = 3; g.strokeStyle = C.LINEA; g.stroke(); g.beginPath(); g.rect(-75 + i * 50, -32, 46, 12); g.fillStyle = '#3a4c70'; g.fill(); g.stroke(); }
+  g.fillStyle = '#f2b134'; g.beginPath(); g.ellipse(-2, 2, 16, 11, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+  g.fillStyle = '#9a7148'; g.beginPath(); g.arc(-2, -16, 11, 0, Math.PI * 2); g.fill(); g.stroke();
+  g.strokeStyle = '#f3d6bd'; g.lineWidth = 5; g.beginPath(); g.moveTo(8, 8); g.lineTo(24, 26); g.moveTo(-6, 10); g.lineTo(-10, 30); g.stroke();
+  g.restore();
+}
+
+function filaVolcada(g, p, px, piso, escala, conPersona, e) {
+  const s = p.esc * escala, py = piso - 80 * s;
+  for (const [dx, dy, col] of (conPersona ? [] : [[-10, -170 * s, '#33425f'], [-5, -85 * s, '#3d4f73']])) {
+    g.save(); g.translate(px + dx, py + dy); g.rotate(-Math.PI / 2); C.asientoFrente(g, 0, 0, s, { color: col, color2: '#2c3953', cabecera: '#c9c6bc', patas: true }); g.restore();
+  }
+  g.save(); g.translate(px, py); g.rotate(-Math.PI / 2);
+  C.asientoFrente(g, 0, 0, s, { patas: true });
+  if (conPersona) { p.dibujar(g, { ...e, x: 0, y: 0, pose: 'acostado_asiento', escala, sombra: false, ladeo: 40 }); C.cinturonFrente(g, 0, 0, s); }
+  g.restore();
+}
+
+function asientoConPersona(g, p, sx, piso, escala, e, o = {}) {
+  const s = p.esc * escala;
+  C.asientoFrente(g, sx, piso, s, o);
+  p.dibujar(g, { ...e, x: sx, y: piso, escala, sombra: false });
+  C.cinturonFrente(g, sx, piso, s); C.brazosAsiento(g, sx, piso, s);
+}
+
+function efectosSelva(t, k = 1, lluv = 0.3) {
+  C.niebla(g, t, { y: 760, alto: 300, k: 0.8 * k, n: 7 });
+  C.gradacion(g, 'rgb(170,205,185)', 'rgb(95,118,104)', 0.85 * k);
+  C.rayos(g, t, { x: 1150, ang: 16, n: 6, disp: 1100, k: 0.55 * k });
+  C.lluvia(g, t, { k: lluv, n: 160, vel: 1300, ang: 8 });
+}
+
+function sub(t) { for (const [a, b, s] of SUBS) if (t >= a && t < b) return [s, C.ventana(t, a, b - 0.1, 0.15)]; return [null, 0]; }
+
+function escenaSelvaCerca(t) {
+  const lug = selvaA, esc = 1.35, px = 760, piso = SUELO_SELVA + 10;
+  const face = [px - 300 * esc, piso - 80 * esc - 10];
+  const u = C.suave((t - 6.4) / 3.6);
+  const cam = C.camLerp(C.encuadre(face[0] + 40, face[1] - 20, 2.4), C.encuadre(560, 700, 1.25), u);
+  cam.x += Math.sin(t * 0.4) * 6;
+  lug.fondo(g, cam, t);
+  const abre = C.clamp((t - T.abre) / 0.5);
+  filaVolcada(g, julianeSelva, px, piso, esc, true, { t, cara: { ...CB.dormida, sucio: 0.6 }, caraB: { ...CB.miedo, sucio: 0.6 }, k2: C.suave(abre), mira: C.lerp(0, -0.8, C.suave((t - 5.2) / 1.5)) });
+  lug.frente(g, cam, t);
+  efectosSelva(t, 1, 0.25);
+}
+
+function escenaArriba(t) {
+  const u = (t - T.arriba) / (T.sola - T.arriba);
+  const cam = { x: 0, y: 0, zoom: C.lerp(1.05, 1.22, u), rot: C.lerp(-4, 6, u) };
+  arriba.fondo(g, cam, t); arriba.frente(g, cam, t);
+  C.rayos(g, t, { x: 960, ang: 0, n: 8, disp: 900, k: 0.6, ancho: 160 });
+  C.lluvia(g, t, { k: 0.25, n: 120, vel: 900, ang: 0 });
+  C.vineta(g, 0.6);
+}
+
+function escenaSola(t, cerca) {
+  const lug = selvaB, p = julianeSelva, x = 1040, y = SUELO_SELVA + 6;
+  let cam;
+  if (!cerca) cam = C.camLerp(C.encuadre(980, 560, 0.92), C.encuadre(1000, 600, 1.05), C.suave((t - T.sola) / 3.6));
+  else cam = C.camLerp(C.encuadre(1050, 690, 2.0), C.encuadre(1050, 695, 2.15), C.suave((t - T.nombre) / 2.6));
+  lug.fondo(g, cam, t);
+  filaVolcada(g, p, 760, SUELO_SELVA + 10, 1.0, false);
+  const mira = t < T.sola + 0.6 ? 0 : t < T.nadie - 0.1 ? C.suave((t - T.sola - 0.6) / 0.4) : C.lerp(1, -1, C.suave((t - T.nadie + 0.1) / 0.35));
+  const ladeo = 0;
+  p.dibujar(g, { t, x, y, mira: cerca ? 0 : mira, pose: 'sentado_suelo', poseB: 'abrazar_rodillas', k: cerca ? 1 : C.suave((t - T.nadie) / 0.8), cara: { ...CB.miedo, sucio: 0.6 }, caraB: { ...CB.triste, sucio: 0.6 }, k2: cerca ? 1 : C.suave((t - T.nadie) / 0.8), ladeo });
+  lug.frente(g, cam, t);
+  efectosSelva(t, 1, 0.4);
+  C.vineta(g, 0.55);
+}
+
+const cabina = (tor, rel) => C.lugar({ hora: 'interior', capas: { fondo: [{ mod: 'cabina', tormenta: tor, relampago: rel, ventanas: [[150, 390, 0.95], [-250, 360, 1.1]] }] } });
+
+function escenaAvion(t) {
+  const tor = C.suave((t - T.tormenta) / 1.0);
+  const flash = t > T.rayo ? Math.max(0, 1 - (t - T.rayo) / 0.5) : 0;
+  const brillo = t > 32.4 && t < T.rayo ? 0.35 * C.suave((t - 32.4) / 1.2) * (0.6 + 0.4 * Math.sin(t * 17)) : 0;
+  const cerca = t >= T.ventana;
+  const miedo = C.suave((t - 28.3) / 0.8);
+  if (!cerca) {
+    const lug = cabina(tor, flash);
+    const cam = C.camLerp(C.encuadre(700, 690, 1.5), C.encuadre(720, 700, 1.62), C.suave((t - T.avion) / 4));
+    cam.temblor = tor * (0.35 + 0.25 * Math.sin(t * 3));
+    lug.fondo(g, cam, t);
+    asientoConPersona(g, julianeAvion, 720, 1000, 1.0, { t, pose: 'sentado', poseB: 'sujetarse', k: miedo, cara: 'feliz', caraB: { ...CB.miedo, pupY: -0.4 }, k2: miedo, mira: C.lerp(0.5, -0.6, miedo) });
+    asientoConPersona(g, mama, 960, 1000, 1.05, { t, pose: 'sentado', cara: 'tranquila', caraB: { ...CB.neutral, cej: 6 }, k2: miedo, mira: C.lerp(-0.6, -0.3, miedo) }, { color: '#3e5179', color2: '#33435f' });
+    if (t > T.regalos) for (const [x0, dl, col] of [[560, 0, '#d0453a'], [1140, 0.25, '#3f8f6a']]) {
+      const u = C.clamp((t - T.regalos - dl) / 0.7), y = C.lerp(260, 990, u * u), rot = u * 180 * (x0 > 900 ? -1 : 1);
+      if (u <= 0) continue;
+      g.save(); g.translate(x0 + u * 30, y); g.rotate(rot * Math.PI / 180);
+      g.beginPath(); g.rect(-34, -28, 68, 56); g.fillStyle = col; g.fill(); g.lineWidth = 4; g.strokeStyle = C.LINEA; g.stroke();
+      g.fillStyle = '#f2d16b'; g.fillRect(-6, -28, 12, 56); g.fillRect(-34, -6, 68, 12); g.restore();
+    }
+    lug.frente(g, cam, t);
+  } else {
+    const lug = avion(tor, Math.max(flash, brillo));
+    const cam = C.camLerp(C.encuadre(1150, 380, 2.6), C.encuadre(1185, 360, 3.1), C.suave((t - T.ventana) / 3.6));
+    cam.temblor = tor * 0.4 + (t > T.rayo ? Math.max(0, 1.6 - (t - T.rayo) * 2) : 0);
+    lug.fondo(g, cam, t); lug.frente(g, cam, t);
+    julianeAvion.dibujar(g, { t, x: 300, y: 1440, escala: 2.3, pose: 'sujetarse', cara: { ...CB.miedo, pupY: -0.5 }, caraB: { ...CB.sorpresa, pupY: -0.5 }, k2: C.clamp((t - T.rayo) / 0.15), mira: 0.9, sombra: false });
+  }
+  C.gradacion(g, 'rgb(255,244,226)', 'rgb(235,225,210)', 1 - tor, 'multiply');
+  C.gradacion(g, 'rgb(120,130,175)', 'rgb(70,72,105)', tor * 0.9, 'multiply');
+  if (tor > 0.3) { const parp = 0.12 * (Math.sin(t * 23) > 0.6 ? 1 : 0) * tor; C.fundido(g, parp); }
+  C.relampago(g, t, T.rayo, { k: 0.9 });
+  C.vineta(g, 0.35 + tor * 0.25);
+}
+
+function rebobinar(t) {
+  const u = C.clamp((t - T.regresa) / 1.6);
+  const tt = T.nombre + 2.4 - u * u * 6;
+  g.save(); g.filter = `grayscale(${C.salida(u * 2)}) contrast(1.15)`;
+  if (tt > T.sola) escenaSola(Math.max(tt, T.sola + 0.01), tt > T.nombre); else escenaSelvaCerca(Math.max(tt, 6));
+  g.restore(); g.filter = 'none';
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 0.25 * C.clamp(u * 3);
+  for (let y = (t * 900) % 6; y < C.H; y += 6) { g.fillStyle = '#000'; g.fillRect(0, y, C.W, 2); }
+  g.restore();
+  if (u > 0.05) { g.save(); g.globalAlpha = (Math.sin(t * 12) > 0 ? 0.9 : 0.5); g.fillStyle = '#fff'; for (const dx of [0, 52]) { g.beginPath(); g.moveTo(130 + dx, 90); g.lineTo(180 + dx, 60); g.lineTo(180 + dx, 120); g.closePath(); g.fill(); } g.restore(); }
+}
+
+window.renderAt = t => {
+  g.limpiar();
+  if (t < T.despierta) {
+    const u = C.suave(t / T.despierta);
+    const cam = C.camLerp(C.encuadre(960, 540, 1.0), C.encuadre(1110, 600, 2.1), u);
+    aereo.fondo(g, cam, t); aereo.frente(g, cam, t);
+    C.niebla(g, t, { y: 500, alto: 900, k: 1.1 - u * 0.6, n: 9, color: '235,240,235' });
+    C.gradacion(g, 'rgb(200,225,205)', 'rgb(120,150,130)', 0.7);
+    C.rayos(g, t, { x: 900, ang: 22, n: 5, disp: 1200, k: 0.5 });
+    C.lluvia(g, t, { k: 0.3, n: 140, vel: 1100, ang: 4 });
+    C.vineta(g, 0.5);
+    C.fundido(g, 1 - C.clamp(t / 0.6));
+    C.fundido(g, C.ventana(t, T.despierta - 0.2, T.despierta + 0.2, 0.15) * 0);
+  } else if (t < T.arriba) escenaSelvaCerca(t);
+  else if (t < T.sola) escenaArriba(t);
+  else if (t < T.nombre) escenaSola(t, false);
+  else if (t < T.regresa) escenaSola(t, true);
+  else if (t < T.fecha) rebobinar(t);
+  else if (t < T.avion) { g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#000'; g.fillRect(0, 0, C.W, C.H); C.rotulo(g, '24 DE DICIEMBRE DE 1971', C.salida((t - T.fecha - 0.1) / 0.45) * (1 - C.clamp((t - T.avion + 0.35) / 0.3)), { y: 470, tam: 88 }); C.rotulo(g, 'LIMA, PERÚ', C.salida((t - T.fecha - 0.5) / 0.45) * (1 - C.clamp((t - T.avion + 0.35) / 0.3)), { y: 590, tam: 54, color: '#f2b134' }); }
+  else escenaAvion(t);
+  if (t >= T.nombre && t < T.regresa) C.cartel(g, 'JULIANE KOEPCKE', '17 años · Perú, 1971', C.clamp((t - T.nombre - 0.3) / 0.5) * (1 - C.clamp((t - T.regresa + 0.4) / 0.3)));
+  if (t >= T.avion) C.fundido(g, 1 - C.clamp((t - T.avion) / 0.4));
+  C.fundido(g, C.clamp((t - (T.fin - 0.5)) / 0.4));
+  C.grano(g, t, 0.045);
+  const [s, a] = sub(t); C.subTemp(g, s, a);
+};
+window.listo = true;
+</script>
+</body></html>

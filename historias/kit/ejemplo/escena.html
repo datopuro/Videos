@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__CARICATURA__</script>
+<script>
+const D = __DATA__;
+C.datos(D);
+const g = C.lienzo();
+
+const mateo = C.personaje({
+  id: 'mateo',
+  cuerpo: { estatura: 1, complexion: 'delgado', edad: 'joven' },
+  piel: '#f1d3b6',
+  pelo: { estilo: 'fleco', color: '#3b2a20' },
+  ropa: { arriba: { tipo: 'sudadera', color: '#e2552f' }, abajo: { tipo: 'pantalon', color: '#2b2f3a' }, pies: { tipo: 'tenis', color: '#f5f5f5', acento: '#e2552f' } },
+  accesorios: [{ tipo: 'gorro', color: '#4f7a8a' }]
+});
+const cajera = C.personaje({
+  id: 'cajera',
+  cuerpo: { estatura: 0.95, complexion: 'medio', edad: 'adulto' },
+  piel: '#b9835a',
+  pelo: { estilo: 'coleta', color: '#1d1512' },
+  ropa: { arriba: { tipo: 'playera', color: '#3f8f6a' }, abajo: { tipo: 'pantalon', color: '#33363f' }, pies: { tipo: 'zapatos', color: '#2a2a2a' } },
+  accesorios: [{ tipo: 'delantal', color: '#f2c14e' }, { tipo: 'gafete' }]
+});
+
+const calle = C.lugar({
+  hora: 'manana',
+  capas: {
+    cielo: [{ mod: 'cielo', tipo: 'manana' }],
+    lejos: [{ mod: 'nubes', semilla: 4 }, { mod: 'ciudad_lejana', semilla: 2, color: '#b7c3d6' }],
+    fondo: [{ mod: 'edificios', semilla: 9 }],
+    medio: [{ mod: 'calle', y: 820 }, { mod: 'arbol', x: 1500, base: 830 }],
+    frente: [{ mod: 'arbol', x: -60, base: 1150, escala: 1.5, color: '#5f9a5e' }]
+  }
+});
+const sCaja = estado => C.lugar({
+  hora: 'interior',
+  capas: {
+    fondo: [{ mod: 'pared', tipo: 'azulejo', color: '#ede6d3', y1: 840 }, { mod: 'letrero', texto: 'SUPER', x: 960, y: 150, tam: 80, color: '#d0453a' }, { mod: 'estante', x: 120, semilla: 3, vacio: estado.vacio }, { mod: 'estante', x: 1440, semilla: 8, vacio: estado.vacio }],
+    medio: [{ mod: 'piso', tipo: 'loseta', y: 840, color: '#d8d2c4' }, { mod: 'puerta', automatica: true, x: 830, w: 260, h: 380, base: 840, abre: estado.abre, interior: '#f6f3ea' }, { mod: 'lampara', x: 600, y: 60 }, { mod: 'lampara', x: 1320, y: 60 }],
+    frente: [{ mod: 'mostrador', x: 1230, w: 640, h: 210, base: 1080 }]
+  }
+});
+
+const T = { llega: 0, frena: 4.6, corte: 6.3, habla1: 6.6, cajera: 8.2, habla2: 8.6, fin: 10.4, rotulo: 10.6 };
+
+window.renderAt = t => {
+  g.limpiar();
+  if (t < T.corte) {
+    const u = C.clamp((t - T.llega) / (T.frena - T.llega));
+    const x = C.lerp(-150, 820, u);
+    const cam = C.camLerp({ x: -120, zoom: 1.0 }, { x: 60, zoom: 1.12 }, C.suave(t / T.corte));
+    calle.fondo(g, cam, t);
+    const k = C.clamp((t - T.frena) / 0.5);
+    mateo.dibujar(g, { t, x, y: 905, ciclo: 'caminar', fase: x / 260, poseB: 'mirar_reloj', k: C.suave(k), cara: 'cansado', caraB: 'duda', k2: C.clamp((t - 5.2) / 0.5) });
+    calle.frente(g, cam, t);
+  } else {
+    const abre = C.salida((t - T.habla1) / 0.8);
+    const lug = sCaja({ abre, vacio: 0 });
+    const zoomIn = C.salida((t - T.corte) / 0.35);
+    const cam = C.camLerp(C.encuadre(960, 540, 1), C.encuadre(820, 520, 1.18), zoomIn * (1 - C.suave((t - T.cajera) / 0.8)));
+    cam.temblor = Math.max(0, 1 - (t - T.corte) / 0.4) * 0.8;
+    lug.fondo(g, cam, t);
+    mateo.dibujar(g, { t, x: 560, y: 930, pose: 'parado', cara: 'sorpresa', caraB: 'feliz', k2: C.clamp((t - 9.3) / 0.5), habla: t < T.cajera });
+    const kc = C.salida((t - T.cajera) / 0.5);
+    if (t > T.cajera) cajera.dibujar(g, { t, x: C.lerp(1700, 1450, kc), y: 930, mira: -1, pose: 'parado', poseB: 'saludar', k: C.suave((t - T.habla2) / 0.4) * (1 - C.suave((t - 9.8) / 0.4)), cara: 'feliz', habla: t > T.habla2 });
+    lug.frente(g, cam, t);
+    C.globo(g, '¿Hola...?', 760, 260, C.ventana(t, T.habla1 + 0.2, T.cajera - 0.2));
+    C.vineta(g, 0.25);
+  }
+  C.fundido(g, C.clamp((t - T.fin) / 0.4));
+  C.rotulo(g, '3 DÍAS DESPUÉS', C.salida((t - T.rotulo) / 0.4), { y: 540 });
+};
+window.listo = true;
+</script>
+</body></html>

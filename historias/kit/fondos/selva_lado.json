@@ -1,0 +1,7 @@
+{"id": "selva_lado", "hora": "tarde", "suelo_y": 900, "capas": {
+ "cielo": [{"mod": "rect", "x": -2000, "y": -2000, "w": 6000, "h": 5000, "color": "#9fbfae", "lw": 0}],
+ "lejos": [{"mod": "selva_lejos", "semilla": 11, "color": "#7fa392", "base": 760, "alto": 520}, {"mod": "selva_lejos", "semilla": 12, "color": "#5f8a72", "base": 820, "alto": 380}],
+ "fondo": [{"mod": "selva_troncos", "semilla": 13, "base": 860, "ancho": 50, "sep": 300, "colores": ["#4d4a3a", "#5a5442", "#433f31"]}],
+ "medio": [{"mod": "selva_troncos", "semilla": 14, "base": 920, "ancho": 90, "sep": 620, "lianas": 0.8}, {"mod": "suelo_selva", "y": 900, "semilla": 15}, {"mod": "helecho", "x": 200, "base": 930, "escala": 1.1}],
+ "frente": [{"mod": "hoja_grande", "x": 2010, "y": 1180, "ang": 210, "escala": 1.4, "color": "#1d4426"}, {"mod": "helecho", "x": 1880, "base": 1150, "escala": 1.8, "color": "#2c5a2c"}]},
+ "efectos": "C.niebla(y:760) + C.gradacion('rgb(170,205,185)','rgb(95,118,104)',0.85) + C.rayos(x:1150,ang:16) + C.lluvia(k:0.3)"}

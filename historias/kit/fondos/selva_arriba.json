@@ -1,0 +1,1 @@
+{"id": "selva_arriba", "hora": "tarde", "capas": {"medio": [{"mod": "dosel", "semilla": 5, "claro": {"x": 1110, "y": 600, "r": 120}}]}, "notas": "vista desde arriba; 'claro' deja un hueco donde dibujar algo con dibujarClaro(g)"}
