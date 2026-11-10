@@ -1,0 +1,57 @@
+<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__THREE__</script>
+<script>__KIT__</script>
+<script>__MOD:tinta__</script>
+<script>
+const D = __DATA__; K.datos(D);
+const T = THREE;
+const { scene, cam, composer } = K.tres({ bloom: false, fov: 30, entorno: false });
+const TI = K.tinta();
+const OV = K.capa2D(), DB = TI.dibujo(OV), C = TI.C;
+const sub = K.subtitulos('marcador', C.amarillo);
+TI.suelo();
+
+const caja = TI.pieza(TI.caja(1.6, 1.2, 1.2, 0.08), 0xd9a066, scene, { pos: [-1.2, 0.6, 0] });
+TI.pieza(TI.caja(1.62, 0.12, 0.3, 0.02), 0xe4572e, caja, { pos: [0, 0.3, 0.47], fino: true });
+const tele = TI.pieza(TI.caja(2.2, 1.3, 0.12, 0.04), 0x2b2b33, scene, { pos: [1.6, 1.25, 0] });
+TI.pieza(new T.PlaneGeometry(2.0, 1.1), 0x2f5bd3, tele, { pos: [0, 0, 0.065], contorno: false, sombra: false });
+TI.pieza(new T.CylinderGeometry(0.06, 0.06, 0.6, 12), 0x2b2b33, scene, { pos: [1.6, 0.3, 0], fino: true });
+TI.pieza(TI.caja(0.9, 0.06, 0.4, 0.02), 0x2b2b33, scene, { pos: [1.6, 0.03, 0], fino: true });
+const moneda = TI.pieza(new T.CylinderGeometry(0.35, 0.35, 0.08, 28), 0xffd23f, scene, { pos: [0.2, 0.36, 1.4], rot: [Math.PI / 2, 0, 0] });
+const inst = new T.InstancedMesh(TI.caja(0.3, 0.3, 0.3, 0.03), TI.toon(0x2a9d6f), 12); inst.castShadow = true; scene.add(inst);
+const m4 = new T.Matrix4(); for (let i = 0; i < 12; i++) { m4.setPosition(-2.4 + (i % 6) * 0.42, 0.15 + Math.floor(i / 6) * 0.31, -1.8); inst.setMatrixAt(i, m4); }
+TI.contorno(inst, true);
+
+const camara = K.tomas([
+  { t: 0, obj: [0, 0.8, 0], az: 0.5, el: 0.38, d: 19, deriva: 0.03 },
+  { t: 3.0, obj: [-1.2, 0.7, 0], az: -0.2, el: 0.3, d: 11 },
+  { t: 4.6, obj: [-1.2, 0.7, 0], az: -0.1, el: 0.3, d: 10.5 },
+  { t: 4.6, corte: true, obj: [1.6, 1.2, 0], az: 0.25, el: 0.18, d: 11, deriva: -0.04 }
+]);
+
+window.renderAt = t => {
+  moneda.rotation.z = t * 2; moneda.position.y = 0.36 + Math.abs(Math.sin(t * 3)) * 0.5;
+  TI.luz(0, 0);
+  const toma = camara(t);
+  composer.render();
+  OV.limpiar();
+  DB.sello('TINTA', 540, 300, K.ap(t, 0.4, 0.4), { fs: 110 });
+  DB.nota('mod/tinta.js · demo', 540, 430, K.ap(t, 0.8), { t });
+  if (toma <= 1) {
+    DB.etiqueta3D('caja con contorno', new T.Vector3(-1.2, 1.25, 0), -60, -170, K.ventana(t, 1.2, 4.5), { t });
+    const [mx, my] = K.proy(moneda.position);
+    DB.circulo(mx, my, 90, 70, K.ventana(t, 1.8, 3.0, 0.5), { t });
+  } else {
+    const [tx, ty] = K.proy([1.6, 1.25, 0.07]);
+    DB.flecha(tx - 330, ty - 380, tx - 60, ty - 120, K.ap(t, 5.0, 0.5), { t });
+    DB.nota('pantalla', tx - 340, ty - 410, K.ap(t, 5.0), { t, fs: 40 });
+    DB.txt('$9,999', tx, ty + 22, 70, '#fff', K.ap(t, 5.4), 900);
+    DB.tachar(tx - 130, ty, 260, K.ap(t, 6.0, 0.4), { t });
+    DB.resaltar(300, 1120, 480, 70, K.ap(t, 6.4, 0.5));
+    DB.txt('resaltado', 540, 1175, 60, C.tinta, K.ap(t, 6.4));
+  }
+  sub(t);
+};
+window.listo = true;
+</script></body></html>

@@ -1,0 +1,17 @@
+const fs = require('fs'), path = require('path');
+const NM = path.join(__dirname, 'npm', 'node_modules');
+const t = require(path.join(NM, 'topojson-client'));
+const lee = f => JSON.parse(fs.readFileSync(path.join(NM, 'world-atlas', f)));
+const w = lee('countries-110m.json'), w50 = lee('countries-50m.json');
+const red = (p, k) => p.map(([a, b]) => [Math.round(a * k) / k, Math.round(b * k) / k]);
+const anillos = g => (g.type === 'Polygon' ? [g.coordinates] : g.coordinates).map(p => p[0]);
+const sirve = p => { const xs = p.map(q => q[0]), ys = p.map(q => q[1]); return Math.max(...xs) - Math.min(...xs) < 180 || Math.max(...ys) < -60; };
+const polis = (g, k = 10, min = 5) => anillos(g).map(p => red(p, k)).filter(p => p.length > min && sirve(p));
+const N = { '484': 'mexico', '840': 'eeuu', '076': 'brasil', '032': 'argentina', '170': 'colombia', '152': 'chile', '604': 'peru', '724': 'espana', '156': 'china', '356': 'india', '392': 'japon', '826': 'reino_unido', '250': 'francia', '276': 'alemania', '124': 'canada', '643': 'rusia', '036': 'australia', '380': 'italia', '410': 'corea_del_sur', '818': 'egipto', '710': 'sudafrica', '566': 'nigeria', '862': 'venezuela', '192': 'cuba', '320': 'guatemala' };
+const M = { tierra: t.feature(w, w.objects.land).features.flatMap(f => polis(f.geometry)), paises: {} };
+for (const c of t.feature(w, w.objects.countries).features) if (N[c.id]) M.paises[N[c.id]] = polis(c.geometry);
+const mx = t.feature(w50, w50.objects.countries).features.find(c => c.id === '484');
+M.mexico_detalle = polis(mx.geometry, 100, 8);
+const codigo = fs.readFileSync(path.join(__dirname, 'mod', 'mapa_codigo.js'), 'utf8');
+fs.writeFileSync(path.join(__dirname, 'mod', 'mapa.js'), '(function(){const K=window.K;const M=' + JSON.stringify(M) + ';\n' + codigo + '})();');
+console.log('mapa.js', fs.statSync(path.join(__dirname, 'mod', 'mapa.js')).size, 'bytes,', Object.keys(M.paises).length, 'paises');

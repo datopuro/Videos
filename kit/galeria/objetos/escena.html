@@ -1,0 +1,59 @@
+<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__THREE__</script>
+<script>__KIT__</script>
+<script>__MOD:tinta__</script>
+<script>__MOD:objetos__</script>
+<script>__MOD:transiciones__</script>
+<script>
+const D = __DATA__; K.datos(D);
+const T = THREE;
+const { scene, cam, composer } = K.tres({ bloom: false, fov: 30, entorno: false, cerca: 0.02 });
+const TI = K.tinta(), OV = K.capa2D(), DB = TI.dibujo(OV);
+const OB = K.objetos({ pieza: TI.pieza });
+TI.suelo();
+
+OB.casa({ pos: [0, 0, -2] });
+const coche = OB.coche({ pos: [4.6, 0, 1.2] }); coche.g.rotation.y = -0.5;
+const per = OB.persona({ pos: [-3, 0, 1.6] });
+OB.arbol({ pos: [-5.2, 0, -1.5], escala: 1.3 }); OB.arbol({ pos: [7.6, 0, -2.5], pino: true, escala: 1.4 });
+
+const IX = 40;
+OB.pared({ pos: [IX + 0.4, 0, -0.5], ancho: 6 });
+const refri = OB.refri({ pos: [IX - 1.5, 0, 0] });
+const tele = OB.tele({ pos: [IX + 1.9, 0, 0], pantalla: (q, w, h) => { q.fillStyle = '#2f5bd3'; q.fillRect(0, 0, w, h); q.fillStyle = '#fff'; q.font = '900 150px Inter, sans-serif'; q.textAlign = 'center'; q.fillText('TELE', w / 2, h / 2 + 50); } });
+const mesa = OB.mesa({ pos: [IX + 0.4, 0, 0.1] }), MY = mesa.alto;
+const cel = OB.celular({ pos: [IX + 0.05, MY + 0.005, 0.15] }); cel.g.rotation.set(-Math.PI / 2, 0, 0.3);
+OB.foco({ pos: [IX + 0.3, MY, 0.0], escala: 1.6 });
+OB.foco({ pos: [IX + 0.42, MY, 0.02], escala: 1.6, encendido: false });
+OB.bateria({ pos: [IX + 0.55, MY, 0.12], escala: 1.5 });
+OB.moneda({ pos: [IX + 0.62, MY + 0.002, 0.25], escala: 1.5 });
+const bil = OB.billete({ pos: [IX + 0.32, MY + 0.001, 0.3] }); bil.g.rotation.y = 0.25;
+const con = OB.contacto({ pos: [IX + 0.9, 1.05, -0.495] });
+const cla = OB.clavija({ pos: [IX + 0.9, 1.08, -0.44] });
+OB.cable([[IX + 0.9, 1.08, -0.447], [IX + 0.9, 1.07, -0.38], [IX + 0.88, 0.9, -0.3], [IX + 0.8, MY + 0.006, -0.2], [IX + 0.6, MY + 0.006, -0.1]], { radio: 0.0035 });
+
+const camara = K.tomas([
+  { t: 0, obj: [1, 1.5, 0], az: 0.45, el: 0.24, d: 34, deriva: 0.03 },
+  { t: 3, corte: true, obj: [IX + 0.4, 0.95, 0], az: 0.25, el: 0.2, d: 14, deriva: -0.03 },
+  { t: 5.5, corte: true, obj: [IX + 0.36, MY + 0.03, 0.14], az: 0.35, el: 0.55, d: 2.1, deriva: 0.04 },
+  { t: 8, corte: true, obj: [IX + 0.9, 1.05, -0.47], az: 0.75, el: 0.2, d: 0.62 },
+  { t: 10.5, obj: [IX + 0.9, 1.05, -0.47], az: 0.55, el: 0.18, d: 0.5 }
+]);
+const TR = K.transiciones([{ t: 3, tipo: 'papel', d: 0.6 }, { t: 5.5, tipo: 'barrido', d: 0.5, color: '#2f5bd3' }, { t: 8, tipo: 'iris', d: 0.5, color: '#1d1b18' }]);
+const AREA = [14, 5, 1.2, 0.6, 0.6], LUZ = [[1, 0], [IX + 0.4, 0], [IX + 0.36, 0.14], [IX + 0.9, -0.47], [IX + 0.9, -0.47]];
+const ROT = ['casa · coche · persona · arbol', 'refri · tele · mesa · pared', 'celular · foco · bateria · moneda · billete', 'contacto · clavija · cable'];
+
+window.renderAt = t => {
+  const i = camara(t); TI.areaSombra(AREA[i]); TI.luz(...LUZ[i]);
+  per.caminar(t * 1.2); coche.rodar(t * 2);
+  refri.abrir(K.ease(K.clamp((t - 3.6) / 0.8)) * (1 - K.ease(K.clamp((t - 4.8) / 0.5))));
+  cla.g.position.z = K.lerp(-0.43, -0.498, K.ease(K.clamp((t - 8.6) / 0.9)));
+  composer.render();
+  OV.limpiar();
+  DB.nota(ROT[Math.min(i, 3)], 540, 330, 1, { t, fs: 34 });
+  DB.sello('mod/objetos.js', 540, 230, 1, { fs: 60, rot: -0.02 });
+  TR(OV, t);
+};
+window.listo = true;
+</script></body></html>

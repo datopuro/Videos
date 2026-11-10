@@ -1,0 +1,28 @@
+<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__THREE__</script>
+<script>__KIT__</script>
+<script>
+const D = __DATA__;
+K.datos(D);
+const MODO = new URLSearchParams(location.search).get('modo') || D.modo || 'cine';
+const { scene, cam, composer } = K.tres(MODO === 'pixel' ? { pixel: 6, bloom: false } : MODO === 'alambre' ? { bloom: [0.9, 0.4, 0.1], entorno: false } : {});
+const OV = K.capa2D();
+const sub = K.subtitulos(MODO === 'pixel' ? 'pixel' : MODO === 'alambre' ? 'codigo' : 'limpio', MODO === 'pixel' ? '#ffd23f' : '#a9d4ff');
+if (MODO !== 'pixel') K.estrellas();
+let obj;
+if (MODO === 'alambre') { obj = new THREE.Group(); scene.add(obj); K.alambre(new THREE.RoundedBoxGeometry(3, 6, 0.4, 4, 0.3), 0xffffff, 0.9, 20, obj); const r = K.rejilla(2.6, 5.4, 0.2, 0xffffff, 0.25, obj); r.position.z = 0.21; }
+else if (MODO === 'pixel') { scene.background = new THREE.Color(0x0b1030); scene.add(new THREE.AmbientLight(0x6070a0, 1)); const l = new THREE.DirectionalLight(0xffffff, 2.5); l.position.set(3, 4, 5); scene.add(l); obj = new THREE.Mesh(new THREE.TorusKnotGeometry(1.5, 0.45, 100, 16), new THREE.MeshStandardMaterial({ color: 0xd8dde8, roughness: 0.6 })); scene.add(obj); }
+else { const t = K.tierra(); obj = t.gr; }
+window.renderAt = t => {
+  obj.rotation.set(0.4, t * 0.4, 0);
+  cam.position.set(0, 0, MODO === 'cine' ? 30 : 16); cam.lookAt(0, 0, 0);
+  composer.render();
+  OV.limpiar();
+  K.txt(OV, 'título de prueba', 540, 470, 54, '#ffd9a0', K.ap(t, 0.3));
+  K.etiqueta(OV, 'fuente · NASA', 540, 545, K.ap(t, 0.6));
+  K.vineta(OV);
+  sub(t);
+};
+window.listo = true;
+</script></body></html>

@@ -1,0 +1,46 @@
+<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__KIT__</script>
+<script>__MOD:graficas__</script>
+<script>__MOD:mapa__</script>
+<script>
+const D = __DATA__; K.datos(D);
+const BG = K.capa2D('bg', 1), OV = K.capa2D();
+const G = K.graf(OV, 'oscuro'), GP = K.graf(OV, 'papel');
+const MU = K.mapa(OV, { region: 'mundo', y: 560 }), MX = K.mapa(OV, { region: 'mexico', y: 520 });
+const fondo = (c0, c1) => { BG.limpiar(); const gr = BG.createLinearGradient(0, 0, 0, K.H); gr.addColorStop(0, c0); gr.addColorStop(1, c1); BG.fillStyle = gr; BG.fillRect(0, 0, K.W, K.H); };
+const tit = (s, t, t0, t1, g = G) => g.txt(s, 540, 300, 58, g.C.texto, K.ventana(t, t0, t1 - 0.3), 900);
+const en = (t, a, b) => t >= a && t < b;
+
+window.renderAt = t => {
+  OV.limpiar();
+  if (t < 12) fondo('#141a2e', '#0a0c14'); else fondo('#ece6da', '#e2dccf');
+  if (en(t, 0, 2.5)) { tit('G.deCada · G.contador', t, 0, 2.5);
+    G.deCada(7, 10, 140, 520, 800, (t - 0.2) / 1.6, { icono: 'persona' });
+    G.contador(1250, 540, 1250, 150, (t - 0.8) / 1.2, { pre: '$', etiqueta: 'ejemplo · dato inventado' }); }
+  if (en(t, 2.5, 5)) { tit('G.barras · G.fuente', t, 2.5, 5);
+    G.barras([{ e: 'A', v: 12 }, { e: 'B', v: 31, destacar: true }, { e: 'C', v: 22 }, { e: 'D\n(2 líneas)', v: 8 }], 140, 480, 800, 620, (t - 2.7) / 1.4, { suf: ' W' });
+    G.fuente('ejemplo inventado, 2026', K.ap(t, 3.6)); }
+  if (en(t, 5, 7.5)) { tit('horizontal · dona · medidor', t, 5, 7.5);
+    G.barras([{ e: 'Refri', v: 45, destacar: true }, { e: 'Tele', v: 18 }, { e: 'Módem', v: 9 }], 90, 420, 900, 330, (t - 5.2) / 1.2, { horizontal: true, suf: ' kWh' });
+    G.dona(0.3, 300, 1020, 150, (t - 5.8) / 1.0, { texto: '3 de 10' });
+    G.medidor(0.8, 780, 1050, 170, (t - 6.0) / 1.0, { texto: 'gasto' }); }
+  if (en(t, 7.5, 10)) { tit('G.linea · G.linea_tiempo', t, 7.5, 10);
+    const L = G.linea([[2019, 10], [2020, 14], [2021, 13], [2022, 21], [2023, 30], [2024, 38]], 170, 440, 780, 480, (t - 7.7) / 1.5, { marcasY: [0, 20, 40], marcasX: [2019, 2024], suf: '%' });
+    G.linea_tiempo([{ e: '1947', nota: 'primer\ntransistor' }, { e: '1971', nota: 'primer\nmicro' }, { e: 'hoy', destacar: true }], 170, 1230, 740, (t - 8.2) / 1.4); }
+  if (en(t, 10, 12)) { tit('G.versus · G.cita · iconos', t, 10, 12);
+    G.versus({ titulo: 'EN NEUTRAL', icono: 'gota', valor: 'gasta', color: G.C.mal, nota: 'ralentí' }, { titulo: 'CON VELOCIDAD', icono: 'check', valor: '≈ 0', color: G.C.bien, nota: 'corte activo' }, 400, (t - 10.1) / 1.0);
+    G.cita('Texto de una cita comprobada que ocupa dos o tres renglones.', 'Nombre de la fuente, año', 90, 880, 900, K.ap(t, 10.8));
+    Object.keys(G.ICONOS).forEach((n, i) => G.icono(n, 110 + (i % 8) * 123, 1250 + Math.floor(i / 8) * 120, 90, i % 3 ? G.C.texto : G.C.acento, K.ap(t, 10.6 + i * 0.03))); }
+  if (en(t, 12, 14)) { tit('K.mapa · mundo (tema papel)', t, 12, 14, GP);
+    MU.base(K.ap(t, 12.1), { tierra: 'rgba(29,27,24,0.2)' }); MU.pais('mexico', K.ap(t, 12.5), '#e4572e'); MU.pais('japon', K.ap(t, 12.8), '#2f5bd3');
+    MU.arco([-99.1, 19.4], [139.7, 35.7], (t - 12.9) / 0.8, { color: '#1d1b18', guiones: [14, 12] });
+    MU.punto(-99.1, 19.4, K.ap(t, 12.6), { texto: 'CDMX', colorTexto: '#1d1b18', sombra: 0, pulso: t }); MU.punto(139.7, 35.7, K.ap(t, 13.5), { texto: 'Tokio', colorTexto: '#1d1b18', sombra: 0 });
+    GP.deCada(3, 10, 240, 1150, 600, (t - 12.4) / 1.2, { icono: 'gota', fs: 50 }); }
+  if (en(t, 14, 16)) { tit('K.mapa · México', t, 14, 16, GP);
+    MX.base(K.ap(t, 14.1), { tierra: 'rgba(29,27,24,0.13)' }); MX.pais('mexico', K.ap(t, 14.3), '#2a9d6f', { borde: '#1d1b18' });
+    MX.punto(-99.13, 19.43, K.ap(t, 14.7), { texto: 'CDMX', pulso: t, colorTexto: '#1d1b18', sombra: 0, dy: 52 }); MX.punto(-100.31, 25.67, K.ap(t, 14.9), { texto: 'Monterrey', colorTexto: '#1d1b18', sombra: 0 }); MX.punto(-103.35, 20.67, K.ap(t, 15.1), { texto: 'Guadalajara', colorTexto: '#1d1b18', sombra: 0, dx: -120, dy: 12 });
+    GP.cita('Los temas oscuro y papel comparten las mismas funciones.', 'kit/mod/graficas.js', 90, 1180, 900, K.ap(t, 15.0)); }
+};
+window.listo = true;
+</script></body></html>

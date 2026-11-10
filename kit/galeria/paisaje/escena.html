@@ -1,0 +1,31 @@
+<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__THREE__</script>
+<script>__KIT__</script>
+<script>__MOD:paisaje__</script>
+<script>__MOD:objetos__</script>
+<script>__MOD:transiciones__</script>
+<script>
+const D = __DATA__; K.datos(D);
+const PALETA = D.paleta || 'dia';
+const { scene, cam, composer } = K.tres({ bloom: [0.3, 0.35, 0.97], fov: 38, exposicion: 1.0 });
+const PA = K.paisaje({ paleta: PALETA, despeje: (x, z, lado) => (lado < 0 && z < -40 && z > -200) ? 0.15 : 1 });
+const OB = K.objetos();
+const coche = OB.coche({ padre: PA.G, color: 0xe4572e });
+const OV = K.capa2D();
+const tipos = Object.keys(K.TRANSICIONES);
+const TR = K.transiciones(tipos.map((tipo, i) => ({ t: 1.6 + i * 1.15, tipo, d: 0.7, color: ['#141a2e', '#ffd23f', '#e4572e'][i % 3] })));
+const VISTAS = [{ atras: 13, lado: 2.5, alto: 5 }, { atras: -14, lado: 3, alto: 2.2, adelante: -2 }, { atras: 8, lado: -7, alto: 2.5 }, { atras: 22, lado: 0, alto: 11 }];
+
+window.renderAt = t => {
+  const z = -10 - t * 9, e = TR.escena(t);
+  PA.poner(coche.g, z, 1.4); coche.rodar(-z);
+  PA.camSeguir(z, VISTAS[e % VISTAS.length]);
+  composer.render();
+  OV.limpiar();
+  K.txt(OV, 'mod/paisaje.js · paleta ' + PALETA, 540, 260, 44, '#fff', 1, 800);
+  K.txt(OV, e < tipos.length ? 'siguiente transición: ' + tipos[e] : 'fin', 540, 330, 36, '#ffd23f', 1, 700);
+  TR(OV, t);
+};
+window.listo = true;
+</script></body></html>
