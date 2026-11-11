@@ -18,7 +18,7 @@ Restaurar en un chat nuevo: además de `kit/*`, restaurar `kit/mod/*` en `kit/mo
   - Estilos de subtítulos nuevos: `marcador` (texto oscuro con resaltador, para fondos claros) y `ocaso` (crema con acento, para fondos oscuros cálidos).
   - `K.orbita([x,y,z], az, el, d)`, `K.proy(punto3D) → [x, y, visible]`.
   - `K.tomas([{t, obj:[x,y,z], az, el, d, fov?, deriva?, temblor?, corte?, curva?}, …])` devuelve `f(t)` que mueve la cámara e informa el índice de la toma. Entre dos claves interpola con `K.ease3`; una clave con `corte:true` es corte seco. `deriva` gira lento (rad/s) mientras dura la toma.
-- **`sfx.py`**: `m.W(bloque, palabra, n=0)` con la misma normalización que `K.wt`.
+- **`sfx.py`**: `m.archivo(ruta, amp, recorte)` carga un mp3/wav real (ver `SONIDO.md` y `sfx_buscar.py`, buscador de Freesound tomado de video-shotcraft, Apache-2.0, solo funciona en la laptop). `m.W(bloque, palabra, n=0)` con la misma normalización que `K.wt`.
 
 ## mod/tinta.js: 3D de tinta sobre papel (estilo Buen Fin)
 Demo: `galeria/tinta`. Sin bloom ni entorno: `K.tres({bloom:false, entorno:false, fov:30})` y luego `const TI = K.tinta()`.
@@ -63,7 +63,7 @@ Demo: `galeria/graficas` (últimos 4 s). **`mapa.js` es un archivo generado**: `
 Demo: `galeria/paisaje` (las 9, una tras otra) y `galeria/objetos`.
 - `const TR = K.transiciones([{t: 12.4, tipo: 'barrido', d: 0.5, color: '#2f5bd3'}, …])`; al final de `renderAt` se llama `TR(OV, t)`. La pantalla queda tapada por completo justo en `t`: **el cambio de escena o el corte de cámara se pone en ese mismo `t`** (con `K.tomas`, la clave con `corte:true` lleva el mismo tiempo).
 - `TR.escena(t)` da el número de escena (cuántos cortes han pasado) y `TR.cortes` la lista de tiempos, útil para los `whoosh` de `mezcla.py`.
-- Tipos: `fundido`, `flash`, `barrido` (`dir`: izq, der, arriba, abajo), `diagonal`, `cortina` (`n`), `iris` (`centro:[x,y]`), `bloques` (`n`), `persiana` (`n`), `papel` (hoja con borde en zigzag).
+- Tipos: `fundido`, `flash`, `barrido` (`dir`: izq, der, arriba, abajo), `diagonal`, `cortina` (`n`), `iris` (`centro:[x,y]`), `bloques` (`n`), `persiana` (`n`), `papel` (hoja con borde en zigzag), `tinta` (mancha de tinta irregular que crece desde `centro`; `semilla` cambia la forma), `puertas` (dos hojas que cierran al centro con una rendija de luz `brillo` y luego abren; para cambios de "antes / después"). Idea de video-shotcraft: anclar `iris` o `tinta` en un objeto real de la escena (el centro de un foco, una moneda) para que el corte tenga sentido.
 - Suelta: `K.transicion(g, tipo, u, {color})` con `u` de 0 a 1.
 - No repetir la misma transición dos veces seguidas en un video ni usar el mismo juego que en el video anterior.
 

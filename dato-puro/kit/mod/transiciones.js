@@ -11,9 +11,13 @@ const TIPOS = {
   iris: (g, c, o) => { const R = Math.hypot(K.W, K.H) / 2, r = R * (1 - K.ease(c)), [x, y] = o.centro ?? [K.W / 2, K.H / 2]; g.fillStyle = o.color; g.beginPath(); g.rect(0, 0, K.W, K.H); g.arc(x, y, Math.max(0, r) * 1.25, 0, Math.PI * 2, true); g.fill('evenodd'); },
   bloques: (g, c, o) => { const n = o.n ?? 6, w = K.W / n, m = Math.ceil(K.H / w); g.fillStyle = o.color; for (let j = 0; j < m; j++) for (let i = 0; i < n; i++) { const r = ((i * 73 + j * 131) % 17) / 17, ci = K.easeOut(K.clamp(c * 1.7 - r * 0.7)); if (ci > 0) g.fillRect(i * w + w / 2 * (1 - ci) - 0.5, j * w + w / 2 * (1 - ci) - 0.5, w * ci + 1, w * ci + 1); } },
   persiana: (g, c, o) => { const n = o.n ?? 12, h = K.H / n; g.fillStyle = o.color; for (let i = 0; i < n; i++) g.fillRect(0, i * h, K.W, h * K.ease(c) + 0.6); },
-  papel: (g, c, o, u) => { const e = K.ease3(u < 0.5 ? u * 2 : (u - 0.5) * 2), y0 = u < 0.5 ? K.H * (1 - e) : -K.H * e; g.fillStyle = o.color; g.beginPath(); g.moveTo(0, y0 + 30); for (let x = 0; x <= K.W; x += 40) g.lineTo(x, y0 + ((x / 40) % 2 ? 0 : 34)); g.lineTo(K.W, y0 + K.H + 30); for (let x = K.W; x >= 0; x -= 40) g.lineTo(x, y0 + K.H + ((x / 40) % 2 ? 0 : 34)); g.closePath(); g.fill(); }
-};
-K.TRANSICIONES = TIPOS;
+  papel: (g, c, o, u) => { const e = K.ease3(u < 0.5 ? u * 2 : (u - 0.5) * 2), y0 = u < 0.5 ? K.H * (1 - e) : -K.H * e; g.fillStyle = o.color; g.beginPath(); g.moveTo(0, y0 + 30); for (let x = 0; x <= K.W; x += 40) g.lineTo(x, y0 + ((x / 40) % 2 ? 0 : 34)); g.lineTo(K.W, y0 + K.H + 30); for (let x = K.W; x >= 0; x -= 40) g.lineTo(x, y0 + K.H + ((x / 40) % 2 ? 0 : 34)); g.closePath(); g.fill(); },
+  tinta: (g, c, o) => { const [x, y] = o.centro ?? [K.W / 2, K.H / 2], R = Math.hypot(Math.max(x, K.W - x), Math.max(y, K.H - y)) * 1.2, e = Math.pow(c, 1.6), s = o.semilla ?? 3, n = 180; g.fillStyle = o.color; g.beginPath();
+    for (let i = 0; i <= n; i++) { const a = i / n * Math.PI * 2, b = Math.sin(a * 5 + s) * 0.09 + Math.sin(a * 11 + s * 2.3) * 0.05 + Math.sin(a * 23 + s * 5.1) * 0.025, pelo = Math.pow(Math.max(0, Math.sin(a * 37 + s * 7)), 24) * 0.16 * (1 - e * 0.6), r = R * e * (1 + b + pelo); i ? g.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r) : g.moveTo(x + Math.cos(a) * r, y + Math.sin(a) * r); }
+    g.closePath(); g.fill(); },
+  puertas: (g, c, o) => { const e = K.ease3(c), w = K.W / 2 * e; g.fillStyle = o.color; g.fillRect(0, 0, w + 1, K.H); g.fillRect(K.W - w - 1, 0, w + 1, K.H);
+    if (c < 0.995) { const brillo = o.brillo ?? '#ffd23f', a = Math.min(1, (1 - c) * 6) * Math.min(1, c * 5); g.globalAlpha = a; g.fillStyle = brillo; g.fillRect(w - 6, 0, 6, K.H); g.fillRect(K.W - w, 0, 6, K.H); g.globalAlpha = a * 0.12; g.fillRect(w, 0, 40, K.H); g.fillRect(K.W - w - 40, 0, 40, K.H); } }
+};K.TRANSICIONES = TIPOS;
 K.transicion = (g, tipo, u, o = {}) => {
   if (u <= 0 || u >= 1) return; const f = TIPOS[tipo]; if (!f) throw new Error('transición desconocida: ' + tipo + '. Hay: ' + Object.keys(TIPOS).join(', '));
   const c = 1 - Math.abs(u * 2 - 1); g.save(); g.setTransform(1, 0, 0, 1, 0, 0); f(g, K.clamp(c), Object.assign({ color: { papel: '#ece6da', flash: '#fff' }[tipo] ?? '#000' }, o), u); g.restore();

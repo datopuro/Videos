@@ -52,6 +52,8 @@ Fondo (`fondos/*.json`): `{id, hora, capas:{cielo|lejos|fondo|medio|frente:[{mod
 | Personaje integrado a la luz | envolver `dibujar` en `C.iluminar` |
 | Fondo enorme que gira | `C.cache` + `drawImage` |
 | Susto | `cam.temblor` + `C.relampago` + `plato:1` |
+| Sonido real (papel, puerta, pasos) | `SONIDO.md`: `sfx_buscar.py` (Freesound CC0, solo en la laptop) + `m.archivo(ruta, amp)` en `mezcla.py` |
+| Transición tinta o puertas | `dato-puro/kit/mod/transiciones.js` (tipos `tinta`, `puertas`, `papel`…): copiar con `cp`, probar |
 | Diálogo con boca | `habla` (número 0..1 o `C.rms(t)` si hay voz.f32); la narración NO mueve bocas |
 
 Límites: el personaje solo existe de frente (no perfil ni espalda); manos sin dedos.

@@ -50,6 +50,13 @@ class Mezcla:
         if m > 0:
             arr[i:i + m] += x[:m]
 
+    def archivo(self, ruta, amp=0.5, recorte=None):
+        a = ["ffmpeg", "-v", "error", "-i", ruta]
+        if recorte:
+            a += ["-ss", str(recorte[0]), "-t", str(recorte[1] - recorte[0])]
+        x = np.frombuffer(subprocess.run(a + ["-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout, dtype=np.float32).astype(np.float64)
+        return self.norm(x, amp)
+
     def norm(self, x, amp):
         return amp * x / max(np.abs(x).max(), 1e-9)
 
