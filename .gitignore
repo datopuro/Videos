@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+npm/
+node_modules/
+three_plus.js
+fuente.json
+whisper-small/
+fr/
+m/
+voz.f32
