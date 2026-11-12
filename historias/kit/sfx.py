@@ -50,6 +50,14 @@ class Mezcla:
         x = np.frombuffer(subprocess.run(a + ["-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout, dtype=np.float32).astype(np.float64)
         return self.norm(x, amp)
 
+    @staticmethod
+    def pico(x):
+        e = np.convolve(np.abs(x), np.ones(441) / 441, "same")
+        return int(np.argmax(e)) / SR
+
+    def golpe(self, t, x, pista="fx"):
+        self.poner(t - self.pico(x), x, pista)
+
     def norm(self, x, amp):
         return amp * x / max(np.abs(x).max(), 1e-9)
 
@@ -109,4 +117,7 @@ class Mezcla:
         m.astype(np.float32).tofile(f"{self.base}/mezcla.f32")
         subprocess.run(["ffmpeg", "-y", "-v", "error", "-f", "f32le", "-ar", str(SR), "-ac", "1", "-i", f"{self.base}/mezcla.f32",
                         "-af", f"loudnorm=I={lufs}:TP=-1.5:LRA=11", "-ar", str(SR), f"{self.base}/mezcla.wav"], check=True)
-        print("ok mezcla")
+        r = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", f"{self.base}/mezcla.wav", "-af", "ebur128=peak=true", "-f", "null", "-"], capture_output=True, text=True).stderr
+        i = r.rfind("Summary:")
+        val = lambda k: r[r.index(k, i):].split()[1] if i >= 0 and k in r[i:] else "?"
+        print("ok mezcla", val("I:"), "LUFS, pico real", val("Peak:"), "dBFS")
