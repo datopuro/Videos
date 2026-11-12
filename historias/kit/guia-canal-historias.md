@@ -182,7 +182,7 @@ Pero esa mañana algo estaba raro.
 Las puertas se abrieron... y no había nadie.
 ```
 
-Si el guion llega sin acotaciones, Claude las propone y se aprueban antes de animar. Si hay personajes nuevos, se proponen sus recetas con una hoja de prueba (frente, perfil y 4 expresiones) antes de usarlos.
+Antes de grabar la voz, revisar el guion con la skill `cuestionar-guion` (lente de narrativa: quién quiere qué, qué se lo impide, qué cambia). Si el guion llega sin acotaciones, Claude las propone y se aprueban antes de animar. Si hay personajes nuevos, se proponen sus recetas con una hoja de prueba (frente, perfil y 4 expresiones) antes de usarlos.
 
 ---
 
