@@ -96,3 +96,6 @@ Demo: `galeria/paisaje`. `const PA = K.paisaje({paleta: 'ocaso'|'dia'|'noche', p
 - Estados de México en el mapa.
 - Motor con pistón (está suelto en la escena de "neutral") y más objetos: estufa, lavadora, medidor de luz, tinaco.
 - Persona con cara y expresiones en 3D (para 2D existe `caricatura.js` en el kit del canal de historias).
+
+## caricatura (mod/caricatura.js, 14 nov 2026)
+Copia de `historias/kit/caricatura.js` + `rig2.js` (objeto global `C`) con dos opciones nuevas en `C.personaje2`: `bigote` (color) y `gorra` (color, `gorraVisera`). Necesita `window.FORMATO={ancho:1080,alto:1920,fps:30}` antes del módulo, `C.datos(D)` y `g = C.lienzo()`. Firma completa y ejemplo en `kit/INDICE.md` del proyecto; uso real: video gasolinera.
