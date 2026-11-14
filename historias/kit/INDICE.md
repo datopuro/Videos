@@ -54,6 +54,20 @@ Fondo (`fondos/*.json`): `{id, hora, capas:{cielo|lejos|fondo|medio|frente:[{mod
 | Susto | `cam.temblor` + `C.relampago` + `plato:1` |
 | Sonido real (papel, puerta, pasos) | `SONIDO.md`: `sfx_buscar.py` (Freesound CC0, solo en la laptop) + `m.archivo(ruta, amp)` en `mezcla.py` |
 | Transición tinta o puertas | `dato-puro/kit/mod/transiciones.js` (tipos `tinta`, `puertas`, `papel`…): copiar con `cp`, probar |
+| Música original (orquesta CC0) | `comun/musica/fondo.py` (ver `comun/LEEME.md`) |
+| Que los letreros se alcancen a leer | `python3 /home/claude/repo/comun/lectura.py /home/claude/kit <carpeta>` antes del render |
+| Un estilo nuevo (sombras chinescas, papel recortado, acuarela, anime 80s…) | galería lemo-opuscar: ver nota al final |
 | Diálogo con boca | `habla` (número 0..1 o `C.rms(t)` si hay voz.f32); la narración NO mueve bocas |
 
 Límites: el personaje solo existe de frente (no perfil ni espalda); manos sin dedos.
+
+## Notas de rig (de la guía técnica de lemo-opuscar, en nuestras palabras)
+- Brazo levantado: girar primero hacia afuera y luego hacia adelante; al revés, los brazos se cruzan en X.
+- Al subir el brazo, el hombro también sube y se adelanta un poco.
+- No delinear la parte del brazo que queda encima del torso: esa línea hace que la articulación parezca costura de títere.
+- Estilos de stop motion o cel: dibujar personajes "en dos" (12 por segundo), pero la cámara y la luz a 24/30 fps; una cámara a saltos parece lag.
+
+## Galería de estilos externa (lemo-opuscar, 99 estilos)
+Solo cuando se busque un estilo nuevo. Bajar únicamente ese estilo:
+`git clone -q --depth 1 --filter=blob:none --sparse https://github.com/lemomo-ai/lemo-opuscar /tmp/lemo && git -C /tmp/lemo sparse-checkout set styles/<slug>`
+Para historias: `shadow-puppet`, `papercut-red`, `paper-popup`, `cel-anime-80s`, `rubber-hose`, `ukiyoe`, `watercolor`, `crayon-book`, `silent-film`, `manga-panels`, `stained-glass`, `colored-pencil`, `scifi-toon`, `midcentury-toon`, `isometric-picture-book`. Ver primero `poster.jpg` y `style.json`; leer `STYLE.md` solo si convence. El código de `demo/` es MIT (se puede adaptar dando crédito); los `.md` son CC BY-NC: se leen para aprender, no se copian al repo. Sus demos son horizontales (1920×1080).
