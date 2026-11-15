@@ -7,6 +7,8 @@ K.ease = u => { u = K.clamp(u); return u * u * (3 - 2 * u); };
 K.ease3 = u => { u = K.clamp(u); return u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2; };
 K.easeOut = u => 1 - Math.pow(1 - K.clamp(u), 3);
 K.easeBack = u => { u = K.clamp(u); const c = 1.70158; return 1 + (c + 1) * Math.pow(u - 1, 3) + c * Math.pow(u - 1, 2); };
+K.resorte = (u, rebotes = 3, amort = 5) => { u = K.clamp(u); return 1 - Math.exp(-amort * u) * Math.cos(rebotes * Math.PI * 2 * u); };
+K.escalon = (u, n = 4) => Math.floor(K.clamp(u) * n) / n;
 K.ap = (t, t0, d = 0.35) => K.easeOut((t - t0) / d);
 K.ventana = (t, t0, t1, d = 0.4, d2 = 0.35) => K.ap(t, t0, d) * (1 - K.ap(t, t1, d2));
 let semilla = 41;

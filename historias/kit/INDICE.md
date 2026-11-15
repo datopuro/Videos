@@ -54,12 +54,17 @@ Fondo (`fondos/*.json`): `{id, hora, capas:{cielo|lejos|fondo|medio|frente:[{mod
 | Susto | `cam.temblor` + `C.relampago` + `plato:1` |
 | Sonido real (papel, puerta, pasos) | `SONIDO.md`: `sfx_buscar.py` (Freesound CC0, solo en la laptop) + `m.archivo(ruta, amp)` en `mezcla.py` |
 | Transición tinta o puertas | `dato-puro/kit/mod/transiciones.js` (tipos `tinta`, `puertas`, `papel`…): copiar con `cp`, probar |
+| Íconos (5 963, Tabler) | `<script>__MOD:iconos__</script>` + `K.ico(g, 'nombre', x, y, tam)`; buscar con `comun/iconos.py buscar <palabra>` |
+| Cosas que caen, rebotan o se apilan | `__MOD:fisica__` (matter-js precalculado), ver `comun/LEEME.md` |
+| Rebote o resorte en un movimiento | `K.easeBack(u)`, `K.resorte(u)`, `K.escalon(u, n)` |
 | Música original (orquesta CC0) | `comun/musica/fondo.py` (ver `comun/LEEME.md`) |
 | Que los letreros se alcancen a leer | `python3 /home/claude/repo/comun/lectura.py /home/claude/kit <carpeta>` antes del render |
 | Un estilo nuevo (sombras chinescas, papel recortado, acuarela, anime 80s…) | galería lemo-opuscar: ver nota al final |
 | Diálogo con boca | `habla` (número 0..1 o `C.rms(t)` si hay voz.f32); la narración NO mueve bocas |
 
 Límites: el personaje solo existe de frente (no perfil ni espalda); manos sin dedos.
+
+Módulos comunes (`iconos`, `datos`, `fisica`, `circuito`): antes, una vez por chat, `bash /home/claude/repo/comun/instalar.sh`; se cargan con `<script>__MOD:nombre__</script>`. Detalle solo si se usan: `comun/LEEME.md`.
 
 ## Notas de rig (de la guía técnica de lemo-opuscar, en nuestras palabras)
 - Brazo levantado: girar primero hacia afuera y luego hacia adelante; al revés, los brazos se cruzan en X.

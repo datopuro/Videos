@@ -1,0 +1,11 @@
+const fs = require('fs'), path = require('path'), { execSync } = require('child_process');
+const C = path.resolve(__dirname, '..'), NM = path.join(C, 'npm', 'node_modules'), MOD = path.join(C, 'mod');
+const lee = p => fs.readFileSync(p, 'utf8');
+const ic = (f, suf) => Object.fromEntries(Object.entries(JSON.parse(lee(path.join(NM, '@tabler/icons', f)))).map(([k, v]) => [k + suf, v.map(n => n[1].d).filter(Boolean)]));
+const todos = Object.assign(ic('tabler-nodes-outline.json', ''), ic('tabler-nodes-filled.json', '-f'));
+fs.writeFileSync(path.join(MOD, 'iconos.js'), '/* Tabler Icons (MIT) https://github.com/tabler/tabler-icons — generado por comun/fuentes/hacer_comun.js */\nwindow.TABLER=' + JSON.stringify(todos) + ';\n' + lee(path.join(C, 'fuentes', 'iconos_codigo.js')));
+fs.writeFileSync(path.join(C, 'npm', 'entrada_d3.js'), "import * as d3 from 'd3'; import { sankey, sankeyLinkHorizontal, sankeyLeft, sankeyRight, sankeyCenter, sankeyJustify } from 'd3-sankey'; window.d3 = Object.assign({}, d3, { sankey, sankeyLinkHorizontal, sankeyLeft, sankeyRight, sankeyCenter, sankeyJustify });");
+execSync(`npx esbuild entrada_d3.js --bundle --minify --format=iife --outfile=d3_bundle.js --log-level=warning`, { cwd: path.join(C, 'npm') });
+fs.writeFileSync(path.join(MOD, 'datos.js'), '/* D3 (ISC) https://github.com/d3/d3 y d3-sankey (BSD-3) — generado por comun/fuentes/hacer_comun.js */\n' + lee(path.join(C, 'npm', 'd3_bundle.js')) + '\n' + lee(path.join(C, 'fuentes', 'datos_codigo.js')));
+fs.writeFileSync(path.join(MOD, 'fisica.js'), '/* matter-js (MIT) https://github.com/liabru/matter-js — generado por comun/fuentes/hacer_comun.js */\n' + lee(path.join(NM, 'matter-js/build/matter.min.js')) + '\n' + lee(path.join(C, 'fuentes', 'fisica_codigo.js')));
+console.log('iconos:', Object.keys(todos).length, '· datos.js y fisica.js generados');

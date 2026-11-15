@@ -53,6 +53,13 @@ def datos(base, fmt):
     return d
 
 
+def modulo(m):
+    for d in (f"{KIT}/mod", os.path.join(KIT, "..", "..", "comun", "mod"), os.path.join(KIT, "..", "repo", "comun", "mod"), os.environ.get("KIT_COMUN", "")):
+        if d and os.path.exists(f"{d}/{m}.js"):
+            return f"{d}/{m}.js"
+    raise FileNotFoundError(f"módulo {m}.js no está en kit/mod ni en comun/mod (¿falta correr comun/instalar.sh?)")
+
+
 def html(base, fmt, extra_js=None):
     h = lee(f"{base}/escena.html")
     pre = "window.FORMATO=" + json.dumps(fmt) + ";\n"
@@ -61,7 +68,7 @@ def html(base, fmt, extra_js=None):
     if "__KIT__" in h:
         h = h.replace("__KIT__", pre + lee(f"{KIT}/kit.js"))
     for m in set(re.findall(r"__MOD:([a-z0-9_]+)__", h)):
-        h = h.replace(f"__MOD:{m}__", pre + lee(f"{KIT}/mod/{m}.js"))
+        h = h.replace(f"__MOD:{m}__", pre + lee(modulo(m)))
     h = h.replace("__DATA__", json.dumps(datos(base, fmt), ensure_ascii=False))
     if extra_js:
         h = h.replace("</body>", "<script>\n" + extra_js + "\n</script></body>")

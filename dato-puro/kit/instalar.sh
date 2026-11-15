@@ -26,3 +26,5 @@ node "$K/hacer_mapa.js"
 python3 -c "import numpy, playwright" 2>/dev/null || pip install --break-system-packages -q numpy playwright
 python3 -c "import PIL" 2>/dev/null || pip install --break-system-packages -q pillow
 echo "kit listo en $K"
+
+[ -f "$K/../../comun/instalar.sh" ] && bash "$K/../../comun/instalar.sh" 2>&1 | tail -1 || true

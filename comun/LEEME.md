@@ -2,6 +2,15 @@
 
 Ningún chat las lee enteras: se usan con los comandos de abajo. Están en el repo que ya se clona para restaurar el kit (`/home/claude/repo/comun/`; en la laptop, la carpeta `comun` del repo clonado).
 
+## Módulos de animación (`comun/mod/`)
+Se cargan en `escena.html` con `<script>__MOD:nombre__</script>` en los dos kits (render.py busca primero `kit/mod/` y luego `comun/mod/`). Antes, una vez por chat: `bash /home/claude/repo/comun/instalar.sh` (en Dato Puro lo corre ya `kit/instalar.sh`). En la laptop: clonar el repo en `C:\dato-puro\repo` y correr ahí `bash comun/instalar.sh`, o poner la variable `KIT_COMUN` con la ruta de `comun/mod`. Demo de todo: `comun/galeria/demo` (hoja en `m/hoja.jpg`).
+
+- **`iconos`** — 5 963 íconos Tabler (MIT): `K.ico(g, 'car', x, y, tam, {color, grosor, u, modo:'aparecer'|'trazar', rot, a})`; `'-f'` al final = relleno. Buscar nombres: `python3 /home/claude/repo/comun/iconos.py buscar battery` (en inglés). Si el nombre no existe, el error sugiere parecidos.
+- **`datos`** — D3 completo (`window.d3`) + gráficas que no tiene `graficas.js`: `const DG = K.d3graf(OV, 'oscuro'|'papel')`; `DG.sankey(nodos, enlaces, x, y, w, h, u, {suf})` (flujos: a dónde se va la luz, el dinero, el agua), `DG.treemap(datos, …)` (partes de un total por área), `DG.burbujas(datos, …)`, `DG.area(series, …, {apilada})`, `DG.red(nodos, enlaces, …)` (grafo con íconos; acomodo de fuerzas calculado una vez, siempre igual). `datos = [{e, v, destacar, color}]`, `nodos = [{id, e, icono}]`, `enlaces = [{de, a, v}]`. Todo recibe `u` de 0 a 1.
+- **`fisica`** — matter-js (MIT) precalculado: `const F = K.fisica((M, mundo, en) => { …M.Bodies…; M.Composite.add(mundo, …); en(1.2, fn) }, {dur})` y en `renderAt`: `F.dibujar(g, t)` o `F.cuerpos(t)` para dibujar a mano. Estilo por cuerpo: `cuerpo.plugin.dp = {color, icono, etiqueta, oculto}`. `F.choques` lista `{t, a, b, v}` para poner golpes en `mezcla.py`. La simulación entera se calcula al cargar: mismo resultado en cualquier cuadro y en paralelo. Coordenadas en píxeles, `y` hacia abajo.
+- **`circuito`** — esquema eléctrico con simulación real (análisis nodal, transitorio): `const CI = K.circuito({nodos:{tierra:[x,y], a:[x,y]…}, partes:[{tipo, de, a, …}]}, {dur})` y `CI.dibujar(g, t, {tema, resaltar:[i], solo:[i], puntos, voltaje})`. Tipos: `bateria` (v; de = −, a = +), `fuente`, `fuente_i`, `resistencia` (r), `foco` (r, brilla con la potencia), `motor` (r), `led`/`diodo` (vf, color; de = ánodo), `capacitor` (c), `inductor` (l), `interruptor` (cerrado: valor o `t => …`), `amperimetro`, `cable`. Cualquier valor puede ser función de `t`. `ruta:[[x,y]…]` para doblar; `e` etiqueta, `mostrar:'i'|'v'|'p'` lectura en vivo, `lado:-1` la pasa al otro lado. Los puntos avanzan según la corriente calculada y los cables se colorean por voltaje (verde +, gris 0, rojo −). `CI.v('nodo', t)`, `CI.i(k, t)`, `CI.unidad(x, 'V')`. Las cifras que salgan en pantalla son del modelo ideal: rotular "simulación" o "esquema simplificado" si el video afirma valores reales.
+- Curvas de movimiento nuevas en `kit.js` de los dos kits (además de la existente `K.easeBack`): `K.resorte(u, rebotes, amort)`, `K.escalon(u, n)` (movimiento a saltos, estilo stop motion).
+
 ## Revisión de lectura: `lectura.py`
 ```bash
 python3 /home/claude/repo/comun/lectura.py /home/claude/kit <carpeta_video>
@@ -23,5 +32,6 @@ python3 /home/claude/repo/comun/musica/fondo.py <carpeta_video>/musica.wav <dura
 - **No escuchado por Claude**: los fondos se revisaron por volumen y graves, no de oído. Escuchar antes de publicar.
 
 ## Créditos
+- Íconos: Tabler Icons (MIT). Gráficas: D3 (ISC) y d3-sankey (BSD-3). Física: matter-js (MIT). `circuito.js` es propio; la idea visual (puntos de corriente y colores por voltaje) viene de CircuitJS (GPL-2.0), del que no se copió código.
 - `lectura.py` adapta la regla y el método de `core/render/readcheck.mjs` y `musica/core/audio/`, `musica/tools/` son copia de lemo-opuscar (Lemomo / LemoLab), código MIT: https://github.com/lemomo-ai/lemo-opuscar — licencia en `musica/LICENSE-MIT-lemo-opuscar.txt`.
 - Instrumentos: Versilian Studios (VSCO 2 CE, VCSL, CC0), FreePats y Karoryfer (CC0), Salamander Grand Piano (CC BY 3.0).

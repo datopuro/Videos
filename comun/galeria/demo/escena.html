@@ -1,0 +1,53 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0;background:#0d1018}</style></head><body>
+<script>__KIT__</script>
+<script>__MOD:iconos__</script>
+<script>__MOD:datos__</script>
+<script>__MOD:fisica__</script>
+<script>__MOD:circuito__</script>
+<script>
+const D = __DATA__; K.datos(D);
+const OV = K.capa2D();
+const G = K.d3graf(OV, 'oscuro');
+const F = K.fisica((M, mundo, en) => {
+  const B = M.Bodies, est = (b, dp) => ((b.plugin.dp = dp), b);
+  M.Composite.add(mundo, [B.rectangle(540, 1380, 1000, 40, { isStatic: true }), B.rectangle(60, 1000, 40, 800, { isStatic: true }), B.rectangle(1020, 1000, 40, 800, { isStatic: true }), B.rectangle(420, 980, 420, 24, { isStatic: true, angle: 0.25 })]);
+  for (let i = 0; i < 14; i++) M.Composite.add(mundo, est(B.circle(200 + (i % 7) * 70, 300 - Math.floor(i / 7) * 90, 34, { restitution: 0.5, label: 'moneda' }), { color: '#ffd23f', icono: 'coin', colorIcono: '#5a4500' }));
+  en(1.2, (M, mundo) => M.Composite.add(mundo, est(B.rectangle(760, 200, 180, 120, { label: 'caja', restitution: 0.2 }), { color: '#4cc9f0', etiqueta: 'CAJA' })));
+}, { dur: 4 });
+const CI = K.circuito({
+  nodos: { tierra: [240, 1250], a: [240, 650], b: [840, 650], c: [840, 1250] },
+  partes: [
+    { tipo: 'bateria', de: 'tierra', a: 'a', v: 9, e: '9 V', lado: -1 },
+    { tipo: 'resistencia', de: 'a', a: 'b', r: 330, e: '330 Ω', mostrar: 'i' },
+    { tipo: 'led', de: 'b', a: 'c', vf: 2, color: '#ff4d4d', e: 'LED', mostrar: 'v' },
+    { tipo: 'interruptor', de: 'c', a: 'tierra', cerrado: t => t > 0.8, e: 'interruptor', lado: -1 },
+  ],
+}, { dur: 4 });
+const CR = K.circuito({
+  nodos: { tierra: [240, 1250], a: [240, 650], b: [840, 650], c: [840, 1250] },
+  partes: [
+    { tipo: 'bateria', de: 'tierra', a: 'a', v: 5, e: '5 V', lado: -1 },
+    { tipo: 'resistencia', de: 'a', a: 'b', r: 10000, e: '10 kΩ', mostrar: 'i' },
+    { tipo: 'capacitor', de: 'b', a: 'c', c: 100e-6, e: '100 µF', mostrar: 'v' },
+    { tipo: 'cable', de: 'c', a: 'tierra' },
+  ],
+}, { dur: 4 });
+const ESC = [
+  ['iconos', 0, 2.5], ['sankey', 2.5, 5], ['treemap', 5, 7.5], ['burbujas', 7.5, 10], ['area', 10, 12], ['red', 12, 14], ['fisica', 14, 18], ['circuito', 18, 22], ['rc', 22, 26],
+];
+window.renderAt = t => {
+  OV.clearRect(0, 0, K.W, K.H); OV.fillStyle = '#0d1018'; OV.fillRect(0, 0, K.W, K.H);
+  const [n, t0, t1] = ESC.find(e => t < e[2]) || ESC[ESC.length - 1], u = (t - t0) / 1.6, lt = t - t0;
+  K.txt(OV, n, 540, 300, 64, '#fff', 1, 800);
+  if (n === 'iconos') ['car', 'bolt', 'bulb', 'battery-charging', 'plug', 'device-mobile', 'temperature', 'droplet', 'coin', 'home', 'clock', 'heart-f'].forEach((ic, i) => K.ico(OV, ic, 220 + (i % 4) * 213, 700 + Math.floor(i / 4) * 230, 150, { color: i % 2 ? '#4cc9f0' : '#ffd23f', u: u * 3 - i * 0.15, modo: i < 6 ? 'aparecer' : 'trazar' }));
+  if (n === 'sankey') G.sankey([{ id: 'red', e: 'Luz que\npagas' }, { id: 'refri', e: 'Refri' }, { id: 'luces', e: 'Focos' }, { id: 'tele', e: 'Tele' }, { id: 'espera', e: 'En espera', destacar: true }], [{ de: 'red', a: 'refri', v: 45 }, { de: 'red', a: 'luces', v: 20 }, { de: 'red', a: 'tele', v: 15 }, { de: 'red', a: 'espera', v: 10 }], 120, 520, 840, 820, u, { suf: ' kWh' });
+  if (n === 'treemap') G.treemap([{ e: 'Refri', v: 45 }, { e: 'Focos', v: 20 }, { e: 'Tele', v: 15 }, { e: 'Espera', v: 10, destacar: true }, { e: 'Otros', v: 10 }], 80, 480, 920, 880, u, { suf: '%' });
+  if (n === 'burbujas') G.burbujas([{ e: 'Refri', v: 45 }, { e: 'Focos', v: 20 }, { e: 'Tele', v: 15 }, { e: 'Espera', v: 10 }, { e: 'Otros', v: 10 }], 80, 480, 920, 880, u, { suf: '%' });
+  if (n === 'area') G.area([{ e: 'verano', pts: [[0, 2], [6, 3], [12, 8], [18, 6], [24, 3]] }, { e: 'invierno', pts: [[0, 3], [6, 5], [12, 4], [18, 7], [24, 4]] }], 160, 520, 840, 800, u, { suf: ' kW' });
+  if (n === 'red') G.red([{ id: 'a', e: 'Router', icono: 'router', destacar: true }, { id: 'b', e: 'Celular', icono: 'device-mobile' }, { id: 'c', e: 'Tele', icono: 'device-tv' }, { id: 'd', e: 'Laptop', icono: 'device-laptop' }, { id: 'e', e: 'Foco', icono: 'bulb' }], [{ de: 'a', a: 'b' }, { de: 'a', a: 'c' }, { de: 'a', a: 'd' }, { de: 'a', a: 'e' }], 80, 520, 920, 820, u);
+  if (n === 'fisica') F.dibujar(OV, lt);
+  if (n === 'circuito') CI.dibujar(OV, lt, { resaltar: lt > 2.5 ? [2] : [] });
+  if (n === 'rc') { CR.dibujar(OV, lt * 3, { tema: 'oscuro' }); K.txt(OV, 'Vc = ' + CR.unidad(CR.v('b', lt * 3), 'V'), 540, 1500, 56, '#ffd23f', 1, 800); }
+};
+window.listo = true;
+</script></body></html>

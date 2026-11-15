@@ -1,3 +1,4 @@
+import re
 import glob
 import json
 import os
@@ -44,6 +45,13 @@ def datos(base, fmt):
     return d
 
 
+def modulo(m):
+    for d in (f"{KIT}/mod", os.path.join(KIT, "..", "..", "comun", "mod"), os.path.join(KIT, "..", "repo", "comun", "mod"), os.environ.get("KIT_COMUN", "")):
+        if d and os.path.exists(f"{d}/{m}.js"):
+            return f"{d}/{m}.js"
+    raise FileNotFoundError(f"módulo {m}.js no está en kit/mod ni en comun/mod (¿falta correr comun/instalar.sh?)")
+
+
 def html(base, fmt):
     h = open(f"{base}/escena.html").read()
     pre = "window.FORMATO=" + json.dumps(fmt) + ";\n"
@@ -53,6 +61,8 @@ def html(base, fmt):
         h = h.replace("__KIT__", pre + open(f"{KIT}/kit.js").read())
     if "__CARICATURA__" in h:
         h = h.replace("__CARICATURA__", pre + open(f"{KIT}/caricatura.js").read() + (open(f"{KIT}/rig2.js").read() if os.path.exists(f"{KIT}/rig2.js") else ""))
+    for m in set(re.findall(r"__MOD:([a-z0-9_]+)__", h)):
+        h = h.replace(f"__MOD:{m}__", pre + open(modulo(m), encoding="utf-8").read())
     return h.replace("__DATA__", json.dumps(datos(base, fmt), ensure_ascii=False))
 
 

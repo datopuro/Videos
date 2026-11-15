@@ -82,6 +82,9 @@ Demo: `galeria/paisaje`. `const PA = K.paisaje({paleta: 'ocaso'|'dia'|'noche', p
 - `despeje: (x, z, lado) => 0..1` aplana el terreno y quita pinos donde estorban a la cámara (lección de neutral: los cerros tapaban el coche).
 - `PA.P(z)`, `PA.alto(x, z)` para colocar cosas fuera de la carretera; `colores: {…}` cambia cualquier color de la paleta.
 
+## Módulos comunes (repo `comun/mod/`, compartidos con historias)
+`iconos` (Tabler, 5 963), `datos` (D3: sankey, treemap, burbujas, área, red), `fisica` (matter-js precalculado), `circuito` (esquema con simulación real y puntos de corriente). Se cargan igual con `__MOD:nombre__`. Detalle y firmas: `comun/LEEME.md`. Demo: `comun/galeria/demo`.
+
 ## Herramientas
 - `python kit/probar.py [demo…]`: renderiza muestras de todas las demos (`tinta`, `graficas`, `objetos`, `paisaje`) y avisa si alguna falla. Correrlo después de tocar `kit.js`, `render.py` o un módulo, y revisar las hojas en `galeria/<demo>/m/hoja.jpg`.
 - `kit/RECETAS.md`: qué módulos combinar según el tipo de tema (mito o dato, dinero, proceso físico, comparación, lugares e historia, cuerpo y mente).
