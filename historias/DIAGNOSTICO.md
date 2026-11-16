@@ -82,5 +82,5 @@ Hecho: render 8× más rápido (T1); utilería de 19 objetos con ocupantes recor
 Pendiente, en este orden:
 1. ~~Personaje v3~~ **Hecho (PR #2)**: `rig3.js`, `C.personaje3`. Queda pendiente dentro de este punto: perfil completo más fiel, manos con dedos para primeros planos y más peinados. Texto original:: cuello, manos con forma, sombra propia y de contacto, grosor de línea constante en pantalla, parpadeo irregular, respiración visible, vista de tres cuartos y de perfil; proporción de cabeza que no encoja los muebles. Validar con el catálogo de utilería (el muñeco de referencia) y en un tramo real.
 2. Tiempos y boca desde la voz (`transcribir.py`, sin JSON de ElevenLabs), fuente incluida en el kit, subtítulos en dos renglones, sin estrobos (T2–T7, T10).
-3. Fondos de interior y exterior con el mismo acabado que la utilería; color y luz por toma (A1, A6).
+3. ~~Fondos~~ **Hecho (PR #3)**: `mod/fondos.js`, `C.lugar` con 6 lugares, 4 horas del día, capas con profundidad, luz que tiñe toda la toma y luces locales (`focos`). Queda pendiente dentro de este punto: más lugares según los pida cada historia (cabina de avión, selva, hospital, montaña) y lluvia. Texto original: fondos de interior y exterior con el mismo acabado que la utilería; color y luz por toma (A1, A6).
 4. Limpieza: sacar personaje v1 y B a un archivo aparte, `historia.json` por video (T8–T13).

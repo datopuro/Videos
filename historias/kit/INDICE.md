@@ -89,6 +89,15 @@ Regla del canal (16 nov 2026, del usuario): nada de figuras sueltas "intentando 
 - **Para agregar uno nuevo, leer `kit/UTILERIA.md`** (pasos, plantilla, medidas del personaje y lista de revisión). El catálogo corre `C.probarUtileria`, que falla si un objeto queda mal armado.
 - Piezas propias con el mismo acabado: `C.forma(g, camino, color, {sombra, brillo, lw, dentro})` con `C.caminos.rr/poli/elip`; `C.sombraContacto(g, x, ancho)`. Dirección de luz global: `C.LUZ`.
 
+## Lugares: fondos terminados con hora del día y luz (`<script>__MOD:fondos__</script>` después del de utilería)
+Regla (16 nov 2026): el fondo de toda toma nueva sale de `C.lugar`; los fondos viejos de `caricatura.js` quedan solo para los tres videos ya hechos.
+- `const L = C.lugar('calle', {hora:'noche'})` una vez por lugar de la historia (fuera de `renderAt`). Horas: `dia`, `tarde`, `noche`, `nublado`.
+- Orden fijo en cada cuadro: `L.dibujar(g,{t,x})` → objetos y personajes con los pies en `y >= L.piso` → `L.frente(g,{t,x})` → `L.luz(g,{t,x,focos})`. `x` es el desplazamiento de cámara en píxeles (lo lejano se mueve menos). Los rótulos y subtítulos van después de `L.luz`, para que no se tiñan.
+- `focos:[{x, y, r, fuerza}]` son luces locales (fogata, lámpara): sin ellas, de noche el personaje queda azulado junto al fuego.
+- Lugares (6): `campo` {flores, camino, pasto}, `bosque` {clase:'abedul'|'pino', frente:false quita los troncos de primer plano}, `calle` {colores}, `interior` {pared, suelo:'madera'|'loseta', tapiz:'rayas'|'puntos'|'madera', ventanaX, alfombra, friso}, `mar` {playa, isla, horizonte, agua, arena}, `nieve` {nevando, hielo}.
+- Verlos todos: `python3 kit/render.py muestras kit/escenas/demo_fondos 0.7 2.2 3.7 5.2 6.7 8.2 9.7 11.2`. La escena corre `C.probarLugares`, que falla si un lugar deja el lienzo cambiado o truena con alguna hora.
+- **Para agregar un lugar nuevo, leer la sección "Lugares" de `kit/UTILERIA.md`.**
+
 ## Notas de rig (de la guía técnica de lemo-opuscar, en nuestras palabras)
 - Brazo levantado: girar primero hacia afuera y luego hacia adelante; al revés, los brazos se cruzan en X.
 - Al subir el brazo, el hombro también sube y se adelanta un poco.

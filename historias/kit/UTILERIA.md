@@ -56,6 +56,28 @@ TIPOS.nombre = o => {
 ```
 Herramientas dentro del archivo: `forma(g, camino, color, {sombra, brillo, lw, dentro, regla})`, caminos `rr(x,y,w,h,r)`, `poli([[x,y]…])`, `elip(x,y,rx,ry)` o una función propia `gg => { gg.beginPath(); … }`; `raya(g, puntos, color, grosor)` (un punto de 4 números es curva); `masa(g, [[x,y,r]…], color)` para follaje, nubes y humo; `tono(color, k)` aclara u oscurece; `frio(color, k)` da el tono de sombra; `contacto(g, x, ancho)`.
 
+## Lugares (`mod/fondos.js`): usar y agregar
+Un lugar es el fondo completo de una toma. Devuelve `{piso, dibujar, frente, luz}` y se usa siempre en este orden: `L.dibujar` → objetos y personajes → `L.frente` → `L.luz` → textos.
+
+Por qué en capas: lo que está lejos se ve más claro, sin contorno y se mueve menos cuando la cámara se desplaza; eso es lo que da profundidad en 2D. La hora del día no se pinta objeto por objeto: `L.luz` tiñe toda la toma al final, así personajes y objetos quedan con la misma luz que el fondo.
+
+Pasos para agregar uno:
+1. Copiar el lugar que más se parezca dentro de `mod/fondos.js` (por ejemplo `LUGARES.campo`) y cambiarle el nombre.
+2. La función recibe `(o, hp)`: `o` es la receta (congelada) y `hp` la paleta de la hora (`hp.cielo`, `hp.lejos`, `hp.luna`, `hp.sol`). Nunca escribir colores de cielo a mano: usar `cielo(g, hp, e, yHorizonte, o)`.
+3. Capas de atrás hacia adelante, mínimo tres: lejana (color mezclado con `hp.lejos` al 60–80 %, sin contorno), media (mezcla 20–50 %) y piso (degradado, más oscuro abajo). Para mezclar colores usar `mez(a, b, k)` **solo con colores `#rrggbb`**; `tono()` devuelve `rgb(...)` y dentro de `mez` da negro.
+4. Todo lo que se repite a lo ancho va con `repetir(px, factor, paso, margen, fn)`: factor 0.1–0.3 lejos, 0.5–0.9 medio, 1 en el piso, más de 1 en `frente`. Así el lugar no se acaba cuando la cámara se mueve.
+5. El piso lleva textura (pasto, tablas, losetas, montículos): una franja de color liso se ve vacía.
+6. Nada de `Math.random` ni estado entre cuadros: usar `C.hash(i)` y `t`. Un cuadro debe salir igual en cualquier orden.
+7. `luz(g, e)` termina en `tenir(g, hp, extra)`; en `extra` van rayos, focos de postes o nieve cayendo.
+8. Agregarlo a `escenas/demo_fondos/escena.html` con un personaje y un objeto, renderizar muestras y revisar: que no haya huecos negros entre cielo y suelo, que el personaje se lea contra el fondo (ropa y piel distintas del color que tiene detrás) y que funcione con las cuatro horas (`C.probarLugares` lo corre solo).
+9. Anotarlo en `kit/INDICE.md`.
+
+Errores que ya pasaron con los lugares:
+- Hueco negro en el horizonte: el cielo se pintaba solo hasta el horizonte y las colinas bajas no lo tapaban. Ahora `cielo` rellena todo el cuadro.
+- Troncos de primer plano claros y con contorno: tapaban la escena. Lo que va en `frente` es silueta oscura, sin contorno y pegada a los bordes.
+- El agua del bote se veía como un rectángulo sobre el mar: el agua propia de `bote` y `velero` ahora se desvanece hacia las orillas.
+- Escribir el marcador de módulo (doble guion bajo + MOD) dentro de un comentario de un `.js`: `render.py` lo sustituye y la página deja de cargar.
+
 ## Errores que ya pasaron (no repetir)
 - Asiento rojo en una escena y azul en otra (Larisa): por eso existe `C.historia`.
 - Cuatro cabezas asomando tras un escritorio sin cuerpo: usar `escritorio` con ocupante; el recorte deja ver torso y hombros.
