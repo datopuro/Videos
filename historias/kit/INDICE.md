@@ -3,7 +3,7 @@
 Restaurar: `git clone --depth 1 https://github.com/datopuro/Videos /home/claude/repo && ln -sfn /home/claude/repo/historias/kit /home/claude/kit` · dependencias: `sh kit/instalar.sh`
 Render: `python3 kit/render.py muestras|tramo|paralelo|codificar <carpeta> ...` · revisión: `revisa_auto.py <mp4>` (texto) y `revisa.py <mp4> <dir> <seg>` (hoja).
 Carpeta de escena: `escena.html`, `formato.json` ({"ancho","alto","fps"}; vertical 1080×1920), `timeline.json`, `voz.f32` opcional (mueve bocas con `habla:true`).
-Archivos JS: `caricatura.js` (base, fondos, efectos, personaje B) + `rig2.js` (animación v2, `personaje2`). render.py los inyecta juntos en `__CARICATURA__`.
+Archivos JS: `caricatura.js` (base, fondos, efectos, personaje B) + `rig2.js` (animación v2, `personaje2`) + `rig3.js` (`personaje3`, el vigente). render.py los inyecta juntos en `__CARICATURA__`.
 Ejemplos completos: `escenas/juliane_piloto.html` (v1.2) y `escenas/juliane_caida.html` (v2, la referencia actual).
 
 ## Esqueleto de escena.html
@@ -69,6 +69,17 @@ Límites: el personaje solo existe de frente (no perfil ni espalda); manos sin d
 Módulos comunes (`iconos`, `datos`, `fisica`, `circuito`): antes, una vez por chat, `bash /home/claude/repo/comun/instalar.sh`; se cargan con `<script>__MOD:nombre__</script>`. Detalle solo si se usan: `comun/LEEME.md`.
 
 Estudio de estilo y lecciones de un canal de historias animadas medido cuadro por cuadro: `referencias/BIBLIA_DE_ESTILO.md` (fórmula de guion, ritmo de voz, cámara, color) y `referencias/LECCIONES_SHORTS_ANIMADOS.md` (valores y trampas). Leer al planear el estilo del canal o cuando un video se vea "de día de campo".
+
+## Personaje v3 (`rig3.js`, desde el 16 nov 2026): usar `C.personaje3` en todo video nuevo
+Misma receta y mismas opciones que `C.personaje2` (que se conserva para los videos ya publicados). `C.historia` ya crea los personajes con v3 (`v: 2` en la receta fuerza el anterior).
+- Trae: cuello, cabeza más chica, manos con pulgar, codos y rodillas redondeados, sombra propia, sombra de piso, línea de grosor parejo con cualquier acercamiento, parpadeo irregular, respiración y detalles de ropa (cuello, botones, bolsa, suela).
+- `giro`: −1 perfil izquierdo, ±0.5 tres cuartos, 0 frente, 1 perfil derecho. Dos personajes que platican: `giro: 0.4` y `giro: -0.4`. El tres cuartos es lo que mejor se ve; el perfil completo es aproximado.
+- `C.caminar(t, {dir, ritmo, amp})` devuelve la pose de caminata: `p.dibujar(g, {t, x, y, giro: dir, pose: C.caminar(t, {dir})})`.
+- `sombra: false` cuando no está parado en el piso (salto, caída, nadando). Dentro de un objeto de utilería se quita sola.
+- `vivo: false` quita los micro movimientos de ojos; `sinParpadeo: true` el parpadeo.
+- Extras de receta: `bigote: '#color'`, `gorra: '#color'`, `gorraVisera`, pelo `rizado` y `afro`, `cuerpo.edad: 'nino'`.
+- Ver todo: `python3 kit/render.py muestras kit/escenas/demo_personaje3 0.5 2.5 4.5 6.5`.
+- Planos: el personaje se luce en plano medio y primer plano (escala 1.5 a 2.2). Evitar personajes de menos de 25 % del alto del cuadro salvo en tomas de lugar.
 
 ## Utilería: objetos terminados, ocupantes que no se salen y colores fijos (`<script>__MOD:utileria__</script>` después de `__CARICATURA__`)
 Regla del canal (16 nov 2026, del usuario): nada de figuras sueltas "intentando ser algo". Todo objeto que salga en una historia viene de la utilería; si falta, se agrega a `mod/utileria.js` con el mismo acabado (sombra propia, brillo, contorno, sombra de piso) y se prueba en `escenas/demo_utileria` antes de usarlo.
