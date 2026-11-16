@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__CARICATURA__</script>
+<script>__MOD:utileria__</script>
+<script>__MOD:fondos__</script>
+<script>
+const D = __DATA__; C.datos(D); const g = C.lienzo();
+C.probarLugares(g);
+const H = C.historia({
+  personajes: {
+    ana: { cuerpo: { complexion: 'delgada' }, piel: '#f3d6bd', pelo: { estilo: 'largo', color: '#7a4a2c' }, ropa: { arriba: { tipo: 'sudadera', color: '#4f8f7a' }, abajo: { tipo: 'pantalon', color: '#39405a' }, pies: { color: '#f4efe6' } } },
+    beto: { cuerpo: { complexion: 'robusto' }, piel: '#c9966b', pelo: { estilo: 'corto', color: '#2c2420' }, ropa: { arriba: { tipo: 'camisa', color: '#d98e3f' }, abajo: { tipo: 'pantalon', color: '#4a3b34' }, pies: { color: '#3a2c25' } } }
+  },
+  objetos: { sofa: { tipo: 'sillon', plazas: 2, color: '#b5523b' }, lampara: { tipo: 'lampara' }, planta: { tipo: 'planta' }, ventana: { tipo: 'ventana', exterior: 'tarde', cortina: '#c96f52' }, bote: { tipo: 'bote', agua: 'rgba(47,127,166,0.9)' }, tienda: { tipo: 'tienda' }, fogata: { tipo: 'fogata' }, banca: { tipo: 'banca', plazas: 2 }, arbol: { tipo: 'arbol' }, roca: { tipo: 'roca', musgo: '#6aa857' }, coche: { tipo: 'coche', color: '#3f7fb5' } }
+});
+const LU = [C.lugar('campo', { flores: true, camino: true }), C.lugar('bosque', { clase: 'abedul' }), C.lugar('calle', { hora: 'noche' }), C.lugar('interior', { hora: 'tarde', ventanaX: 420, alfombra: '#c96f52', tapiz: 'rayas' }), C.lugar('mar', { hora: 'tarde' }), C.lugar('nieve', { hora: 'nublado', nevando: true, hielo: true }), C.lugar('calle', {}), C.lugar('bosque', { clase: 'pino', hora: 'noche' })];
+const SENT = { sentado: true, pi: [10, 0], pd: [10, 0] };
+const ESC = [
+  (L, t, x) => { H.obj('arbol').dibujar(g, { x: 420 - x, y: L.piso + 30, t }); H.obj('roca').dibujar(g, { x: 1500 - x, y: L.piso + 90, t }); H.per('ana').dibujar(g, { t, x: 860 + t * 60 - x, y: L.piso + 120, escala: 1.25, giro: 1, pose: C.caminar(t), cara: 'feliz' }); },
+  (L, t, x) => { H.per('ana').dibujar(g, { t, x: 820 - x, y: L.piso + 110, escala: 1.25, giro: 0.5, cara: 'miedo' }); H.per('beto').dibujar(g, { t, x: 1120 - x, y: L.piso + 130, escala: 1.25, giro: -0.5, cara: 'neutral' }); },
+  (L, t, x) => { H.obj('coche').dibujar(g, { x: 1250 - x, y: L.piso + 150, escala: 1.25, t }); H.per('beto').dibujar(g, { t, x: 560 - x, y: L.piso - 6, escala: 1.15, giro: 0.4, cara: 'tranquila' }); },
+  (L, t, x) => { H.obj('ventana').dibujar(g, { x: 420 - x * 0.9, y: L.piso - 230, t }); H.obj('lampara').dibujar(g, { x: 1580 - x, y: L.piso + 60, t }); H.obj('planta').dibujar(g, { x: 130 - x, y: L.piso + 70, t }); H.obj('sofa').dibujar(g, { x: 1000 - x, y: L.piso + 110, escala: 1.15, t, dentro: [(gg, a) => H.per('ana').dibujar(gg, { ...a, t, giro: 0.4, cara: 'feliz', pose: SENT }), (gg, a) => H.per('beto').dibujar(gg, { ...a, t, giro: -0.4, pose: SENT, habla: Math.max(0, Math.sin(t * 9)) * 0.5 })] }); },
+  (L, t, x) => { H.obj('bote').dibujar(g, { x: 1050 - x, y: 700 + Math.sin(t * 1.4) * 6, rot: Math.sin(t * 1.4 + 1) * 2, escala: 1.1, t, dentro: [(gg, a) => H.per('ana').dibujar(gg, { ...a, t, giro: 0.5, cara: 'feliz', pose: SENT }), (gg, a) => H.per('beto').dibujar(gg, { ...a, t, giro: -0.3, pose: SENT })] }); },
+  (L, t, x) => { H.obj('tienda').dibujar(g, { x: 620 - x, y: L.piso + 60, t, dentro: [(gg, a) => H.per('beto').dibujar(gg, { ...a, t, cara: 'triste', pose: SENT })] }); H.obj('fogata').dibujar(g, { x: 1150 - x, y: L.piso + 140, t }); H.per('ana').dibujar(g, { t, x: 1450 - x, y: L.piso + 150, escala: 1.2, giro: -0.6, cara: 'tranquila', manoI: [-70, -150] }); },
+  (L, t, x) => { H.obj('banca').dibujar(g, { x: 700 - x, y: L.piso - 4, t, dentro: [(gg, a) => H.per('ana').dibujar(gg, { ...a, t, giro: 0.4, pose: SENT, cara: 'feliz' }), (gg, a) => H.per('beto').dibujar(gg, { ...a, t, giro: -0.4, pose: SENT })] }); },
+  (L, t, x) => { H.obj('fogata').dibujar(g, { x: 960 - x, y: L.piso + 120, t }); H.per('ana').dibujar(g, { t, x: 700 - x, y: L.piso + 120, escala: 1.2, giro: 0.6, cara: 'miedo' }); }
+];
+window.renderAt = t => { const i = Math.min(LU.length - 1, Math.floor(t / 1.5)), lt = t - i * 1.5, x = lt * 60, L = LU[i]; g.limpiar(); L.dibujar(g, { t, x }); ESC[i](L, t, x); L.frente(g, { t, x }); L.luz(g, { t, x, focos: i === 7 ? [{ x: 960 - x, y: L.piso + 40, r: 520, fuerza: 1.3 }] : i === 5 ? [{ x: 1150 - x, y: L.piso + 60, r: 380, fuerza: 0.7 }] : [] }); C.rotulo(g, L.tipo + ' · ' + L.hora, 1, { tam: 40, y: 64 }); };
+window.listo = true;
+</script></body></html>
