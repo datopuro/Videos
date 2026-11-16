@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__CARICATURA__</script>
+<script>__MOD:utileria__</script>
+<script>
+const D = __DATA__; C.datos(D); const g = C.lienzo();
+const RA = { id: 'ana', cuerpo: { complexion: 'delgada' }, piel: '#f3d6bd', pelo: { estilo: 'largo', color: '#7a4a2c' }, ropa: { arriba: { tipo: 'sudadera', color: '#4f8f7a' }, abajo: { tipo: 'pantalon', color: '#39405a' }, pies: { color: '#f4efe6' } } };
+const RB = { id: 'beto', cuerpo: { complexion: 'robusto' }, piel: '#c9966b', pelo: { estilo: 'corto', color: '#2c2420' }, bigote: '#2c2420', ropa: { arriba: { tipo: 'camisa', color: '#d98e3f' }, abajo: { tipo: 'pantalon', color: '#4a3b34' }, pies: { color: '#3a2c25' } } };
+const RC = { id: 'luz', cuerpo: { edad: 'nino' }, piel: '#e8c19c', pelo: { estilo: 'coleta', color: '#3b2a20' }, ropa: { arriba: { tipo: 'vestido', color: '#c9577a' }, pies: { color: '#f2f2f2' } } };
+const RD = { id: 'don', piel: '#e2c4a8', pelo: { estilo: 'calvo' }, gorra: '#3f6fa8', ropa: { arriba: { tipo: 'playera', color: '#e2574c' }, abajo: { tipo: 'short', color: '#5b6270' }, pies: { color: '#f2f2f2' } } };
+const v2 = [RA, RB].map(r => C.personaje2(r)), v3 = [RA, RB, RC, RD].map(r => C.personaje3(r));
+const sofa = C.utileria('sillon', { plazas: 2, color: '#b5523b' });
+const rot = (s, x, y) => { g.setTransform(1, 0, 0, 1, 0, 0); g.font = '700 26px Arial, sans-serif'; g.fillStyle = '#1d1b22'; g.textAlign = 'center'; g.fillText(s, x, y); };
+const PAG = [
+  t => { // v2 contra v3
+    v2.forEach((p, i) => p.dibujar(g, { t, x: 260 + i * 300, y: 900, escala: 1.5, sombra: true })); rot('antes (v2)', 410, 60);
+    v3.slice(0, 2).forEach((p, i) => p.dibujar(g, { t, x: 1060 + i * 320, y: 900, escala: 1.5, cara: i ? 'tranquila' : 'feliz' })); rot('ahora (v3)', 1220, 60);
+    v3[2].dibujar(g, { t, x: 1640, y: 900, escala: 1.5, cara: 'feliz' }); v3[3].dibujar(g, { t, x: 1820, y: 900, escala: 1.1 });
+  },
+  t => { // giro
+    [-1, -0.5, 0, 0.5, 1].forEach((gi, i) => { v3[0].dibujar(g, { t, x: 220 + i * 370, y: 500, escala: 1.05, giro: gi, cara: 'feliz' }); v3[1].dibujar(g, { t, x: 220 + i * 370, y: 1010, escala: 1.05, giro: gi, cara: 'neutral' }); rot('giro ' + gi, 220 + i * 370, 40); });
+  },
+  t => { // caras de cerca
+    const caras = ['neutral', 'feliz', 'miedo', 'terror', 'triste', 'dolor', 'sorpresa', 'apretada'];
+    caras.forEach((c, i) => { const cam = C.encuadre(0, 0, 1); g.setTransform(1, 0, 0, 1, 0, 0); v3[i % 2].dibujar(g, { t, x: 240 + (i % 4) * 480, y: 760 + Math.floor(i / 4) * 520, escala: 2.1, cara: c, giro: i % 4 === 3 ? 0.45 : 0, sombra: false }); rot(c, 240 + (i % 4) * 480, 40 + Math.floor(i / 4) * 520); });
+  },
+  t => { // caminar, sentados, lejos y cerca
+    const x = 200 + ((t * 150) % 700);
+    v3[0].dibujar(g, { t, x, y: 520, escala: 1.0, giro: 1, pose: C.caminar(t, { dir: 1 }), cara: 'feliz' }); rot('C.caminar + giro 1', 500, 40);
+    v3[1].dibujar(g, { t, x: 900 - ((t * 150) % 700) + 100, y: 1010, escala: 1.0, giro: -0.7, pose: C.caminar(t + 0.3, { dir: -1 }) });
+    sofa.dibujar(g, { x: 1400, y: 560, escala: 1.0, t, dentro: [(gg, a) => v3[0].dibujar(gg, { ...a, t, cara: 'feliz', giro: 0.4, mira: [0.6, 0], pose: { sentado: true, pi: [10, 0], pd: [10, 0] } }), (gg, a) => v3[1].dibujar(gg, { ...a, t, giro: -0.4, habla: Math.max(0, Math.sin(t * 9)) * 0.5, pose: { sentado: true, pi: [10, 0], pd: [10, 0] }, manoD: [112, -206] })] });
+    rot('sentados, mirándose', 1400, 40);
+    [0.3, 0.55, 0.85].forEach((k, i) => v3[i].dibujar(g, { t, x: 1130 + i * 150 + k * 60, y: 1030, escala: k })); rot('lejos: la línea no se pierde', 1330, 640);
+    v3[3].dibujar(g, { t, x: 1780, y: 1560, escala: 3.2, sombra: false, cara: 'sorpresa' }); rot('cerca', 1780, 640);
+  }
+];
+window.renderAt = t => { g.limpiar(); g.fillStyle = '#eadfce'; g.fillRect(0, 0, C.W, C.H); g.fillStyle = '#e0d3be'; g.fillRect(0, 540, C.W, 6); PAG[Math.min(3, Math.floor(t / 2))](t); g.setTransform(1, 0, 0, 1, 0, 0); };
+window.listo = true;
+</script></body></html>

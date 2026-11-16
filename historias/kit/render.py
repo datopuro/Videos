@@ -60,7 +60,7 @@ def html(base, fmt):
     if "__KIT__" in h:
         h = h.replace("__KIT__", pre + open(f"{KIT}/kit.js").read())
     if "__CARICATURA__" in h:
-        h = h.replace("__CARICATURA__", pre + open(f"{KIT}/caricatura.js").read() + (open(f"{KIT}/rig2.js").read() if os.path.exists(f"{KIT}/rig2.js") else ""))
+        h = h.replace("__CARICATURA__", pre + open(f"{KIT}/caricatura.js").read() + "".join(open(f"{KIT}/{r}", encoding="utf-8").read() for r in ("rig2.js", "rig3.js") if os.path.exists(f"{KIT}/{r}")))
     for m in set(re.findall(r"__MOD:([a-z0-9_]+)__", h)):
         h = h.replace(f"__MOD:{m}__", pre + open(modulo(m), encoding="utf-8").read())
     return h.replace("__DATA__", json.dumps(datos(base, fmt), ensure_ascii=False))

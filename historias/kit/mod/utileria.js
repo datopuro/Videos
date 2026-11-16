@@ -17,7 +17,7 @@
   C.LUZ = C.LUZ || [-0.55, -0.83];
 
   const forma = (g, camino, color, o = {}) => {
-    const s = o.sombra ?? 9, b = o.brillo ?? 5, lw = o.lw ?? C.LW;
+    const s = o.sombra ?? 9, b = o.brillo ?? 5, lw = (o.lw ?? C.LW) * (C.grosor ? C.grosor(g) : 1);
     g.save(); g.lineJoin = 'round'; g.lineCap = 'round';
     camino(g); g.fillStyle = color; g.fill(o.regla || 'nonzero');
     if (s || b) {
@@ -444,7 +444,7 @@
         if (!fn) return; const a = ob.anclas[i];
         g.save(); if (ob.interior) { ob.interior(g, i); g.clip(ob.reglaInterior || 'nonzero'); }
         g.translate(a.x, a.y); if (e.espejo) g.scale(-1, 1); if (a.rot) g.rotate(a.rot * Math.PI / 180);
-        fn(g, { x: 0, y: 0, escala: a.escala ?? 1 }); g.restore();
+        fn(g, { x: 0, y: 0, escala: a.escala ?? 1, enObjeto: true }); g.restore();
       });
       ob.frente(g, e);
       g.restore();
@@ -470,7 +470,7 @@
   C.historia = def => {
     const objs = {}, pers = {};
     for (const [id, r] of Object.entries(def.objetos || {})) objs[id] = C.utileria(r.tipo, { ...r, id });
-    for (const [id, r] of Object.entries(def.personajes || {})) pers[id] = C.personaje2({ ...r, id });
+    for (const [id, r] of Object.entries(def.personajes || {})) pers[id] = (r.v === 2 ? C.personaje2 : (C.personaje3 || C.personaje2))({ ...r, id });
     const falta = (que, id, hay) => { throw new Error(`${que} "${id}" no está en la historia. Definidos: ${Object.keys(hay).join(', ') || 'ninguno'}. Se agrega una sola vez en C.historia({...}).`); };
     return Object.freeze({ def, obj: id => objs[id] || falta('el objeto', id, objs), per: id => pers[id] || falta('el personaje', id, pers), paleta: Object.freeze({ ...(def.paleta || {}) }) });
   };
