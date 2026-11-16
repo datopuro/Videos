@@ -10,7 +10,8 @@
    Capas de cada objeto: atras → ocupantes (recortados) → frente. */
 (() => {
   const C = window.C, TAU = Math.PI * 2;
-  const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  const rgb = h => h[0] === '#' ? [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)) : (h.match(/[\d.]+/g) || [128, 128, 128]).slice(0, 3).map(Number);
+  const aguaSuave = (g, col, L, alto) => { const c = rgb(col).join(','), m = (col.match(/[\d.]+/g) || []), a = col[0] !== '#' && m.length > 3 ? Number(m[3]) : 1; g.save(); g.clip(); g.scale(1, (alto + 30) / L); const gr = g.createRadialGradient(0, 0, L * 0.45, 0, 0, L); gr.addColorStop(0, `rgba(${c},${a})`); gr.addColorStop(1, `rgba(${c},0)`); g.fillStyle = gr; g.fillRect(-L, -L, L * 2, L * 2); g.restore(); };
   const tono = (h, k) => `rgb(${rgb(h).map(v => Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k)).join(',')})`;
   const frio = (h, k) => { const [r, g, b] = rgb(h); return `rgb(${Math.round(r * (1 - k))},${Math.round(g * (1 - k * 0.9))},${Math.round(Math.min(255, b * (1 - k * 0.62)))})`; };
   C.tono = tono;
@@ -147,7 +148,7 @@
         if (agua) {
           g.save(); g.beginPath(); g.moveTo(-L, 60);
           for (let x = -L; x <= L; x += 20) g.lineTo(x, -6 + Math.sin(x * 0.021 + t * 2.2) * 6 + Math.sin(x * 0.047 - t * 1.4) * 3);
-          g.lineTo(L, 60); g.closePath(); g.fillStyle = agua; g.fill();
+          g.lineTo(L, 60); g.closePath(); aguaSuave(g, agua, L, 60);
           g.strokeStyle = 'rgba(255,255,255,0.55)'; g.lineWidth = 3; g.lineCap = 'round';
           for (const s of [-1, 1]) { g.beginPath(); for (let k = 0; k < 3; k++) { const x0 = s * (L / 2 - 30 + k * 46), w = 30 - k * 6, y = 4 + k * 9 + Math.sin(t * 2 + k) * 2; g.moveTo(x0 - w, y); g.quadraticCurveTo(x0, y - 7, x0 + w, y); } g.stroke(); }
           g.restore();
@@ -370,7 +371,7 @@
         const t = e.t || 0;
         forma(g, casco, col, { sombra: 18, dentro: gg => { gg.fillStyle = franja; gg.beginPath(); gg.moveTo(-L, 8); gg.lineTo(L, -4); gg.lineTo(L, 80); gg.lineTo(-L, 80); gg.fill(); raya(gg, [[-L / 2, DK + 26], [L / 2 + 60, DK + 10]], tono(col, 0.25), 3); for (let x = -L / 2 + 150; x < L / 2 - 120; x += 150) { gg.beginPath(); gg.arc(x, DK + 74, 13, 0, TAU); gg.fillStyle = '#dbe9f2'; gg.fill(); gg.lineWidth = 3.5; gg.strokeStyle = C.LINEA; gg.stroke(); } } });
         forma(g, poli([[-L / 2 - 8, DK - 44], [L / 2 + 78, DK - 58], [L / 2 + 76, DK - 38], [-L / 2 - 6, DK - 24]]), '#8a5a3b', { sombra: 4, brillo: 3, lw: 4 });
-        if (agua) { g.save(); g.beginPath(); g.moveTo(-L, 80); for (let x = -L; x <= L; x += 24) g.lineTo(x, 6 + Math.sin(x * 0.017 + t * 2) * 7 + Math.sin(x * 0.041 - t * 1.3) * 3); g.lineTo(L, 80); g.closePath(); g.fillStyle = agua; g.fill(); g.strokeStyle = 'rgba(255,255,255,0.55)'; g.lineWidth = 3.5; g.lineCap = 'round'; g.beginPath(); for (let k = 0; k < 4; k++) { const x0 = L / 2 - 60 + k * 54, y = 16 + k * 8; g.moveTo(x0 - 30, y); g.quadraticCurveTo(x0, y - 9, x0 + 30, y); } g.stroke(); g.restore(); }
+        if (agua) { g.save(); g.beginPath(); g.moveTo(-L, 80); for (let x = -L; x <= L; x += 24) g.lineTo(x, 6 + Math.sin(x * 0.017 + t * 2) * 7 + Math.sin(x * 0.041 - t * 1.3) * 3); g.lineTo(L, 80); g.closePath(); aguaSuave(g, agua, L, 80); g.strokeStyle = 'rgba(255,255,255,0.55)'; g.lineWidth = 3.5; g.lineCap = 'round'; g.beginPath(); for (let k = 0; k < 4; k++) { const x0 = L / 2 - 60 + k * 54, y = 16 + k * 8; g.moveTo(x0 - 30, y); g.quadraticCurveTo(x0, y - 9, x0 + 30, y); } g.stroke(); g.restore(); }
       }
     };
   };
