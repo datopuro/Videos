@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__CARICATURA__</script>
+<script>__MOD:utileria__</script>
+<script>
+const D = __DATA__; C.datos(D); const g = C.lienzo();
+const N = C.probarUtileria(g);
+const tipos = Object.keys(C.TIPOS_UTILERIA), COLS = 5, FILAS = Math.ceil(tipos.length / COLS), CW = C.W / COLS, CH = C.H / FILAS;
+const objs = tipos.map(tp => C.utileria(tp, tp === 'bote' || tp === 'velero' ? { agua: 'rgba(58,120,150,0.92)' } : tp === 'ventana' ? { cortina: '#c96f52' } : {}));
+const ref = C.personaje2({ id: 'ref', piel: '#e2c4a8', pelo: { estilo: 'corto', color: '#4a3a30' }, ropa: { arriba: { tipo: 'playera', color: '#9aa3b0' }, abajo: { tipo: 'pantalon', color: '#5b6270' }, pies: { color: '#f2f2f2' } } });
+window.renderAt = t => {
+  g.limpiar(); g.fillStyle = '#e9e1d2'; g.fillRect(0, 0, C.W, C.H);
+  objs.forEach((ob, i) => {
+    const cx = (i % COLS + 0.5) * CW, y0 = Math.floor(i / COLS) * CH, alto = { velero: 980, arbol: 840, avion: 520, tienda: 480, puerta: 500 }[ob.tipo] || 420;
+    const k = Math.min((CW - 150) / ob.ancho, (CH - 64) / alto, 0.5), piso = y0 + CH - 22 - (ob.tipo === 'avion' ? 160 * k : ob.tipo === 'bote' || ob.tipo === 'velero' ? 50 * k : 0);
+    g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = (i + Math.floor(i / COLS)) % 2 ? '#e4dbc9' : '#efe8da'; g.fillRect(cx - CW / 2, y0, CW, CH);
+    g.save(); g.beginPath(); g.rect(cx - CW / 2, y0, CW, CH); g.clip();
+    ob.dibujar(g, { x: cx - (ob.anclas.length ? 0 : 46 * k), y: piso, escala: k, t, abierta: 0.5 + 0.5 * Math.sin(t * 1.5), cinturon: true, giro: t * 3,
+      dentro: ob.anclas.map(() => (gg, a) => ref.dibujar(gg, { t, x: a.x, y: a.y, escala: a.escala, cara: 'tranquila', pose: ob.tipo === 'puerta' || ob.tipo === 'velero' ? {} : { sentado: true, pi: [10, 0], pd: [10, 0] } })) });
+    if (!ob.anclas.length) ref.dibujar(g, { t, x: cx + (ob.ancho / 2 + 70) * k, y: piso + (ob.tipo === 'avion' ? 160 * k : 0), escala: k, sombra: true });
+    g.restore();
+    g.setTransform(1, 0, 0, 1, 0, 0); g.font = '700 24px Arial, sans-serif'; g.fillStyle = '#1d1b22'; g.textAlign = 'left'; g.fillText(ob.tipo + (ob.anclas.length ? '  ·  ' + ob.anclas.length + ' lugar(es)' : ''), cx - CW / 2 + 14, y0 + 32);
+  });
+};
+window.listo = true;
+</script></body></html>

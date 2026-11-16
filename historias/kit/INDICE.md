@@ -74,7 +74,8 @@ Estudio de estilo y lecciones de un canal de historias animadas medido cuadro po
 Regla del canal (16 nov 2026, del usuario): nada de figuras sueltas "intentando ser algo". Todo objeto que salga en una historia viene de la utilería; si falta, se agrega a `mod/utileria.js` con el mismo acabado (sombra propia, brillo, contorno, sombra de piso) y se prueba en `escenas/demo_utileria` antes de usarlo.
 - `const H = C.historia({personajes:{ana:{...receta}}, objetos:{sofa:{tipo:'sillon', plazas:2, color:'#b5523b'}}})` una sola vez por video. `H.per('ana')`, `H.obj('sofa')`. El color y el tamaño viven ahí: pasarlos al dibujar da error, así un objeto no cambia entre escenas.
 - `H.obj('bote').dibujar(g, {x, y, escala, rot, t, espejo, dentro:[(gg, a) => H.per('ana').dibujar(gg, {t, x:a.x, y:a.y, escala:a.escala, pose:{sentado:true}}), …]})`: dibuja atrás → ocupantes recortados al interior → frente. Los pies no pueden asomar bajo la borda ni fuera de las ventanas.
-- Tipos: `sillon` (plazas), `silla`, `mesa` (ancho, alto), `lampara` (encendida), `planta`, `bote` (plazas, agua, remo), `coche` (dos lugares; `giro` para las ruedas).
+- Tipos (19): sillon, silla, banca, asiento_avion, escritorio, cama, mesa, lampara, planta, puerta, ventana, tienda, fogata, bote, velero, coche, avion, arbol, roca. Verlos todos: `python3 kit/render.py muestras kit/escenas/catalogo_utileria 1.0`.
+- **Para agregar uno nuevo, leer `kit/UTILERIA.md`** (pasos, plantilla, medidas del personaje y lista de revisión). El catálogo corre `C.probarUtileria`, que falla si un objeto queda mal armado.
 - Piezas propias con el mismo acabado: `C.forma(g, camino, color, {sombra, brillo, lw, dentro})` con `C.caminos.rr/poli/elip`; `C.sombraContacto(g, x, ancho)`. Dirección de luz global: `C.LUZ`.
 
 ## Notas de rig (de la guía técnica de lemo-opuscar, en nuestras palabras)
