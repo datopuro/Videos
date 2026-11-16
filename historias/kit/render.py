@@ -70,7 +70,7 @@ def abrir(p, base, fmt):
     if os.environ.get("KIT_GL", "") == "gpu":
         args = ["--use-gl=angle", "--ignore-gpu-blocklist", "--enable-gpu-rasterization"]
     else:
-        args = ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"]
+        args = ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--disable-accelerated-2d-canvas"]
     b = p.chromium.launch(args=args)
     pg = b.new_page(viewport={"width": fmt["ancho"], "height": fmt["alto"]})
     pg.on("console", lambda m: print("JS:", m.text) if m.type in ("error", "warning") else None)
