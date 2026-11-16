@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__CARICATURA__</script>
+<script>__MOD:utileria__</script>
+<script>
+const D = __DATA__; C.datos(D); const g = C.lienzo();
+const H = C.historia({
+  personajes: {
+    ana: { cuerpo: { complexion: 'delgada' }, piel: '#f3d6bd', pelo: { estilo: 'largo', color: '#7a4a2c' }, ropa: { arriba: { tipo: 'sudadera', color: '#4f8f7a' }, abajo: { tipo: 'pantalon', color: '#39405a' }, pies: { color: '#f4efe6' } } },
+    beto: { cuerpo: { complexion: 'robusto' }, piel: '#d9a982', pelo: { estilo: 'corto', color: '#2c2420' }, ropa: { arriba: { tipo: 'camisa', color: '#d98e3f' }, abajo: { tipo: 'pantalon', color: '#4a3b34' }, pies: { color: '#3a2c25' } } }
+  },
+  objetos: {
+    sofa: { tipo: 'sillon', plazas: 2, color: '#b5523b' },
+    lampara: { tipo: 'lampara', color: '#e8c46a' },
+    planta: { tipo: 'planta', maceta: '#c46a43' },
+    mesita: { tipo: 'mesa', ancho: 300, alto: 120, color: '#9a6b45' },
+    bote: { tipo: 'bote', plazas: 2, color: '#a8693c', agua: 'rgba(58,120,150,0.92)' },
+    coche: { tipo: 'coche', color: '#3f7fb5' }
+  }
+});
+const SENT = { sentado: true, pi: [10, 0], pd: [10, 0] };
+function sala(t, zoom, cx, cy) {
+  const cam = C.encuadre(cx, cy, zoom); cam.t = t; C.camara(g, cam, 1);
+  const gr = g.createLinearGradient(0, 0, 0, 800); gr.addColorStop(0, '#d9c6ad'); gr.addColorStop(1, '#eadbc6'); g.fillStyle = gr; g.fillRect(-400, -400, 2800, 1230);
+  g.fillStyle = '#b98d62'; g.fillRect(-400, 830, 2800, 700); g.fillStyle = '#8a6444'; g.fillRect(-400, 818, 2800, 14);
+  g.strokeStyle = 'rgba(70,45,25,0.25)'; g.lineWidth = 3; for (let x = -400; x < 2400; x += 170) { g.beginPath(); g.moveTo(x, 832); g.lineTo(x - 90, 1500); g.stroke(); }
+  C.forma(g, C.caminos.rr(250, 250, 300, 360, 10), '#f4f1e6', { sombra: 8 }); C.forma(g, C.caminos.rr(274, 274, 252, 312, 6), '#9fc7df', { sombra: 0, brillo: 0, lw: 4 });
+  g.save(); g.translate(960, 985); g.scale(1, 0.22); g.beginPath(); g.arc(0, 0, 640, 0, Math.PI * 2); g.fillStyle = '#c96f52'; g.fill(); g.lineWidth = 26; g.strokeStyle = '#e9d7b8'; g.stroke(); g.restore();
+  H.obj('lampara').dibujar(g, { x: 1560, y: 900, t });
+  H.obj('planta').dibujar(g, { x: 480, y: 905, t });
+  H.obj('sofa').dibujar(g, { x: 960, y: 930, t, dentro: [
+    (gg, a) => H.per('ana').dibujar(gg, { t, x: a.x, y: a.y, cara: 'feliz', mira: [0.7, 0], pose: { ...SENT, cab: 4 + Math.sin(t * 1.3) * 2 }, manoI: [-112, -206], manoD: [22, -112] }),
+    (gg, a) => H.per('beto').dibujar(gg, { t, x: a.x, y: a.y, cara: 'tranquila', mira: [-0.7, 0], habla: Math.max(0, Math.sin(t * 9)) * 0.5, pose: { ...SENT, cab: -4 }, manoI: [-22, -112], manoD: [112, -206] })
+  ] });
+  H.obj('mesita').dibujar(g, { x: 1330, y: 1010, t });
+  g.setTransform(1, 0, 0, 1, 0, 0);
+}
+function lago(t) {
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  const gr = g.createLinearGradient(0, 0, 0, 760); gr.addColorStop(0, '#f6b56b'); gr.addColorStop(1, '#fbe3b4'); g.fillStyle = gr; g.fillRect(0, 0, C.W, 760);
+  g.beginPath(); g.arc(1450, 560, 120, 0, Math.PI * 2); g.fillStyle = '#fff3cf'; g.fill();
+  g.fillStyle = '#6f8f86'; g.beginPath(); g.moveTo(0, 700); g.quadraticCurveTo(500, 560, 1000, 690); g.quadraticCurveTo(1500, 600, 1920, 700); g.lineTo(1920, 780); g.lineTo(0, 780); g.fill();
+  g.fillStyle = '#3a7896'; g.fillRect(0, 740, C.W, 400);
+  H.obj('bote').dibujar(g, { x: 960 + Math.sin(t * 0.5) * 30, y: 800 + Math.sin(t * 1.4) * 7, rot: Math.sin(t * 1.4 + 1) * 2.2, escala: 1.25, t, dentro: [
+    (gg, a) => H.per('ana').dibujar(gg, { t, x: a.x, y: a.y, cara: 'feliz', mira: [0.8, -0.2], pose: { ...SENT }, pelo: [-18 + Math.sin(t * 3) * 6, 0], manoI: [-40, -128], manoD: [74, -126] }),
+    (gg, a) => H.per('beto').dibujar(gg, { t, x: a.x, y: a.y, cara: 'sorpresa', mira: [-0.6, 0.3], pose: { ...SENT, hombros: 6 }, manoI: [-78, -126], manoD: [78, -126] })
+  ] });
+  g.setTransform(1, 0, 0, 1, 0, 0);
+}
+function calle(t) {
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  const gr = g.createLinearGradient(0, 0, 0, 700); gr.addColorStop(0, '#8fc4e8'); gr.addColorStop(1, '#dff0f7'); g.fillStyle = gr; g.fillRect(0, 0, C.W, 760);
+  for (let i = 0; i < 9; i++) { const x = i * 250 - 60, h = 260 + C.hash(i) * 240; C.forma(g, C.caminos.rr(x, 760 - h, 210, h + 20, 6), ['#d9c7b0', '#c9b6c8', '#b9c9c0'][i % 3], { sombra: 10, lw: 4 }); }
+  g.fillStyle = '#4b4b55'; g.fillRect(0, 760, C.W, 320); g.fillStyle = '#e9e2c9'; for (let x = -100; x < 2000; x += 220) g.fillRect(x, 950, 120, 12);
+  const u = C.salida(t / 2.6), x = C.lerp(-420, 1000, u), fr = 1 - C.clamp((t - 2.2) / 0.5), cab = t > 2.3 ? Math.sin(C.clamp((t - 2.3) / 0.5) * Math.PI) * -2.4 : 0;
+  H.obj('coche').dibujar(g, { x, y: 900 + Math.sin(t * 22) * 1.5 * fr, rot: cab, escala: 1.35, giro: x / 65, t, dentro: [
+    (gg, a) => H.per('beto').dibujar(gg, { t, x: a.x, y: a.y, escala: a.escala, cara: 'feliz', mira: [0.9, 0], pose: { ...SENT }, manoI: [20, -150], manoD: [70, -160] }),
+    (gg, a) => H.per('ana').dibujar(gg, { t, x: a.x, y: a.y, escala: a.escala, cara: 'tranquila', mira: [0.6, 0], pose: { ...SENT } })
+  ] });
+  g.setTransform(1, 0, 0, 1, 0, 0);
+}
+window.renderAt = t => {
+  g.limpiar();
+  if (t < 3.5) sala(t, C.lerp(0.98, 1.06, C.suave(t / 3.5)), 960, 560);
+  else if (t < 6) sala(t, C.lerp(1.75, 1.85, C.suave((t - 3.5) / 2.5)), 960, 700);
+  else if (t < 10) lago(t - 6);
+  else calle(t - 10);
+  C.vineta(g, 0.3);
+  C.rotulo(g, t < 3.5 ? 'sala: plano abierto' : t < 6 ? 'misma sala, mismo sofá: acercamiento' : t < 10 ? 'bote: nada asoma bajo la borda' : 'coche: ocupantes solo por las ventanas', 1, { tam: 44, y: 70 });
+};
+window.listo = true;
+</script></body></html>
