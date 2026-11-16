@@ -1,0 +1,41 @@
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
+import numpy as np
+IB='/usr/share/fonts/opentype/inter/Inter-Black.otf'; IS='/usr/share/fonts/opentype/inter/Inter-Bold.otf'
+F=lambda s,b=True: ImageFont.truetype(IB if b else IS,s)
+ROJO=(224,74,60); BL=(255,255,255); NO=(14,12,20)
+def txt(d,x,y,t,f,col,sw=9,al='c'):
+    w=d.textlength(t,font=f); x=x-w/2 if al=='c' else x-w if al=='r' else x
+    d.text((x,y),t,font=f,fill=col,stroke_width=sw,stroke_fill=NO)
+def sello(im,cx,cy,t,tam,rot):
+    f=F(tam); d0=ImageDraw.Draw(im); w=int(d0.textlength(t,font=f)+tam*0.8); h=int(tam*1.6)
+    s=Image.new('RGBA',(w,h),(0,0,0,0)); d=ImageDraw.Draw(s); d.rounded_rectangle((4,4,w-4,h-4),tam//6,outline=ROJO+(255,),width=max(4,tam//10)); d.text((tam*0.4,tam*0.22),t,font=f,fill=ROJO+(255,))
+    s=s.rotate(rot,expand=True,resample=Image.BICUBIC); im.alpha_composite(s,(int(cx-s.width/2),int(cy-s.height/2)))
+def vertical(n,frame,cx,w,y0,t1,t2,st=None):
+    src=Image.open(frame).convert('RGB')
+    bg=src.crop((max(0,cx-300),0,max(0,cx-300)+600,1080)).resize((1080,1920)).filter(ImageFilter.GaussianBlur(40)); bg=Image.eval(bg,lambda v:int(v*0.75)).convert('RGBA')
+    x0=max(0,min(1920-w,cx-w//2)); fg=src.crop((x0,0,x0+w,1080)); h=int(1080*1080/w); fg=fg.resize((1080,h),Image.LANCZOS).convert('RGBA')
+    m=np.ones((h,1080),np.float32)
+    for i in range(60): m[i,:]=i/60; m[h-1-i,:]=np.minimum(m[h-1-i,:],i/60)
+    fg.putalpha(Image.fromarray((m*255).astype('uint8'))); bg.alpha_composite(fg,(0,y0))
+    ov=Image.new('RGBA',(1080,1920),(0,0,0,0)); d=ImageDraw.Draw(ov)
+    for y in range(1150,1920): d.line((0,y,1080,y),fill=(14,12,20,int(min(225,(y-1150)*0.45))))
+    for y in range(0,320): d.line((0,y,1080,y),fill=(14,12,20,int((320-y)*0.6)))
+    bg=Image.alpha_composite(bg,ov); d=ImageDraw.Draw(bg)
+    pw=d.textlength(f'PARTE {n}',font=F(62))+70; d.rounded_rectangle(((1080-pw)/2,110,(1080+pw)/2,200),45,fill=ROJO); d.text(((1080-pw)/2+35,118),f'PARTE {n}',font=F(62),fill=BL)
+    txt(d,540,1230,t1,F(104),BL,10); txt(d,540,1360,t2,F(104),ROJO,10)
+    txt(d,540,1520,'LARISA SAVITSKAYA · HISTORIA REAL',F(38,False),BL,5)
+    if st: sello(bg,*st)
+    bg.convert('RGB').save(f'miniatura_parte{n}.jpg',quality=92)
+vertical(1,'c/c_0.2.png',960,820,-60,'CAYÓ 5,220 M','EN SU ASIENTO')
+vertical(2,'c/c_133.5.png',1010,760,0,'SOLA EN','LA TAIGA')
+vertical(3,'c/c_220.5.png',1000,900,120,'SU PAÍS DIJO','QUE NO PASÓ')
+src0=Image.open('c/c_0.2.png').convert('RGB').resize((1280,720)); src=Image.new('RGB',(1280,720),(14,12,30)); src.paste(src0,(-300,0)); src=src.convert('RGBA'); g=Image.new('RGBA',(1280,720)); d=ImageDraw.Draw(g)
+for x in range(560,1280): d.line((x,0,x,720),fill=(14,12,30,int(min(255,(x-560)*1.4))))
+im=Image.alpha_composite(src,g); d=ImageDraw.Draw(im)
+txt(d,1250,90,'CAYÓ 5,220 M',F(96),BL,9,'r'); txt(d,1250,205,'Y SOBREVIVIÓ',F(96),ROJO,9,'r')
+sello(im,1010,430,'NUNCA PASÓ',64,6)
+txt(d,1250,580,'Larisa Savitskaya · 1981 · historia real',F(34,False),BL,5,'r')
+im.convert('RGB').save('miniatura_youtube.jpg',quality=93)
+s=Image.new('RGB',(1620,960))
+for i in range(3): s.paste(Image.open(f'miniatura_parte{i+1}.jpg').resize((540,960)),(i*540,0))
+s.save('minis.jpg')
