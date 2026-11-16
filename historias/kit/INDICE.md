@@ -70,6 +70,14 @@ Módulos comunes (`iconos`, `datos`, `fisica`, `circuito`): antes, una vez por c
 
 Estudio de estilo y lecciones de un canal de historias animadas medido cuadro por cuadro: `referencias/BIBLIA_DE_ESTILO.md` (fórmula de guion, ritmo de voz, cámara, color) y `referencias/LECCIONES_SHORTS_ANIMADOS.md` (valores y trampas). Leer al planear el estilo del canal o cuando un video se vea "de día de campo".
 
+## Utilería: objetos terminados, ocupantes que no se salen y colores fijos (`<script>__MOD:utileria__</script>` después de `__CARICATURA__`)
+Regla del canal (16 nov 2026, del usuario): nada de figuras sueltas "intentando ser algo". Todo objeto que salga en una historia viene de la utilería; si falta, se agrega a `mod/utileria.js` con el mismo acabado (sombra propia, brillo, contorno, sombra de piso) y se prueba en `escenas/demo_utileria` antes de usarlo.
+- `const H = C.historia({personajes:{ana:{...receta}}, objetos:{sofa:{tipo:'sillon', plazas:2, color:'#b5523b'}}})` una sola vez por video. `H.per('ana')`, `H.obj('sofa')`. El color y el tamaño viven ahí: pasarlos al dibujar da error, así un objeto no cambia entre escenas.
+- `H.obj('bote').dibujar(g, {x, y, escala, rot, t, espejo, dentro:[(gg, a) => H.per('ana').dibujar(gg, {t, x:a.x, y:a.y, escala:a.escala, pose:{sentado:true}}), …]})`: dibuja atrás → ocupantes recortados al interior → frente. Los pies no pueden asomar bajo la borda ni fuera de las ventanas.
+- Tipos (19): sillon, silla, banca, asiento_avion, escritorio, cama, mesa, lampara, planta, puerta, ventana, tienda, fogata, bote, velero, coche, avion, arbol, roca. Verlos todos: `python3 kit/render.py muestras kit/escenas/catalogo_utileria 1.0`.
+- **Para agregar uno nuevo, leer `kit/UTILERIA.md`** (pasos, plantilla, medidas del personaje y lista de revisión). El catálogo corre `C.probarUtileria`, que falla si un objeto queda mal armado.
+- Piezas propias con el mismo acabado: `C.forma(g, camino, color, {sombra, brillo, lw, dentro})` con `C.caminos.rr/poli/elip`; `C.sombraContacto(g, x, ancho)`. Dirección de luz global: `C.LUZ`.
+
 ## Notas de rig (de la guía técnica de lemo-opuscar, en nuestras palabras)
 - Brazo levantado: girar primero hacia afuera y luego hacia adelante; al revés, los brazos se cruzan en X.
 - Al subir el brazo, el hombro también sube y se adelanta un poco.
