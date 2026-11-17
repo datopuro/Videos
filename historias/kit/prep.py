@@ -25,6 +25,7 @@ ini0 = float(np.argmax(voz) * 0.01)
 ALI = None
 if os.path.exists(f"{OUT}/alineacion.json"):
     a = json.load(open(f"{OUT}/alineacion.json"))
+    ORIGEN = a.get("origen", "ElevenLabs")
     if "words" in a:
         ALI = [(w["text"], w["start"] / TEMPO, w["end"] / TEMPO) for w in a["words"] if w.get("type", "word") == "word"]
     else:
@@ -103,7 +104,7 @@ for k, frases in enumerate(B):
         tw = tiempos(pals, a, z)
         segs.append({"texto": texto, "ini": tw[0][0], "fin": tw[-1][1]})
         j = 0
-        for p in trozos(texto):
+        for p in trozos(texto, CFG.get("sub_car", 24)):
             m = len(p.split(" "))
             ws = [{"w": pals[j + q], "ini": tw[j + q][0], "fin": tw[j + q][1]} for q in range(m)]
             subs.append({"texto": p, "ini": ws[0]["ini"], "fin": ws[-1]["fin"], "palabras": ws})
@@ -116,4 +117,4 @@ v.tofile(f"{OUT}/voz.f32")
 json.dump({"sr": SR, "total": total, "bloques": bloques}, open(f"{OUT}/timeline.json", "w"), ensure_ascii=False, indent=1)
 for b, d in bloques.items():
     print(b, f"{d['ini']:6.2f}-{d['fin']:6.2f}", " | ".join(s["texto"] for s in d["subs"]))
-print("total", round(total, 2), "| tiempos de", "ElevenLabs" if ALI is not None else "silabas+pausas")
+print("total", round(total, 2), "| tiempos de", ORIGEN if ALI is not None else "silabas+pausas (menos exacto: corre antes alinear.py)")
