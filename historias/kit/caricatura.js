@@ -389,7 +389,7 @@ M.mostrador = (g, o) => {
   g.beginPath(); g.rect(o.x - 16, base - h - 16, w + 32, 22); trazo(g, o.cubierta || '#efe7da');
 };
 M.letrero = (g, o) => {
-  g.font = `800 ${o.tam || 64}px "Arial Black", Arial, sans-serif`;
+  g.font = `800 ${o.tam || 64}px Historias, "Arial Black", Arial, sans-serif`;
   const w = g.measureText(o.texto).width + 60, h = (o.tam || 64) + 34;
   rrect(g, o.x - w / 2, o.y - h / 2, w, h, 12); trazo(g, o.fondo || '#f4f1ea');
   g.fillStyle = o.color || '#2d3142'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(o.texto, o.x, o.y + 3);
@@ -430,7 +430,7 @@ C.lugar = rec => {
 C.rotulo = (g, texto, a, o = {}) => {
   if (a <= 0.01) return;
   g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = C.clamp(a);
-  g.font = `900 ${o.tam || 92}px "Arial Black", Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.font = `900 ${o.tam || 92}px Historias, "Arial Black", Arial, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
   const y = o.y ?? C.H * 0.14, s = 0.85 + 0.15 * C.rebote(a);
   g.translate(C.W / 2, y); g.scale(s, s);
   g.lineWidth = 16; g.strokeStyle = C.LINEA; g.lineJoin = 'round'; g.strokeText(texto, 0, 0);
@@ -440,7 +440,7 @@ C.rotulo = (g, texto, a, o = {}) => {
 C.globo = (g, texto, x, y, a, o = {}) => {
   if (a <= 0.01) return;
   g.save(); g.globalAlpha = C.clamp(a);
-  g.font = `700 ${o.tam || 40}px Arial, sans-serif`;
+  g.font = `700 ${o.tam || 40}px Historias, Arial, sans-serif`;
   const w = g.measureText(texto).width + 50, h = (o.tam || 40) + 40;
   if (o.pensamiento) { for (const [dx, dy, r] of [[-10, 40, 9], [-26, 68, 6]]) { g.beginPath(); g.arc(x + dx, y + h / 2 + dy - 30, r, 0, Math.PI * 2); trazo(g, '#fff', 4); } }
   rrect(g, x - w / 2, y - h / 2, w, h, h / 2); trazo(g, '#fff', 4);
@@ -659,18 +659,18 @@ C.cartel = (g, titulo, sub, a, o = {}) => {
   g.save(); g.setTransform(1, 0, 0, 1, 0, 0);
   const x = o.x ?? 110, y = o.y ?? C.H - 250, u = C.salida(a);
   g.globalAlpha = C.clamp(a);
-  g.font = `900 ${o.tam || 74}px "Arial Black", Arial, sans-serif`; const w = Math.max(g.measureText(titulo).width, 300) + 60;
+  g.font = `900 ${o.tam || 74}px Historias, "Arial Black", Arial, sans-serif`; const w = Math.max(g.measureText(titulo).width, 300) + 60;
   g.fillStyle = o.acento || '#f2b134'; g.fillRect(x - 24, y - 70, 14, 150 * u);
   g.fillStyle = 'rgba(12,14,18,0.78)'; g.fillRect(x - 10, y - 70, w * u, 150);
   g.save(); g.beginPath(); g.rect(x - 10, y - 70, w * u, 150); g.clip();
   g.fillStyle = '#fff'; g.textBaseline = 'middle'; g.fillText(titulo, x + 16, y - 10);
-  g.font = `700 ${o.tamSub || 38}px Arial, sans-serif`; g.fillStyle = o.acento || '#f2b134'; g.fillText(sub, x + 18, y + 50);
+  g.font = `700 ${o.tamSub || 38}px Historias, Arial, sans-serif`; g.fillStyle = o.acento || '#f2b134'; g.fillText(sub, x + 18, y + 50);
   g.restore(); g.restore();
 };
 C.subTemp = (g, texto, a) => {
   if (!texto || a <= 0.01) return;
   g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = C.clamp(a);
-  g.font = '600 40px Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.font = '600 40px Historias, Arial, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
   const w = Math.min(g.measureText(texto).width + 50, C.W - 120);
   g.fillStyle = 'rgba(0,0,0,0.62)'; rrect(g, C.W / 2 - w / 2, C.H - 112, w, 64, 12); g.fill();
   g.fillStyle = '#fff'; g.fillText(texto, C.W / 2, C.H - 79, C.W - 160);

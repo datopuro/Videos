@@ -98,6 +98,18 @@ Regla (16 nov 2026): el fondo de toda toma nueva sale de `C.lugar`; los fondos v
 - Verlos todos: `python3 kit/render.py muestras kit/escenas/demo_fondos 0.7 2.2 3.7 5.2 6.7 8.2 9.7 11.2`. La escena corre `C.probarLugares`, que falla si un lugar deja el lienzo cambiado o truena con alguna hora.
 - **Para agregar un lugar nuevo, leer la sección "Lugares" de `kit/UTILERIA.md`.**
 
+## Voz: tiempos, boca y subtítulos sacados del audio (`<script>__MOD:voz__</script>` después de los otros módulos)
+Regla (16 nov 2026): ningún tiempo se teclea a mano y ningún subtítulo se escribe dentro de la escena. Todo sale de la voz.
+- Carpeta del video: `bloques.json` (`{"tempo":1.0, "voz":"voz_original.mp3", "sub_car":40, "bloques":[["frase 1","frase 2"],["frase 3"]]}`, solo el texto del guion) y el mp3.
+- `python3 kit/alinear.py carpeta` → escucha el mp3 y escribe `alineacion.json` con el tiempo de cada palabra (no hace falta el JSON de ElevenLabs). Imprime las diferencias entre guion y voz: si la coincidencia baja de 85 % el audio no es el del guion. Precisión medida: ±0.1 s por palabra.
+- `python3 kit/prep.py carpeta` → `timeline.json` y `voz.f32`. Debe terminar en "tiempos de alinear.py".
+- En la escena: `C.cuando('texto tal cual del guion')` da el segundo en que se dice (opciones `{fin:true, vez:2, mas:0.2}`); si la voz no lo dice, da error. Las entradas de tomas, rótulos y gestos se definen así, nunca con números.
+- Boca: `habla: C.bocaVoz(t)` (sigue el volumen real) o `habla: C.hablaEn(t, 'frase que dice ese personaje')` para que solo abra la boca en su frase. Un narrador que no aparece no mueve la boca de nadie.
+- `C.subtitulos(g, t)` al final del cuadro (después de `L.luz`): parte en dos renglones por ancho real, tamaño según formato (horizontal 5.2 % del alto, vertical 6 % del ancho), fuente del kit. `{resalta:'#ffd54a'}` pinta la palabra que se está diciendo. No usar `C.subTemp` ni globos que repitan lo que ya dice el subtítulo.
+- Fuente: Poppins va dentro del kit (`kit/fuentes/`) y `render.py` la mete en la página; todo texto usa `C.FUENTE` y se ve igual en la nube y en Windows.
+- Destellos: solo con `C.destello(g, t, t0)` (sube y baja en rampa, tope 0.6). Prohibido alternar claro/oscuro cuadro por cuadro (`Math.sin(t*90)` y similares).
+- Muestra: `kit/escenas/demo_voz` (el mp3 no está en el repo; sin él se ven los subtítulos pero no la boca).
+
 ## Notas de rig (de la guía técnica de lemo-opuscar, en nuestras palabras)
 - Brazo levantado: girar primero hacia afuera y luego hacia adelante; al revés, los brazos se cruzan en X.
 - Al subir el brazo, el hombro también sube y se adelanta un poco.
