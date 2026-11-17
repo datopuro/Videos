@@ -52,6 +52,14 @@ def modulo(m):
     raise FileNotFoundError(f"módulo {m}.js no está en kit/mod ni en comun/mod (¿falta correr comun/instalar.sh?)")
 
 
+def fuentes():
+    import base64
+    caras = [(peso, base64.b64encode(open(f"{KIT}/fuentes/{arch}", "rb").read()).decode()) for peso, arch in ((600, "Poppins-SemiBold.ttf"), (800, "Poppins-ExtraBold.ttf")) if os.path.exists(f"{KIT}/fuentes/{arch}")]
+    if not caras:
+        return ""
+    return "window.fuentesListas=Promise.all(" + json.dumps(caras) + ".map(([w,b])=>{const f=new FontFace('Historias','url(data:font/ttf;base64,'+b+')',{weight:String(w)});document.fonts.add(f);return f.load();}));\n"
+
+
 def html(base, fmt):
     h = open(f"{base}/escena.html").read()
     pre = "window.FORMATO=" + json.dumps(fmt) + ";\n"
@@ -60,7 +68,7 @@ def html(base, fmt):
     if "__KIT__" in h:
         h = h.replace("__KIT__", pre + open(f"{KIT}/kit.js").read())
     if "__CARICATURA__" in h:
-        h = h.replace("__CARICATURA__", pre + open(f"{KIT}/caricatura.js").read() + "".join(open(f"{KIT}/{r}", encoding="utf-8").read() for r in ("rig2.js", "rig3.js") if os.path.exists(f"{KIT}/{r}")))
+        h = h.replace("__CARICATURA__", pre + fuentes() + open(f"{KIT}/caricatura.js").read() + "".join(open(f"{KIT}/{r}", encoding="utf-8").read() for r in ("rig2.js", "rig3.js") if os.path.exists(f"{KIT}/{r}")))
     for m in set(re.findall(r"__MOD:([a-z0-9_]+)__", h)):
         h = h.replace(f"__MOD:{m}__", pre + open(modulo(m), encoding="utf-8").read())
     return h.replace("__DATA__", json.dumps(datos(base, fmt), ensure_ascii=False))
@@ -77,7 +85,7 @@ def abrir(p, base, fmt):
     pg.on("pageerror", lambda e: print("PAGEERR:", e))
     pg.set_content(html(base, fmt))
     pg.wait_for_function("window.listo===true", timeout=60000)
-    pg.evaluate("document.fonts.ready")
+    pg.evaluate("Promise.resolve(window.fuentesListas).then(() => document.fonts.ready).then(() => true)")
     return b, pg
 
 
