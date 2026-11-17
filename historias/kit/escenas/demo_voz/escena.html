@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__CARICATURA__</script>
+<script>__MOD:utileria__</script>
+<script>__MOD:fondos__</script>
+<script>__MOD:voz__</script>
+<script>
+const D = __DATA__; C.datos(D); const g = C.lienzo();
+C.probarVoz();
+const H = C.historia({
+  personajes: {
+    ana: { cuerpo: { complexion: 'delgada' }, piel: '#f3d6bd', pelo: { estilo: 'largo', color: '#7a4a2c' }, ropa: { arriba: { tipo: 'sudadera', color: '#4f8f7a' }, abajo: { tipo: 'pantalon', color: '#39405a' }, pies: { color: '#f4efe6' } } },
+    beto: { cuerpo: { complexion: 'robusto' }, piel: '#c9966b', pelo: { estilo: 'corto', color: '#2c2420' }, ropa: { arriba: { tipo: 'camisa', color: '#d98e3f' }, abajo: { tipo: 'pantalon', color: '#4a3b34' }, pies: { color: '#3a2c25' } } }
+  },
+  objetos: { lampara: { tipo: 'lampara' }, planta: { tipo: 'planta' }, ventana: { tipo: 'ventana', exterior: 'dia', cortina: '#c96f52' } }
+});
+const L = C.lugar('interior', { ventanaX: 420, tapiz: 'rayas', alfombra: '#c96f52' });
+const T = { poco: C.cuando('es muy poco'), pregunta: C.cuando('¿Cómo se agranda?'), finPregunta: C.cuando('¿Cómo se agranda?', { fin: true }), cierre: C.cuando('Con el mismo transistor') };
+const resalta = (window.FORMATO || {}).resalta ? '#ffd54a' : null;
+window.renderAt = t => {
+  const x = t * 6, pregunta = t >= T.pregunta - 0.1 && t < T.cierre;
+  g.limpiar(); L.dibujar(g, { t, x });
+  H.obj('ventana').dibujar(g, { x: 420 - x * 0.9, y: L.piso - 230, t }); H.obj('lampara').dibujar(g, { x: 1640 - x, y: L.piso + 60, t }); H.obj('planta').dibujar(g, { x: 150 - x, y: L.piso + 70, t });
+  H.per('ana').dibujar(g, { t, x: 800 - x, y: L.piso + 150, escala: 1.5, giro: 0.45, cara: t > T.poco && !pregunta ? 'triste' : 'feliz', habla: pregunta ? 0 : C.bocaVoz(t) });
+  H.per('beto').dibujar(g, { t, x: 1200 - x, y: L.piso + 160, escala: 1.5, giro: -0.45, cara: pregunta ? 'sorpresa' : 'neutral', habla: C.hablaEn(t, '¿Cómo se agranda?') });
+  L.frente(g, { t, x }); L.luz(g, { t, x });
+  C.destello(g, t, T.pregunta);
+  C.subtitulos(g, t, { resalta });
+};
+window.listo = true;
+</script></body></html>

@@ -1,0 +1,290 @@
+{
+ "sr": 44100,
+ "total": 16.49641723356009,
+ "bloques": {
+  "01": {
+   "ini": 0.06,
+   "fin": 15.38,
+   "segmentos": [
+    {
+     "texto": "Un micrófono genera una señal de unas milésimas de voltio.",
+     "ini": 0.06,
+     "fin": 3.7
+    },
+    {
+     "texto": "Para un equipo de audio es muy poco:",
+     "ini": 4.29,
+     "fin": 6.34
+    },
+    {
+     "texto": "necesita mucho más, a veces unas mil veces más.",
+     "ini": 6.8,
+     "fin": 10.79
+    },
+    {
+     "texto": "¿Cómo se agranda?",
+     "ini": 11.38,
+     "fin": 12.13
+    },
+    {
+     "texto": "Con el mismo transistor que ya vimos como interruptor.",
+     "ini": 12.6,
+     "fin": 15.38
+    }
+   ],
+   "subs": [
+    {
+     "texto": "Un micrófono genera una señal",
+     "ini": 0.06,
+     "fin": 1.84,
+     "palabras": [
+      {
+       "w": "Un",
+       "ini": 0.06,
+       "fin": 0.24
+      },
+      {
+       "w": "micrófono",
+       "ini": 0.24,
+       "fin": 0.88
+      },
+      {
+       "w": "genera",
+       "ini": 0.88,
+       "fin": 1.28
+      },
+      {
+       "w": "una",
+       "ini": 1.28,
+       "fin": 1.44
+      },
+      {
+       "w": "señal",
+       "ini": 1.44,
+       "fin": 1.84
+      }
+     ]
+    },
+    {
+     "texto": "de unas milésimas de voltio.",
+     "ini": 1.84,
+     "fin": 3.7,
+     "palabras": [
+      {
+       "w": "de",
+       "ini": 1.84,
+       "fin": 2.0
+      },
+      {
+       "w": "unas",
+       "ini": 2.0,
+       "fin": 2.24
+      },
+      {
+       "w": "milésimas",
+       "ini": 2.24,
+       "fin": 3.04
+      },
+      {
+       "w": "de",
+       "ini": 3.04,
+       "fin": 3.28
+      },
+      {
+       "w": "voltio.",
+       "ini": 3.28,
+       "fin": 3.7
+      }
+     ]
+    },
+    {
+     "texto": "Para un equipo de audio es muy poco:",
+     "ini": 4.29,
+     "fin": 6.34,
+     "palabras": [
+      {
+       "w": "Para",
+       "ini": 4.29,
+       "fin": 4.4
+      },
+      {
+       "w": "un",
+       "ini": 4.4,
+       "fin": 4.56
+      },
+      {
+       "w": "equipo",
+       "ini": 4.56,
+       "fin": 4.88
+      },
+      {
+       "w": "de",
+       "ini": 4.88,
+       "fin": 5.04
+      },
+      {
+       "w": "audio",
+       "ini": 5.04,
+       "fin": 5.52
+      },
+      {
+       "w": "es",
+       "ini": 5.52,
+       "fin": 5.76
+      },
+      {
+       "w": "muy",
+       "ini": 5.76,
+       "fin": 6.0
+      },
+      {
+       "w": "poco:",
+       "ini": 6.0,
+       "fin": 6.34
+      }
+     ]
+    },
+    {
+     "texto": "necesita mucho más,",
+     "ini": 6.8,
+     "fin": 8.3,
+     "palabras": [
+      {
+       "w": "necesita",
+       "ini": 6.8,
+       "fin": 7.52
+      },
+      {
+       "w": "mucho",
+       "ini": 7.52,
+       "fin": 8.0
+      },
+      {
+       "w": "más,",
+       "ini": 8.0,
+       "fin": 8.3
+      }
+     ]
+    },
+    {
+     "texto": "a veces unas mil veces más.",
+     "ini": 8.7,
+     "fin": 10.79,
+     "palabras": [
+      {
+       "w": "a",
+       "ini": 8.7,
+       "fin": 8.76
+      },
+      {
+       "w": "veces",
+       "ini": 8.72,
+       "fin": 9.2
+      },
+      {
+       "w": "unas",
+       "ini": 9.2,
+       "fin": 9.68
+      },
+      {
+       "w": "mil",
+       "ini": 9.68,
+       "fin": 10.08
+      },
+      {
+       "w": "veces",
+       "ini": 10.08,
+       "fin": 10.56
+      },
+      {
+       "w": "más.",
+       "ini": 10.56,
+       "fin": 10.79
+      }
+     ]
+    },
+    {
+     "texto": "¿Cómo se agranda?",
+     "ini": 11.38,
+     "fin": 12.13,
+     "palabras": [
+      {
+       "w": "¿Cómo",
+       "ini": 11.38,
+       "fin": 11.52
+      },
+      {
+       "w": "se",
+       "ini": 11.52,
+       "fin": 11.68
+      },
+      {
+       "w": "agranda?",
+       "ini": 11.68,
+       "fin": 12.13
+      }
+     ]
+    },
+    {
+     "texto": "Con el mismo transistor",
+     "ini": 12.6,
+     "fin": 13.84,
+     "palabras": [
+      {
+       "w": "Con",
+       "ini": 12.6,
+       "fin": 12.72
+      },
+      {
+       "w": "el",
+       "ini": 12.72,
+       "fin": 12.88
+      },
+      {
+       "w": "mismo",
+       "ini": 12.88,
+       "fin": 13.2
+      },
+      {
+       "w": "transistor",
+       "ini": 13.2,
+       "fin": 13.84
+      }
+     ]
+    },
+    {
+     "texto": "que ya vimos como interruptor.",
+     "ini": 13.84,
+     "fin": 15.38,
+     "palabras": [
+      {
+       "w": "que",
+       "ini": 13.84,
+       "fin": 14.0
+      },
+      {
+       "w": "ya",
+       "ini": 14.0,
+       "fin": 14.16
+      },
+      {
+       "w": "vimos",
+       "ini": 14.16,
+       "fin": 14.54
+      },
+      {
+       "w": "como",
+       "ini": 14.56,
+       "fin": 14.8
+      },
+      {
+       "w": "interruptor.",
+       "ini": 14.8,
+       "fin": 15.38
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

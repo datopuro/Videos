@@ -1,0 +1,15 @@
+{
+ "tempo": 1.0,
+ "voz": "voz_original.mp3",
+ "sub_car": 40,
+ "cola": 0.6,
+ "bloques": [
+  [
+   "Un micrófono genera una señal de unas milésimas de voltio.",
+   "Para un equipo de audio es muy poco:",
+   "necesita mucho más, a veces unas mil veces más.",
+   "¿Cómo se agranda?",
+   "Con el mismo transistor que ya vimos como interruptor."
+  ]
+ ]
+}
