@@ -428,6 +428,322 @@
     };
   };
 
+
+  /* Objetos agregados para Mary Anning (18 nov 2026): fósiles, papelería, vela, carreta, vitral, vitrina, perro.
+     Los objetos de mano (martillo, hoja, sobre, libro chico) tienen el origen donde va la mano o al centro de su base;
+     se dibujan después del personaje, en la posición de manoD/manoI. */
+  const espina = (g, pts, col, r0, r1, lw) => {
+    for (let i = 0; i < pts.length; i++) { const u = i / Math.max(1, pts.length - 1), r = r0 + (r1 - r0) * u; forma(g, elip(pts[i][0], pts[i][1], r * 1.15, r), col, { sombra: Math.max(1, r * 0.35), brillo: Math.min(3, r * 0.3), lw }); }
+  };
+  const curvaPts = (p0, p1, p2, n) => Array.from({ length: n }, (_, i) => { const u = i / (n - 1), a = (1 - u) * (1 - u), b = 2 * (1 - u) * u, c = u * u; return [a * p0[0] + b * p1[0] + c * p2[0], a * p0[1] + b * p1[1] + c * p2[1]]; });
+  const parcial = (g, pts, k) => { const n = Math.max(0, Math.min(pts.length, Math.round(pts.length * k))); if (n < 2) return; g.beginPath(); g.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < n; i++) g.lineTo(pts[i][0], pts[i][1]); g.stroke(); };
+  const bocetoPlesio = (g, ink, k) => {
+    g.save(); g.strokeStyle = ink; g.lineCap = 'round'; g.lineJoin = 'round';
+    const lado = (p0, p1, p2, w0, w1, n) => { const c = curvaPts(p0, p1, p2, n), A = [], B = []; for (let i = 0; i < n; i++) { const a = c[Math.min(n - 1, i + 1)], b = c[Math.max(0, i - 1)], dx = a[0] - b[0], dy = a[1] - b[1], d = Math.hypot(dx, dy) || 1, w = w0 + (w1 - w0) * i / (n - 1); A.push([c[i][0] - dy / d * w, c[i][1] + dx / d * w]); B.push([c[i][0] + dy / d * w, c[i][1] - dx / d * w]); } return { c, A, B }; };
+    const cu = lado([-10, -6], [-50, -14], [-76, -42], 7, 2.6, 30), co = lado([30, -2], [52, 2], [72, 4], 6, 1, 14);
+    const cuerpo = Array.from({ length: 48 }, (_, i) => { const a = i / 47 * TAU; return [10 + Math.cos(a) * 28, -2 + Math.sin(a) * 16]; });
+    const aleta = (x, y, ang, L) => Array.from({ length: 24 }, (_, i) => { const a = i / 23 * TAU, px = (Math.cos(a) + 1) * 0.5 * L, py = Math.sin(a) * L * 0.18 * (1 - Math.cos(a) * 0.2); return [x + px * Math.cos(ang) - py * Math.sin(ang), y + px * Math.sin(ang) + py * Math.cos(ang)]; });
+    const ales = [aleta(-4, 8, 2.2, 34), aleta(26, 9, 0.75, 32), aleta(-4, -10, -2.3, 30), aleta(26, -10, -0.8, 28)];
+    const secs = [cuerpo, cu.A, cu.B, co.A, co.B, ...ales], tot = secs.length;
+    const wash = C.clamp((k - 0.5) / 0.3);
+    if (wash > 0) { g.save(); g.globalAlpha = wash * 0.22; g.fillStyle = ink; for (const s of [cuerpo, ...ales]) { g.beginPath(); s.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.closePath(); g.fill(); } g.beginPath(); cu.A.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); [...cu.B].reverse().forEach(p => g.lineTo(p[0], p[1])); g.closePath(); g.fill(); g.restore(); }
+    g.lineWidth = 2.1; secs.forEach((s, i) => parcial(g, s, C.clamp(k * tot * 1.1 - i)));
+    if (k > 0.35) { const a = C.clamp((k - 0.35) / 0.1); g.globalAlpha = a; g.beginPath(); g.ellipse(-80, -45, 6.5, 4.2, -0.6, 0, TAU); g.stroke(); g.fillStyle = ink; g.beginPath(); g.arc(-80, -46, 1.4, 0, TAU); g.fill(); g.globalAlpha = 1; }
+    if (k > 0.6) { g.lineWidth = 1.2; const n = Math.round(26 * C.clamp((k - 0.6) / 0.3)); for (let i = 0; i < n; i++) { const [x, y] = cu.c[i + 2] || cu.c[29]; g.beginPath(); g.arc(x, y, 1.3, 0, TAU); g.stroke(); } for (let i = 0; i < 6 * C.clamp((k - 0.7) / 0.25); i++) { const x = -4 + i * 6.5; g.beginPath(); g.moveTo(x, -14); g.quadraticCurveTo(x + 2, -2, x, 10); g.stroke(); } }
+    g.restore();
+  };
+  C.bocetoPlesio = bocetoPlesio;
+
+  TIPOS.hoja = o => {
+    const papel = o.papel || '#efe3c4', ink = o.tinta || '#3b2a20', dib = o.dibujo || 'plesiosaurio', W = dib === 'plesiosaurio' ? 200 : 140, H = dib === 'plesiosaurio' ? 140 : 180;
+    return {
+      ancho: W, anclas: [],
+      atras(g, e) {
+        const k = e.trazo ?? 1;
+        forma(g, poli([[-W / 2, -H], [W / 2 - 6, -H - 4], [W / 2, 0], [-W / 2 + 4, 2]]), papel, { sombra: 4, brillo: 2, lw: 3.5, dentro: gg => {
+          gg.fillStyle = 'rgba(150,110,60,0.14)'; gg.beginPath(); gg.ellipse(W * 0.3, -H * 0.2, 30, 18, 0.4, 0, TAU); gg.fill();
+          if (dib === 'plesiosaurio') { gg.save(); gg.translate(14, -H * 0.42); gg.scale(1.05, 1.05); bocetoPlesio(gg, ink, k); gg.restore(); }
+          if (dib === 'hueso') { gg.save(); gg.strokeStyle = ink; gg.lineWidth = 2.4; gg.lineCap = 'round'; const p = curvaPts([-40, -60], [0, -112], [40, -132], 30); parcial(gg, p, k * 1.4); if (k > 0.6) { for (const [x, y] of [p[0], p[29]]) { gg.beginPath(); gg.arc(x, y, 7, 0, TAU); gg.stroke(); } } gg.restore(); }
+          const filas = dib === 'carta' ? 9 : dib === 'articulo' ? 6 : 2, y0 = dib === 'carta' ? -H + 26 : dib === 'articulo' ? -H + 50 : -26;
+          gg.strokeStyle = 'rgba(59,42,32,0.55)'; gg.lineWidth = 2;
+          for (let i = 0; i < filas; i++) { const w = (dib === 'carta' ? 96 : 84) * (0.6 + 0.4 * C.hash(i * 3.1 + filas)), kk = C.clamp(k * filas - i); if (kk <= 0) continue; gg.beginPath(); for (let x = 0; x < w * kk; x += 4) gg.lineTo(-W / 2 + 22 + x, y0 + i * 14 + Math.sin(x * 0.4 + i) * 1.3); gg.stroke(); }
+          if (dib === 'articulo') { gg.fillStyle = 'rgba(59,42,32,0.75)'; gg.fillRect(-W / 2 + 22, -H + 22, 96, 9); gg.save(); gg.translate(4, -46); gg.scale(0.55, 0.55); bocetoPlesio(gg, ink, 1); gg.restore(); }
+          if (dib === 'carta' && k > 0.9) { gg.strokeStyle = ink; gg.lineWidth = 2.2; gg.beginPath(); gg.moveTo(10, -18); gg.bezierCurveTo(22, -34, 30, -6, 42, -22); gg.bezierCurveTo(48, -30, 50, -16, 56, -20); gg.stroke(); }
+        } });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.libro = o => {
+    const tapa = o.color || '#6b2f2a', papel = '#f1e6c8', W = o.chico ? 120 : 220;
+    return {
+      ancho: W * 2, anclas: [],
+      atras(g, e) {
+        contacto(g, 0, W * 2.1, 0.2);
+        if (!(e.abierto ?? 1)) { forma(g, rr(-W / 2, -26, W, 26, 6), tapa, { sombra: 5, dentro: gg => raya(gg, [[-W / 2 + 14, -14], [W / 2 - 14, -14]], tono(tapa, 0.3), 2.5) }); forma(g, rr(-W / 2 + 6, -20, W - 12, 8, 3), papel, { sombra: 0, brillo: 0, lw: 2.5 }); return; }
+        forma(g, poli([[-W, -10], [0, 0], [W, -10], [W, 4], [0, 12], [-W, 4]]), tapa, { sombra: 4 });
+        for (const s of [-1, 1]) forma(g, gg => { gg.beginPath(); gg.moveTo(0, -4); gg.quadraticCurveTo(s * W * 0.5, -40, s * (W - 6), -30); gg.lineTo(s * (W - 6), -8); gg.quadraticCurveTo(s * W * 0.5, -18, 0, 4); gg.closePath(); }, papel, { sombra: 4, lw: 3, dentro: gg => { gg.strokeStyle = 'rgba(60,44,30,0.4)'; gg.lineWidth = 2; for (let i = 0; i < 4; i++) { gg.beginPath(); gg.moveTo(s * 18, -10 - i * 5 - 6); gg.quadraticCurveTo(s * W * 0.5, -34 - i * 4 + 12, s * (W - 22), -24 - i * 4 + 6); gg.stroke(); } } });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.canasta = o => {
+    const col = o.color || '#b58a4e';
+    return {
+      ancho: 150, anclas: [],
+      atras(g, e) {
+        contacto(g, 0, 160, 0.2);
+        raya(g, [[-60, -70], [0, -170, 60, -70]], C.LINEA, 14); raya(g, [[-60, -70], [0, -170, 60, -70]], tono(col, -0.1), 8);
+        const ll = e.lleno ?? 0;
+        if (ll > 0) for (let i = 0; i < Math.round(5 * ll); i++) { const x = -44 + i * 22, y = -80 - C.hash(i) * 10; forma(g, elip(x, y, 16, 13), i % 2 ? '#8e8a84' : '#b9a98a', { sombra: 4, lw: 3, dentro: gg => { gg.strokeStyle = 'rgba(40,30,20,0.4)'; gg.lineWidth = 1.6; gg.beginPath(); for (let a = 0; a < 9; a += 0.4) gg.lineTo(x + Math.cos(a) * a * 1.4, y + Math.sin(a) * a * 1.2); gg.stroke(); } }); }
+      },
+      frente(g) {
+        forma(g, poli([[-74, -82], [74, -82], [56, 0], [-56, 0]]), col, { sombra: 10, dentro: gg => { for (let y = -70; y < 0; y += 14) raya(gg, [[-74, y], [74, y]], frio(col, 0.28), 2.4); for (let x = -60; x <= 60; x += 20) raya(gg, [[x, -82], [x * 0.78, 0]], tono(col, 0.18), 2.2); } });
+        forma(g, rr(-80, -92, 160, 16, 8), tono(col, -0.12), { sombra: 4, lw: 3.5 });
+      }
+    };
+  };
+
+  TIPOS.martillo = o => {
+    const mango = o.mango || '#9b6b3e', metal = o.metal || '#6f7480';
+    return {
+      ancho: 120, anclas: [],
+      atras(g) {
+        forma(g, rr(-7, -70, 14, 130, 6), mango, { sombra: 3, brillo: 2, lw: 3.5 });
+        forma(g, poli([[-44, -94], [30, -94], [52, -84], [30, -72], [-44, -72], [-50, -83]]), metal, { sombra: 5, brillo: 3, lw: 3.5, dentro: gg => raya(gg, [[-30, -80], [20, -80]], tono(metal, 0.3), 2) });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.amonita = o => {
+    const col = o.color || '#a99a82', R = o.radio || 34;
+    return {
+      ancho: R * 2, anclas: [],
+      atras(g) {
+        contacto(g, 0, R * 2.2, 0.22);
+        forma(g, elip(0, -R, R, R * 0.92), col, { sombra: R * 0.25, dentro: gg => { gg.strokeStyle = frio(col, 0.35); gg.lineWidth = 2.4; gg.beginPath(); for (let a = 0; a < 15; a += 0.15) { const r = R * 0.95 * Math.exp(-a * 0.17); gg.lineTo(Math.cos(a) * r, -R + Math.sin(a) * r * 0.92); } gg.stroke(); gg.lineWidth = 1.5; for (let a = 0; a < 12; a += 0.42) { const r = R * 0.95 * Math.exp(-a * 0.17), r2 = r * Math.exp(-TAU * 0.17); gg.beginPath(); gg.moveTo(Math.cos(a) * r, -R + Math.sin(a) * r * 0.92); gg.lineTo(Math.cos(a) * r2, -R + Math.sin(a) * r2 * 0.92); gg.stroke(); } } });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.craneo = o => {
+    const hueso = o.color || '#c8b48f', L = o.largo_px || 300;
+    return {
+      ancho: L, anclas: [],
+      atras(g) {
+        contacto(g, 20, L * 1.1, 0.24);
+        forma(g, gg => { gg.beginPath(); gg.moveTo(L * 0.5, -40); gg.quadraticCurveTo(L * 0.5, -96, L * 0.3, -104); gg.quadraticCurveTo(L * 0.1, -108, -L * 0.05, -70); gg.lineTo(-L * 0.5, -34); gg.quadraticCurveTo(-L * 0.53, -24, -L * 0.48, -20); gg.lineTo(-L * 0.05, -20); gg.quadraticCurveTo(L * 0.3, -6, L * 0.5, -40); gg.closePath(); }, hueso, { sombra: 12, dentro: gg => {
+          gg.fillStyle = frio(hueso, 0.45); gg.beginPath(); gg.ellipse(L * 0.27, -64, 30, 26, 0, 0, TAU); gg.fill();
+          gg.strokeStyle = tono(hueso, 0.2); gg.lineWidth = 4; for (let a = 0; a < TAU; a += TAU / 12) { gg.beginPath(); gg.arc(L * 0.27, -64, 22, a, a + 0.4); gg.stroke(); }
+          gg.strokeStyle = frio(hueso, 0.4); gg.lineWidth = 2.5; gg.beginPath(); gg.moveTo(-L * 0.47, -27); gg.lineTo(L * 0.05, -38); gg.stroke();
+          gg.fillStyle = '#f2ead6'; for (let x = -L * 0.44; x < 0; x += 11) { gg.beginPath(); gg.moveTo(x, -31 + (x + L * 0.47) * 0.02); gg.lineTo(x + 4, -22 + (x + L * 0.47) * 0.02); gg.lineTo(x + 8, -31 + (x + L * 0.47) * 0.02); gg.fill(); }
+          raya(gg, [[L * 0.38, -96], [L * 0.46, -60]], frio(hueso, 0.3), 2.2);
+        } });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.plesiosaurio = o => {
+    const hueso = o.color || '#d2bf98', roca = o.roca || '#7d8592', losa = o.losa !== false;
+    const cuello = curvaPts([-120, -60], [-330, -120], [-420, -250], 30), cola = curvaPts([150, -50], [260, -40], [360, -70], 14);
+    return {
+      ancho: 900, anclas: [],
+      atras(g, e) {
+        const k = e.revela ?? 1, lim = -460 + 900 * k;
+        if (losa) forma(g, poli([[-470, -300], [-60, -330], [420, -270], [450, 0], [-460, 0]]), roca, { sombra: 14, dentro: gg => { for (let i = 0; i < 7; i++) raya(gg, [[-470, -270 + i * 40], [450, -250 + i * 38]], frio(roca, 0.18 + (i % 2) * 0.1), 3); } });
+        g.save(); g.beginPath(); g.rect(-600, -500, lim + 600, 600); g.clip();
+        const sobre = o.hundido ? 'rgba(40,40,50,0.18)' : null;
+        g.save(); g.translate(0, 0);
+        const ale = (x, y, s, r) => { g.save(); g.translate(x, y); g.rotate(r); g.scale(s, 1); forma(g, gg => { gg.beginPath(); gg.moveTo(0, -12); gg.quadraticCurveTo(70, -14, 120, 6); gg.quadraticCurveTo(70, 18, 0, 12); gg.closePath(); }, hueso, { sombra: 4, lw: 3, dentro: gg => { for (let i = 1; i < 6; i++) raya(gg, [[i * 20, -12], [i * 20, 12]], frio(hueso, 0.35), 2); } }); g.restore(); };
+        ale(-40, -100, -1, 0.5); ale(80, -100, 1, -0.5); ale(-40, -20, -1, -0.45); ale(90, -20, 1, 0.45);
+        forma(g, elip(30, -60, 150, 62), tono(hueso, -0.05), { sombra: 6, lw: 3.5, dentro: gg => { gg.fillStyle = 'rgba(70,60,50,0.18)'; gg.fillRect(-140, -130, 340, 140); } });
+        for (let i = 0; i < 11; i++) { const x = -90 + i * 22; raya(g, [[x, -110], [x + 6, -60, x, -12]], C.LINEA, 6); raya(g, [[x, -110], [x + 6, -60, x, -12]], hueso, 3.2); }
+        espina(g, [...curvaPts([-130, -62], [30, -66], [160, -52], 14)], hueso, 9, 9, 2.5);
+        espina(g, cuello, hueso, 9, 6.5, 2.5); espina(g, cola, hueso, 8, 4, 2.5);
+        forma(g, gg => { gg.beginPath(); gg.ellipse(-432, -262, 26, 14, -0.7, 0, TAU); }, hueso, { sombra: 4, lw: 3, dentro: gg => { gg.fillStyle = frio(hueso, 0.5); gg.beginPath(); gg.arc(-428, -268, 5, 0, TAU); gg.fill(); } });
+        g.restore();
+        if (sobre) { g.fillStyle = sobre; g.fillRect(-600, -500, 1200, 600); }
+        g.restore();
+        if (losa && k < 1) { g.save(); g.beginPath(); g.rect(lim, -500, 1200, 600); g.clip(); for (let i = 0; i < 5; i++) forma(g, elip(lim + 40 + i * 120, -140 + C.hash(i) * 80, 90, 70), tono(roca, 0.06 + C.hash(i * 2) * 0.08), { sombra: 8, brillo: 0, lw: 3 }); g.restore(); }
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.vela = o => {
+    const cera = o.color || '#efe6cf', metal = o.metal || '#b08d4a';
+    return {
+      ancho: 80, anclas: [],
+      atras(g, e) {
+        const t = e.t || 0, on = (e.encendida ?? 1) > 0, fl = 1 + 0.08 * Math.sin(t * 9.1) + 0.05 * Math.sin(t * 5.3 + 1);
+        if (on) { g.save(); g.globalCompositeOperation = 'screen'; const gr = g.createRadialGradient(0, -128, 4, 0, -128, 240 * fl); gr.addColorStop(0, 'rgba(255,214,140,0.5)'); gr.addColorStop(1, 'rgba(255,214,140,0)'); g.fillStyle = gr; g.fillRect(-260, -380, 520, 520); g.restore(); }
+        contacto(g, 0, 90, 0.2);
+        forma(g, elip(0, -8, 38, 9), metal, { sombra: 3, lw: 3.5 }); forma(g, rr(-26, -18, 52, 12, 5), metal, { sombra: 3, lw: 3.5 });
+        forma(g, rr(-12, -104, 24, 90, 4), cera, { sombra: 5, dentro: gg => raya(gg, [[6, -100], [7, -70]], tono(cera, 0.3), 3) });
+        raya(g, [[0, -104], [0, -112]], C.LINEA, 3);
+        if (on) { g.save(); g.translate(0, -112); g.scale(fl * 0.9, fl); forma(g, gg => { gg.beginPath(); gg.moveTo(0, -36); gg.quadraticCurveTo(13, -10, 9, 0); gg.quadraticCurveTo(0, 8, -9, 0); gg.quadraticCurveTo(-13, -10, 0, -36); gg.closePath(); }, '#ffcf5a', { sombra: 0, brillo: 0, lw: 2.5, dentro: gg => { gg.fillStyle = '#fff5cc'; gg.beginPath(); gg.ellipse(0, -6, 4, 8, 0, 0, TAU); gg.fill(); } }); g.restore(); }
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.bulto = o => {
+    const manta = o.color || '#e9dcc0';
+    return {
+      ancho: 120, anclas: [],
+      atras(g) {
+        forma(g, gg => { gg.beginPath(); gg.ellipse(0, -40, 62, 36, -0.12, 0, TAU); }, manta, { sombra: 8, dentro: gg => { raya(gg, [[-40, -60], [-10, -40, 20, -66]], frio(manta, 0.25), 2.5); raya(gg, [[-30, -20], [10, -10, 40, -30]], frio(manta, 0.25), 2.5); } });
+        forma(g, gg => { gg.beginPath(); gg.ellipse(-46, -58, 26, 24, 0, 0, TAU); }, tono(manta, -0.05), { sombra: 5, lw: 3.5, dentro: gg => { gg.fillStyle = 'rgba(80,60,40,0.12)'; gg.beginPath(); gg.ellipse(-44, -56, 15, 13, 0, 0, TAU); gg.fill(); } });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.caja = o => {
+    const col = o.color || '#a07848', W = o.ancho || 520, H = o.alto || 110;
+    return {
+      ancho: W, anclas: [],
+      atras(g) {
+        contacto(g, 0, W * 1.05, 0.22);
+        forma(g, rr(-W / 2, -H, W, H, 6), col, { sombra: 8, dentro: gg => { for (let y = -H + H / 3; y < 0; y += H / 3) raya(gg, [[-W / 2, y], [W / 2, y]], frio(col, 0.3), 2.5); for (const x of [-W / 2 + 18, W / 2 - 18]) raya(gg, [[x, -H], [x, 0]], tono(col, -0.25), 6); } });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.carreta = o => {
+    const col = o.color || '#8a5f3a', W = 560, rueda = o.rueda || '#5a3b24';
+    const RU = (g, x, giro) => { g.save(); g.translate(x, -70); forma(g, elip(0, 0, 70, 70), rueda, { sombra: 6, lw: 4.5, dentro: gg => { gg.fillStyle = tono(rueda, 0.2); gg.beginPath(); gg.arc(0, 0, 54, 0, TAU); gg.fill(); } }); g.rotate(giro); for (let i = 0; i < 8; i++) { g.rotate(TAU / 8); raya(g, [[0, 0], [0, 54]], C.LINEA, 7); raya(g, [[0, 0], [0, 54]], tono(rueda, -0.2), 4); } forma(g, elip(0, 0, 14, 14), '#6f7480', { sombra: 2, lw: 3 }); g.restore(); };
+    return {
+      ancho: W, anclas: [{ x: 0, y: -150, escala: 1 }],
+      interior(g) { g.beginPath(); g.rect(-W, -2000, W * 2, 1930); },
+      atras(g, e) {
+        contacto(g, 0, W * 1.1, 0.25);
+        raya(g, [[W / 2 - 10, -150], [W / 2 + 190, -120]], C.LINEA, 14); raya(g, [[W / 2 - 10, -150], [W / 2 + 190, -120]], tono(col, -0.1), 8);
+        RU(g, -W * 0.28, (e.giro || 0) * 0.8);
+      },
+      frente(g, e) {
+        forma(g, rr(-W / 2, -230, W, 96, 6), col, { sombra: 8, dentro: gg => { for (let x = -W / 2 + 70; x < W / 2; x += 70) raya(gg, [[x, -230], [x, -134]], frio(col, 0.3), 2.5); } });
+        forma(g, rr(-W / 2 - 10, -144, W + 20, 18, 5), tono(col, -0.2), { sombra: 3, lw: 3.5 });
+        RU(g, W * 0.28, e.giro || 0);
+      }
+    };
+  };
+
+  TIPOS.sobre = o => {
+    const col = o.color || '#e8dcbc', sello = o.sello || '#a3322a';
+    return {
+      ancho: 150, anclas: [],
+      atras(g) {
+        forma(g, rr(-75, -96, 150, 96, 6), col, { sombra: 5, lw: 3.5, dentro: gg => { raya(gg, [[-75, -96], [0, -40], [75, -96]], frio(col, 0.3), 2.5); raya(gg, [[-75, 0], [-20, -48]], frio(col, 0.22), 2); raya(gg, [[75, 0], [20, -48]], frio(col, 0.22), 2); } });
+        forma(g, elip(0, -42, 14, 13), sello, { sombra: 3, lw: 3 });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.monedas = o => {
+    const oro = o.color || '#d9b24c';
+    return {
+      ancho: 120, anclas: [],
+      atras(g, e) {
+        const n = Math.round(e.cuantas ?? 6); contacto(g, 0, 130, 0.2);
+        for (let i = 0; i < n; i++) { const x = (i % 3 - 1) * 34 + (C.hash(i) - 0.5) * 8, y = -Math.floor(i / 3) * 10; forma(g, elip(x, y - 8, 22, 8), oro, { sombra: 2, lw: 3, dentro: gg => raya(gg, [[x - 10, y - 9], [x + 8, y - 11]], tono(oro, 0.35), 2) }); }
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.vitral = o => {
+    const W = 300, H = 640, plomo = '#2a2630', COL = o.colores || ['#3f6fb0', '#c7463a', '#e2b84a', '#4f9a6a', '#7a4fa0', '#e8e2cf'];
+    const arco = gg => { gg.beginPath(); gg.moveTo(-W / 2, 0); gg.lineTo(-W / 2, -H + W / 2); gg.arc(0, -H + W / 2, W / 2, Math.PI, 0); gg.lineTo(W / 2, 0); gg.closePath(); };
+    return {
+      ancho: W + 80, anclas: [],
+      atras(g, e) {
+        const t = e.t || 0;
+        forma(g, gg => { gg.beginPath(); gg.moveTo(-W / 2 - 40, 30); gg.lineTo(-W / 2 - 40, -H + W / 2); gg.arc(0, -H + W / 2, W / 2 + 40, Math.PI, 0); gg.lineTo(W / 2 + 40, 30); gg.closePath(); }, '#b9b0a2', { sombra: 10 });
+        forma(g, arco, '#e8e2cf', { sombra: 0.01, brillo: 0, lw: 5, dentro: gg => {
+          for (let r = 0; r < 12; r++) for (let c = 0; c < 4; c++) { const x = -W / 2 + c * W / 4, y = -H + r * 56 + (c % 2) * 28; gg.fillStyle = COL[(r * 3 + c * 5) % COL.length]; gg.fillRect(x, y, W / 4, 56); }
+          gg.fillStyle = '#e2b84a'; gg.beginPath(); gg.arc(0, -H + W / 2, 60, 0, TAU); gg.fill(); gg.fillStyle = '#fff3c4'; gg.beginPath(); gg.arc(0, -H + W / 2, 30, 0, TAU); gg.fill();
+          gg.strokeStyle = plomo; gg.lineWidth = 6; for (let c = 1; c < 4; c++) { gg.beginPath(); gg.moveTo(-W / 2 + c * W / 4, -H + W / 2); gg.lineTo(-W / 2 + c * W / 4, 0); gg.stroke(); } for (let r = 0; r < 12; r++) { gg.beginPath(); gg.moveTo(-W / 2, -H + W / 2 + r * 42); gg.lineTo(W / 2, -H + W / 2 + 12 + r * 42); gg.stroke(); }
+          gg.beginPath(); gg.arc(0, -H + W / 2, 60, 0, TAU); gg.stroke();
+          gg.save(); gg.globalCompositeOperation = 'screen'; gg.fillStyle = `rgba(255,250,220,${0.18 + 0.06 * Math.sin(t * 0.7)})`; gg.fillRect(-W / 2, -H, W, H); gg.restore();
+        } });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.vitrina = o => {
+    const madera = o.color || '#4a3a30', W = 420, H = 360;
+    return {
+      ancho: W, anclas: [{ x: 0, y: -430, escala: 1 }],
+      interior(g) { g.beginPath(); g.rect(-W / 2 + 16, -430 - H + 16, W - 32, H - 16); },
+      atras(g) {
+        contacto(g, 0, W * 1.1, 0.25);
+        forma(g, rr(-W / 2 + 40, -430, W - 80, 430, 6), madera, { sombra: 10, dentro: gg => { raya(gg, [[-W / 2 + 70, -380], [W / 2 - 70, -380]], tono(madera, 0.2), 3); raya(gg, [[-W / 2 + 70, -60], [W / 2 - 70, -60]], tono(madera, 0.2), 3); } });
+        forma(g, rr(-W / 2, -440, W, 24, 6), tono(madera, 0.1), { sombra: 4 });
+        forma(g, rr(-W / 2 + 16, -430 - H + 16, W - 32, H - 16, 2), '#2b3542', { sombra: 0, brillo: 0, lw: 3 });
+        g.save(); g.globalCompositeOperation = 'screen'; const gr = g.createRadialGradient(0, -430 - H + 40, 10, 0, -600, 300); gr.addColorStop(0, 'rgba(255,240,200,0.45)'); gr.addColorStop(1, 'rgba(255,240,200,0)'); g.fillStyle = gr; g.fillRect(-W / 2, -430 - H, W, H); g.restore();
+      },
+      frente(g) {
+        g.save(); g.fillStyle = 'rgba(200,225,240,0.12)'; g.fillRect(-W / 2, -430 - H, W, H); g.restore();
+        raya(g, [[-W / 2 + 40, -430 - H + 30], [-W / 2 + 120, -430 - H + 150]], 'rgba(255,255,255,0.5)', 6); raya(g, [[-W / 2 + 60, -430 - H + 20], [-W / 2 + 100, -430 - H + 80]], 'rgba(255,255,255,0.35)', 4);
+        g.save(); g.strokeStyle = C.LINEA; g.lineWidth = 12; g.strokeRect(-W / 2, -430 - H, W, H); g.strokeStyle = '#b08d4a'; g.lineWidth = 6; g.strokeRect(-W / 2, -430 - H, W, H); g.restore();
+      }
+    };
+  };
+
+  TIPOS.perro = o => {
+    const blanco = o.color || '#f2efe8', negro = o.mancha || '#2a2528';
+    return {
+      ancho: 200, anclas: [],
+      atras(g, e) {
+        const t = e.t || 0, cola = Math.sin(t * 5.5) * 0.35, paso = e.camina ? Math.sin(t * 9) : 0;
+        contacto(g, 0, 200, 0.22);
+        raya(g, [[-62, -92], [-96, -120 + cola * 30, -90, -150 + cola * 40]], C.LINEA, 12); raya(g, [[-62, -92], [-96, -120 + cola * 30, -90, -150 + cola * 40]], blanco, 6);
+        for (const [x, s] of [[-50, 1], [-30, -1], [40, 1], [58, -1]]) forma(g, rr(x - 10 + paso * s * 6, -50, 20, 50, 8), x > 0 ? blanco : tono(blanco, -0.06), { sombra: 3, lw: 3.5 });
+        forma(g, poli([[40, -100], [80, -128], [92, -100], [60, -70]]), blanco, { sombra: 4, lw: 4 });
+        forma(g, elip(0, -78, 74, 34), blanco, { sombra: 8, dentro: gg => { gg.fillStyle = negro; gg.beginPath(); gg.ellipse(-20, -100, 30, 22, 0.2, 0, TAU); gg.fill(); } });
+        g.save(); g.translate(70, -118); g.rotate((e.cabeza || 0) * 0.3);
+        forma(g, gg => { gg.beginPath(); gg.ellipse(0, 0, 36, 30, 0, 0, TAU); }, blanco, { sombra: 6, dentro: gg => { gg.fillStyle = negro; gg.beginPath(); gg.ellipse(-8, -6, 24, 24, 0, 0, TAU); gg.fill(); } });
+        forma(g, rr(18, -4, 38, 26, 12), blanco, { sombra: 3, lw: 3.5 });
+        forma(g, elip(54, 4, 8, 7), negro, { sombra: 0, brillo: 2, lw: 2.5 });
+        forma(g, poli([[-26, -20], [-14, -40], [-4, -22]]), negro, { sombra: 2, lw: 3 }); forma(g, poli([[2, -24], [14, -44], [22, -22]]), negro, { sombra: 2, lw: 3 });
+        g.fillStyle = C.LINEA; g.beginPath(); g.arc(18, -6, 4.5, 0, TAU); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(19.5, -7.5, 1.5, 0, TAU); g.fill();
+        g.restore();
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.ictiosaurio = o => {
+    const hueso = o.color || '#c8b48f', roca = o.roca || '#7d8592', losa = o.losa !== false, cr = TIPOS.craneo({ color: hueso, largo_px: 280 });
+    const col = curvaPts([-150, -70], [120, -96], [380, -40], 30);
+    return {
+      ancho: 900, anclas: [],
+      atras(g, e) {
+        const k = e.revela ?? 1, lim = -460 + 900 * k;
+        if (losa) forma(g, poli([[-470, -230], [-40, -250], [440, -210], [460, 0], [-460, 0]]), roca, { sombra: 14, dentro: gg => { for (let i = 0; i < 6; i++) raya(gg, [[-470, -200 + i * 36], [460, -190 + i * 34]], frio(roca, 0.18 + (i % 2) * 0.1), 3); } });
+        g.save(); g.beginPath(); g.rect(-600, -500, lim + 600, 600); g.clip();
+        const ale = (x, y, s, r, L) => { g.save(); g.translate(x, y); g.rotate(r); g.scale(s, 1); forma(g, gg => { gg.beginPath(); gg.moveTo(0, -10); gg.quadraticCurveTo(L * 0.6, -14, L, 4); gg.quadraticCurveTo(L * 0.6, 16, 0, 10); gg.closePath(); }, hueso, { sombra: 4, lw: 3, dentro: gg => { for (let i = 1; i < 5; i++) raya(gg, [[i * L / 5, -10], [i * L / 5, 10]], frio(hueso, 0.35), 2); } }); g.restore(); };
+        ale(-60, -60, -1, -0.9, 100); ale(-40, -110, -1, 0.7, 90); ale(180, -70, -1, -0.8, 70); ale(200, -100, -1, 0.6, 60);
+        for (let i = 0; i < 14; i++) { const [x, y] = col[2 + i]; raya(g, [[x, y - 2], [x + 6, y + 30, x - 2, y + 54 - i * 2]], C.LINEA, 6); raya(g, [[x, y - 2], [x + 6, y + 30, x - 2, y + 54 - i * 2]], hueso, 3.2); }
+        espina(g, col, hueso, 9, 4.5, 2.5);
+        forma(g, poli([[380, -40], [430, -110], [440, -96], [400, -34], [440, 10], [426, 18]]), tono(hueso, -0.08), { sombra: 4, lw: 3 });
+        g.save(); g.translate(-300, -26); g.scale(0.95, 0.95); cr.atras(g, {}); g.restore();
+        g.restore();
+        if (losa && k < 1) { g.save(); g.beginPath(); g.rect(lim, -500, 1200, 600); g.clip(); for (let i = 0; i < 5; i++) forma(g, elip(lim + 40 + i * 120, -110 + C.hash(i) * 60, 90, 70), tono(roca, 0.06 + C.hash(i * 2) * 0.08), { sombra: 8, brillo: 0, lw: 3 }); g.restore(); }
+      },
+      frente() {}
+    };
+  };
+
   C.TIPOS_UTILERIA = TIPOS;
   const PROHIBIDO = ['color', 'cojin', 'maceta', 'borde', 'plazas', 'largo', 'ancho', 'alto'];
   C.utileria = (tipo, receta = {}) => {
