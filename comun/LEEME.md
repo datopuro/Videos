@@ -35,7 +35,21 @@ python3 /home/claude/repo/comun/musica/fondo.py <carpeta_video>/musica.wav <dura
 - Para una pieza a mano: `from core.audio import sampler as S` (con `sys.path` en `comun/musica`), `S.render([(t, 'cellos', 'D3', dur, vel, pan), …], dur)`. Lista: `S.instruments()`.
 - **No escuchado por Claude**: los fondos se revisaron por volumen y graves, no de oído. Escuchar antes de publicar.
 
+## Sonidos sin internet: `sonidos.py`
+890 sonidos con licencia comprobada: 730 efectos (golpes, puertas, papel, pasos, agua, lluvia, animales, dinero, cocina), 44 transiciones, 85 remates musicales y 31 canciones de Kevin MacLeod. 825 son CC0 (sin crédito); las canciones y unos pocos efectos son CC-BY (crédito obligatorio en la descripción). Sustituye a `sfx_buscar.py` en la nube, donde Freesound está bloqueado.
+```bash
+python3 /home/claude/repo/comun/sonidos.py buscar puerta madera          # español o inglés; --tipo sfx|transicion|remate|musica, --libre (solo CC0), --n 12
+python3 /home/claude/repo/comun/sonidos.py ver kenney-rpg-door-open-1     # etiquetas, autor, crédito
+python3 /home/claude/repo/comun/sonidos.py copiar <carpeta_video> id1 id2 # copia a <carpeta>/sonidos/ y escribe CREDITOS.txt
+```
+- La primera búsqueda de cada sesión baja la biblioteca de GitHub (9 s, 250 MB, a `/home/claude/sonidos`, fuera del repo).
+- En `mezcla.py`: `m.poner(t, m.archivo('sonidos/<id>.ogg', 0.4), 'fx')`. Se pega cada sonido a un contacto visible (puerta que se cierra, pie que pisa), no uno en cada corte.
+- Si `CREDITOS.txt` dice que alguno exige crédito, ese texto va en la descripción del video (Dato Puro: también en los textos para redes).
+- Para fondo musical se prefiere `musica/fondo.py`: las canciones de MacLeod se oyen en miles de videos.
+- **No escuchado por Claude**: los sonidos se eligen por etiqueta y duración. Escuchar el video antes de publicar.
+
 ## Créditos
+- `sonidos.py` usa la biblioteca de stickman-video-director (código MIT; cada grabación con su licencia): https://github.com/kaomei/stickman-video-director, fijada a un commit para que no cambie.
 - `look3d.js` reescribe para three.js los shaders `lensblur.ts` y `grade.ts`, y `medir_movimiento.py` copia `medir_30fps.py`, ambos de shorts-animados-claude (MIT): https://github.com/luispablovillasenor-afk/shorts-animados-claude — licencia en `LICENSE-MIT-shorts-animados.txt`.
 - Íconos: Tabler Icons (MIT). Gráficas: D3 (ISC) y d3-sankey (BSD-3). Física: matter-js (MIT). `circuito.js` es propio; la idea visual (puntos de corriente y colores por voltaje) viene de CircuitJS (GPL-2.0), del que no se copió código.
 - `lectura.py` adapta la regla y el método de `core/render/readcheck.mjs` y `musica/core/audio/`, `musica/tools/` son copia de lemo-opuscar (Lemomo / LemoLab), código MIT: https://github.com/lemomo-ai/lemo-opuscar — licencia en `musica/LICENSE-MIT-lemo-opuscar.txt`.
