@@ -14,7 +14,7 @@
 (() => {
   const C = window.C, TAU = Math.PI * 2, hs = C.hash;
   if (!C.forma) throw new Error('fondos.js necesita el módulo utileria cargado antes');
-  const { rr, poli } = C.caminos, forma = C.forma, masa = C.masa, tono = C.tono, frio = C.frio;
+  const { rr, poli, elip } = C.caminos, forma = C.forma, masa = C.masa, tono = C.tono, frio = C.frio;
   const rgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
   const mez = (a, b, k) => { const A = rgb(a), B = rgb(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * k).toString(16).padStart(2, '0')).join(''); };
   C.mezclaColor = mez;
@@ -207,6 +207,54 @@
       },
       frente() {},
       luz(g, e) { tenir(g, hp, () => { if (!o.nevando) return; const t = e.t || 0, k = o.nevando === true ? 1 : o.nevando; g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = 'rgba(255,255,255,0.9)'; for (let i = 0; i < 130 * k; i++) { const v = 60 + hs(i * 1.7) * 110, x = ((hs(i * 3.3) * (C.W + 200) + Math.sin(t * 0.8 + i) * 40 - t * 30 * hs(i * 2.2)) % (C.W + 200) + C.W + 200) % (C.W + 200) - 100, y = (hs(i * 7.7) * C.H + t * v) % C.H; g.globalAlpha = 0.5 + hs(i) * 0.5; g.beginPath(); g.arc(x, y, 2 + hs(i * 5.1) * 3.5, 0, TAU); g.fill(); } g.restore(); }); }
+    };
+  };
+
+
+  /* Acantilado (Mary Anning, 18 nov 2026): pared de capas grises (Blue Lias: caliza y lutita alternadas), borde con
+     pasto, playa de piedras y el mar a un lado. Opciones: mar 'izq'|'der', derrumbe (montón de roca al pie),
+     y al dibujar e.marea (0 a 1) acerca el agua. */
+  LUGARES.acantilado = (o, hp) => {
+    const piso = o.piso ?? 820, lado = o.mar === 'izq' ? -1 : 1, roca = o.roca || '#7e8794', clara = o.clara || '#b9b29f';
+    const agua = '#3d6f8a', arena = o.arena || '#8f8a84';
+    return {
+      piso,
+      dibujar(g, e) {
+        const px = e.x || 0, t = e.t || 0, W = C.W, H = C.H, marea = e.marea ?? 0.3;
+        const top = piso - (o.alto ?? Math.min(620, piso * 0.72));
+        cielo(g, hp, e, top + 80, o);
+        const mx = lado > 0 ? W * 0.62 : W * 0.38;
+        const bordeX = y => mx + lado * ((y - top) * 0.18 + Math.sin(y * 0.03) * 10);
+        const ga = g.createLinearGradient(0, top + 60, 0, piso); ga.addColorStop(0, mez(agua, hp.cielo[1], 0.5)); ga.addColorStop(1, agua); g.fillStyle = ga; g.fillRect(0, top + 60, W, H);
+        g.strokeStyle = 'rgba(255,255,255,0.28)'; g.lineWidth = 3; g.lineCap = 'round';
+        for (let j = 0; j < 8; j++) { const y = top + 80 + j * j * 7; g.beginPath(); repetir(px, 0.15 + j * 0.05, 200, 200, (x, i) => { const xx = x + C.hash(i * 3.1 + j) * 120 + Math.sin(t * 0.8 + j) * 14; g.moveTo(xx, y); g.quadraticCurveTo(xx + 28, y - 6, xx + 56, y); }); g.stroke(); }
+        g.save(); g.translate(-px * 0.55, 0);
+        const pared = () => { g.beginPath(); g.moveTo(lado > 0 ? -400 : W + 400, top - 10);
+          for (let x = 0; x <= 1; x += 0.02) { const xx = lado > 0 ? -400 + x * (mx + 400) : W + 400 - x * (W + 400 - mx); g.lineTo(xx, top + Math.sin(xx * 0.01) * 14 + C.hash(Math.floor(xx / 40)) * 8); }
+          for (let y = top; y <= piso + 10; y += 10) g.lineTo(bordeX(y), y);
+          g.lineTo(lado > 0 ? -400 : W + 400, piso + 10); g.closePath(); };
+        pared(); g.save(); g.clip();
+        for (let y = top - 20, i = 0; y < piso + 20; i++) { const h = (i % 2 ? 22 : 34) + C.hash(i * 1.7) * 18; g.fillStyle = i % 2 ? mez(roca, '#5d6470', 0.3) : (i % 4 === 0 ? clara : mez(clara, roca, 0.45)); g.beginPath(); g.moveTo(-500, y + 30); for (let x = -500; x < W + 500; x += 60) g.lineTo(x, y + Math.sin(x * 0.004 + i) * 6 + (x - W / 2) * 0.03); for (let x = W + 500; x > -500; x -= 60) g.lineTo(x, y + h + Math.sin(x * 0.004 + i + 1) * 6 + (x - W / 2) * 0.03); g.closePath(); g.fill(); y += h; }
+        g.strokeStyle = 'rgba(30,32,44,0.22)'; g.lineWidth = 3; for (let i = 0; i < 26; i++) { const x = C.hash(i * 5.3) * W * 1.4 - W * 0.2, y = top + 40 + C.hash(i * 2.2) * (piso - top - 60); g.beginPath(); g.moveTo(x, y); g.lineTo(x + 8, y + 40 + C.hash(i) * 50); g.stroke(); }
+        const sm = g.createLinearGradient(0, top, 0, piso); sm.addColorStop(0, 'rgba(255,255,255,0.08)'); sm.addColorStop(1, 'rgba(20,24,40,0.28)'); g.fillStyle = sm; g.fillRect(-500, top - 40, W + 1000, piso - top + 60);
+        g.restore();
+        pared(); g.lineWidth = 5; g.strokeStyle = C.LINEA; g.stroke();
+        g.fillStyle = mez('#5f8f4f', hp.lejos, 0.2); g.beginPath(); g.moveTo(lado > 0 ? -400 : W + 400, top - 40);
+        for (let x = 0; x <= 1; x += 0.02) { const xx = lado > 0 ? -400 + x * (mx + 400) : W + 400 - x * (W + 400 - mx); g.lineTo(xx, top + Math.sin(xx * 0.01) * 14 + 18 + C.hash(Math.floor(xx / 30) + 7) * 10); }
+        g.lineTo(bordeX(top) + lado * 6, top - 6); g.lineTo(lado > 0 ? -400 : W + 400, top - 120); g.closePath(); g.fill();
+        g.restore();
+        const ys = piso - 26, gs = g.createLinearGradient(0, ys, 0, H); gs.addColorStop(0, arena); gs.addColorStop(1, tono(arena, -0.25)); g.fillStyle = gs;
+        g.beginPath(); g.moveTo(0, ys); for (let x = 0; x <= W; x += 30) g.lineTo(x, ys + Math.sin((x + px) * 0.01) * 4); g.lineTo(W, H); g.lineTo(0, H); g.closePath(); g.fill();
+        const orilla = lado > 0 ? W * (0.95 - marea * 0.35) - px * 0.9 : W * (0.05 + marea * 0.35) - px * 0.9;
+        g.save(); g.beginPath(); g.moveTo(orilla, ys - 4);
+        for (let y = ys; y <= H + 20; y += 20) g.lineTo(orilla + lado * (y - ys) * 0.55 + Math.sin(y * 0.03 + t * 1.3) * 18, y);
+        g.lineTo(lado > 0 ? W + 50 : -50, H + 20); g.lineTo(lado > 0 ? W + 50 : -50, ys - 4); g.closePath(); g.fillStyle = mez(agua, '#9cc4d4', 0.25); g.fill();
+        g.strokeStyle = 'rgba(255,255,255,0.85)'; g.lineWidth = 7; g.beginPath(); for (let y = ys; y <= H + 20; y += 20) { const xx = orilla + lado * (y - ys) * 0.55 + Math.sin(y * 0.03 + t * 1.3) * 18; y === ys ? g.moveTo(xx, y) : g.lineTo(xx, y); } g.stroke(); g.restore();
+        repetir(px, 1, 52, 40, (x, i) => { const y = piso - 10 + C.hash(i * 2.9) * (H - piso + 10), k = 0.6 + (y - piso) / 400, c = ['#a7a29a', '#76716c', '#c4bdb0', '#5e5b58'][Math.abs(i) % 4]; forma(g, elip(x + C.hash(i) * 30, y, 16 * k + C.hash(i * 3) * 10 * k, 9 * k + C.hash(i * 5) * 5 * k), c, { sombra: 3, brillo: 2, lw: 2.5 }); });
+        if (o.derrumbe) { const dx = (lado > 0 ? W * 0.3 : W * 0.7) - px * 0.8; for (let i = 0; i < 9; i++) forma(g, elip(dx + (C.hash(i * 4.4) - 0.5) * 380, piso - 20 - C.hash(i) * 70 + i * 4, 60 + C.hash(i * 2) * 50, 40 + C.hash(i * 7) * 30), i % 2 ? mez(roca, '#5d6470', 0.3) : mez(clara, roca, 0.45), { sombra: 10, lw: 4 }); }
+      },
+      frente(g, e) {},
+      luz(g, e) { tenir(g, hp); }
     };
   };
 

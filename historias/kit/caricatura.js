@@ -449,7 +449,7 @@ C.globo = (g, texto, x, y, a, o = {}) => {
   g.restore();
 };
 C.fundido = (g, a, color = '#000') => { if (a <= 0) return; g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = C.clamp(a); g.fillStyle = color; g.fillRect(0, 0, C.W, C.H); g.restore(); };
-C.vineta = (g, k = 0.35) => { g.save(); g.setTransform(1, 0, 0, 1, 0, 0); const gr = g.createRadialGradient(C.W / 2, C.H / 2, C.H * 0.45, C.W / 2, C.H / 2, C.W * 0.75); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, `rgba(0,0,0,${k})`); g.fillStyle = gr; g.fillRect(0, 0, C.W, C.H); g.restore(); };
+C.vineta = (g, k = 0.35) => { g.save(); g.setTransform(1, 0, 0, 1, 0, 0); const gr = g.createRadialGradient(C.W / 2, C.H / 2, Math.min(C.W, C.H) * 0.45, C.W / 2, C.H / 2, Math.max(C.W, C.H) * 0.75); gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, `rgba(0,0,0,${k})`); g.fillStyle = gr; g.fillRect(0, 0, C.W, C.H); g.restore(); };
 C.dividida = (g, a, dibujarIzq, dibujarDer) => {
   const x = C.W / 2;
   g.save(); g.beginPath(); g.rect(0, 0, x - 4, C.H); g.clip(); dibujarIzq(); g.restore();

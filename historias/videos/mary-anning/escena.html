@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__CARICATURA__</script>
+<script>__MOD:utileria__</script>
+<script>__MOD:fondos__</script>
+<script>__MOD:voz__</script>
+<script>
+/* Mary Anning · base de la escena (sirve para el completo horizontal y los reels verticales).
+   Referencias:
+   https://www.geolsoc.org.uk/the-library/online-exhibitions/mary-anning-and-the-geological-society : sala de la Sociedad
+     Geológica (pequeña, primer piso), plesiosaurio de 1823 y dibujos que circularon.
+   https://www.nhm.ac.uk/discover/mary-anning-unsung-hero.html : acantilados de Lyme Regis, cráneo de ictiosaurio, perro Tray.
+   https://wellcomecollection.org/stories/ZMkQzBAAACAADSiq : carta y dibujo del plesiosaurio (diciembre de 1823).
+   kit/INDICE.md y kit/UTILERIA.md : C.historia, C.lugar, C.cuando y C.subtitulos (reglas del canal). */
+const D = __DATA__; C.datos(D); const g = C.lienzo();
+C.probarVoz();
+const V = C.H > C.W, W = C.W, HH = C.H, CX = W / 2, TAU = Math.PI * 2;
+const PISO = V ? 1180 : 840, ESC = V ? 1.7 : 1.4, K = V ? 0.66 : 1;
+const KP = o => V ? Math.min(o.k ?? 1, 1.12) : (o.k ?? 1);
+const sx = d => CX + d * K;
+const cl = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), suave = u => { u = cl(u); return u * u * (3 - 2 * u); };
+const q = (frase, o) => { try { return C.cuando(frase, o); } catch (e) { return null; } };
+const T = (frase, o) => C.cuando(frase, o);
+const ent = (t, t0, d = 0.35) => t0 == null ? 0 : suave((t - t0) / d);
+
+const H = C.historia({
+  personajes: {
+    mary_nina: { cuerpo: { complexion: 'delgado', edad: 'nino' }, piel: '#f0d2b8', pelo: { estilo: 'coleta', color: '#6b4a2f' }, ropa: { arriba: { tipo: 'vestido', color: '#8a7f6c' }, pies: { color: '#3a2c25' } } },
+    mary: { cuerpo: { complexion: 'delgado' }, piel: '#f0d2b8', pelo: { estilo: 'coleta', color: '#6b4a2f' }, ropa: { arriba: { tipo: 'vestido', color: '#5b6b7a' }, pies: { color: '#3a2c25' } } },
+    joseph: { cuerpo: { complexion: 'medio', edad: 'nino' }, piel: '#f0d2b8', pelo: { estilo: 'corto', color: '#4a3a2a' }, ropa: { arriba: { tipo: 'camisa', color: '#d8d0c0' }, abajo: { tipo: 'pantalon', color: '#6a5642' }, pies: { color: '#2a2220' } } },
+    richard: { cuerpo: { complexion: 'robusto' }, piel: '#e8c3a4', pelo: { estilo: 'corto', color: '#3a2c25' }, bigote: '#3a2c25', ropa: { arriba: { tipo: 'camisa', color: '#8a8a80' }, abajo: { tipo: 'pantalon', color: '#5a4632' }, pies: { color: '#2a2220' } } },
+    molly: { cuerpo: { complexion: 'medio' }, piel: '#f0d2b8', pelo: { estilo: 'coleta', color: '#7a6a5a' }, ropa: { arriba: { tipo: 'vestido', color: '#4a4a52' }, pies: { color: '#3a2c25' } } },
+    vecina: { cuerpo: { complexion: 'medio' }, piel: '#f0d2b8', pelo: { estilo: 'largo', color: '#5b4636' }, ropa: { arriba: { tipo: 'vestido', color: '#8a6a5a' }, pies: { color: '#3a2c25' } } },
+    henley: { cuerpo: { complexion: 'medio' }, piel: '#f0d2b8', pelo: { estilo: 'corto', color: '#5a4636' }, ropa: { arriba: { tipo: 'saco', color: '#4f5e3f' }, abajo: { tipo: 'pantalon', color: '#d9cfb8' }, pies: { color: '#1a1a1a' } } },
+    birch: { cuerpo: { complexion: 'medio' }, piel: '#f0d2b8', pelo: { estilo: 'corto', color: '#9a9a9a' }, bigote: '#9a9a9a', ropa: { arriba: { tipo: 'saco', color: '#7a2f2f' }, abajo: { tipo: 'pantalon', color: '#3a3f4f' }, pies: { color: '#2a2220' } } },
+    cuvier: { cuerpo: { complexion: 'medio' }, piel: '#e8c3a4', pelo: { estilo: 'largo', color: '#cfcfcf' }, ropa: { arriba: { tipo: 'saco', color: '#202020' }, abajo: { tipo: 'pantalon', color: '#202020' }, pies: { color: '#1a1a1a' } } },
+    clerigo: { cuerpo: { complexion: 'delgado' }, piel: '#f0d2b8', pelo: { estilo: 'corto', color: '#4a3a2a' }, ropa: { arriba: { tipo: 'saco', color: '#2a2a2a' }, abajo: { tipo: 'pantalon', color: '#2a2a2a' }, pies: { color: '#1a1a1a' } } },
+    presidente: { cuerpo: { complexion: 'medio' }, piel: '#f0d2b8', pelo: { estilo: 'corto', color: '#6a5a4a' }, ropa: { arriba: { tipo: 'saco', color: '#2c3a52' }, abajo: { tipo: 'pantalon', color: '#2c3a52' }, pies: { color: '#1a1a1a' } } },
+    amiga: { cuerpo: { complexion: 'medio' }, piel: '#f0d2b8', pelo: { estilo: 'largo', color: '#3b2a22' }, ropa: { arriba: { tipo: 'vestido', color: '#7a5a7a' }, pies: { color: '#3a2c25' } } },
+    socio: { cuerpo: { complexion: 'robusto' }, piel: '#e8c3a4', pelo: { estilo: 'calvo', color: '#6a5a4a' }, ropa: { arriba: { tipo: 'saco', color: '#3a3a44' }, abajo: { tipo: 'pantalon', color: '#2a2a30' }, pies: { color: '#1a1a1a' } } }
+  },
+  objetos: {
+    olmo: { tipo: 'arbol', alto: 900, color: '#4f7a46' },
+    bebe: { tipo: 'bulto' },
+    mesa: { tipo: 'mesa', color: '#8a6440', ancho: 420 },
+    mesa_sala: { tipo: 'mesa', color: '#5a3d2b', ancho: 1000, alto: 160 },
+    amonita: { tipo: 'amonita' },
+    amonita_g: { tipo: 'amonita', radio: 46, color: '#b8a888' },
+    canasta: { tipo: 'canasta' },
+    martillo: { tipo: 'martillo' },
+    craneo: { tipo: 'craneo' },
+    ictio: { tipo: 'ictiosaurio' },
+    plesio: { tipo: 'plesiosaurio' },
+    plesio_mesa: { tipo: 'plesiosaurio', losa: false },
+    hueso: { tipo: 'hoja', dibujo: 'hueso' },
+    dibujo: { tipo: 'hoja', dibujo: 'plesiosaurio' },
+    carta: { tipo: 'hoja', dibujo: 'carta' },
+    articulo: { tipo: 'hoja', dibujo: 'articulo' },
+    libro: { tipo: 'libro' },
+    deudas: { tipo: 'libro', color: '#3f3a32' },
+    vela: { tipo: 'vela' },
+    cama: { tipo: 'cama', color: '#8a7f6c' },
+    cama_nina: { tipo: 'cama', color: '#a9988a' },
+    silla: { tipo: 'silla', color: '#7a5236' },
+    silla_sala: { tipo: 'silla', color: '#4a3226', cojin: '#7a2f2f' },
+    puerta: { tipo: 'puerta', color: '#5a3b26' },
+    ventana: { tipo: 'ventana', exterior: 'dia', cortina: '#9a7a5a' },
+    ventana_noche: { tipo: 'ventana', exterior: 'noche', cortina: '#6a5a4a' },
+    escritorio: { tipo: 'escritorio', color: '#5a3b26' },
+    monedas: { tipo: 'monedas' },
+    caja: { tipo: 'caja', ancho: 760 },
+    carreta: { tipo: 'carreta' },
+    sobre: { tipo: 'sobre' },
+    roca: { tipo: 'roca', color: '#7e8794' },
+    roca_c: { tipo: 'roca', color: '#a9a291', ancho: 180 },
+    vitral: { tipo: 'vitral' },
+    vitrina: { tipo: 'vitrina' },
+    tray: { tipo: 'perro' },
+    lampara: { tipo: 'lampara', color: '#d9b46a' }
+  }
+});
+
+const AC = { piso: PISO, alto: V ? 860 : 600 };
+const LUG = {
+  tormenta: C.lugar('campo', { hora: 'nublado', piso: PISO, pasto: '#5f8a4f' }),
+  campo: C.lugar('campo', { hora: 'dia', piso: PISO, pasto: '#6a9a55', flores: true }),
+  playa: C.lugar('acantilado', { hora: 'dia', ...AC }),
+  playa_tarde: C.lugar('acantilado', { hora: 'tarde', ...AC }),
+  playa_nub: C.lugar('acantilado', { hora: 'nublado', ...AC, derrumbe: true }),
+  playa_izq: C.lugar('acantilado', { hora: 'dia', ...AC, mar: 'izq' }),
+  noche: C.lugar('acantilado', { hora: 'noche', piso: PISO, alto: V ? 640 : 400, mar: 'izq' }),
+  casa: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#cdb99a', tapiz: 'madera', ventanaX: V ? 200 : 360 }),
+  casa_noche: C.lugar('interior', { hora: 'noche', piso: PISO, pared: '#b9a487', tapiz: 'madera' }),
+  estudio: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#9fb0a8', tapiz: 'rayas', suelo: 'madera', ventanaX: V ? 860 : 1500 }),
+  paris: C.lugar('interior', { hora: 'tarde', piso: PISO, pared: '#d3c19c', tapiz: 'rayas', suelo: 'loseta', alfombra: '#7a2f2f' }),
+  subasta: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#b8a48a', tapiz: 'puntos', suelo: 'madera', alfombra: '#5a4a6a' }),
+  sala: C.lugar('interior', { hora: 'noche', piso: PISO, pared: '#4f6152', tapiz: 'madera', suelo: 'madera' }),
+  pasillo: C.lugar('interior', { hora: 'noche', piso: PISO, pared: '#6a5a4a', tapiz: 'rayas', suelo: 'loseta' }),
+  calle: C.lugar('calle', { hora: 'nublado', piso: PISO, colores: ['#c9b8a0', '#b7a99a', '#a99c8f', '#c4b39a'] }),
+  iglesia: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#bdb3a3', friso: false, suelo: 'loseta' }),
+  museo: C.lugar('interior', { hora: 'noche', piso: PISO, pared: '#2f3442', friso: false, suelo: 'loseta' })
+};
+
+/* Escena: fondo → (cámara: paneo px y acercamiento z alrededor de un punto del piso) → objetos y personajes → frente → luz. */
+const escena = (L, e, fn) => {
+  const t = e.t, px = e.px || 0, z = e.z || 1, fx = e.fx ?? CX, sh = e.temblor ? [C.ruido(t * 23, 3) * e.temblor, C.ruido(t * 19, 7) * e.temblor] : [0, 0];
+  L.dibujar(g, { t, x: px + sh[0] * 0.3, marea: e.marea });
+  g.save(); g.translate(sh[0], sh[1]); g.translate(fx, PISO); g.scale(z, z); g.translate(-fx - px, -PISO);
+  fn();
+  g.restore();
+  L.frente(g, { t, x: px }); L.luz(g, { t, x: px, focos: e.focos });
+};
+let G = g;
+const per = (id, o) => H.per(id).dibujar(G, { ...o, escala: ESC * KP(o) });
+const obj = (id, o) => H.obj(id).dibujar(G, { ...o, escala: ESC * (o.k ?? 1) });
+const enMano = (o, mano, id, oo = {}) => { const k = ESC * KP(o), m = o[mano], p = o.pose || {}, ox = (p.dx || 0), oy = (p.suelo ? 92 : 0) + (p.dy || 0); H.obj(id).dibujar(G, { t: o.t, ...oo, x: o.x + (m[0] + ox) * k + (oo.dx || 0) * k, y: o.y + (m[1] + oy) * k + (oo.dy || 0) * k, escala: k * (oo.k ?? 1) }); };
+const silueta = (fn, a = 0.82) => C.iluminar(g, gg => { const v = G; G = gg; try { fn(); } finally { G = v; } }, { tinte: `rgba(22,22,34,${a})` });
+const cargaBebe = (id, o) => { const k = ESC * KP(o); per(id, { ...o, manoD: [30, -136], manoI: [-30, -140] }); H.obj('bebe').dibujar(G, { x: o.x - 6 * k, y: o.y - 118 * k, t: o.t, escala: k * 0.62 }); };
+
+/* Textos en pantalla (después de L.luz). */
+const etiqueta = (txt, a, o = {}) => C.rotulo(g, txt, a, { tam: o.tam || (V ? 62 : 58), y: o.y ?? (V ? 360 : 100), color: o.color || '#ffe7a8' });
+const titular = (txt, a, o = {}) => C.rotulo(g, txt, a, { tam: o.tam || (V ? 96 : 104), y: o.y ?? (V ? 450 : 170), color: o.color || '#ffffff' });
+const sello = (txt, x, y, a, o = {}) => {
+  if (a <= 0.01) return;
+  const tam = o.tam || (V ? 80 : 90), col = o.color || '#d8432f', s = 1 + 0.6 * (1 - suave(a));
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = cl(a); g.translate(x, y); g.rotate((o.rot ?? -8) * Math.PI / 180); g.scale(s, s);
+  g.font = `900 ${tam}px ${C.FUENTE}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  const w = g.measureText(txt).width + tam * 0.7, h = tam * 1.35;
+  g.fillStyle = 'rgba(255,248,235,0.86)'; g.beginPath(); g.roundRect(-w / 2, -h / 2, w, h, tam * 0.18); g.fill();
+  g.lineWidth = tam * 0.1; g.strokeStyle = col; g.stroke(); g.fillStyle = col; g.fillText(txt, 0, tam * 0.04);
+  g.restore();
+};
+const aro = (x, y, r, a) => { if (a <= 0.01) return; g.save(); g.globalAlpha = cl(a); g.lineWidth = 9; g.strokeStyle = '#ffd54a'; g.setLineDash([22, 14]); g.lineDashOffset = -a * 60; g.beginPath(); g.ellipse(x, y, r * (1.3 - 0.3 * suave(a)), r * 0.8 * (1.3 - 0.3 * suave(a)), 0, 0, TAU); g.stroke(); g.restore(); };
+const rayo = (x0, y0, x1, y1, a) => {
+  if (a <= 0.01) return;
+  const pts = [[x0, y0]]; for (let i = 1; i < 9; i++) { const u = i / 9; pts.push([x0 + (x1 - x0) * u + (C.hash(i * 7.3) - 0.5) * 90, y0 + (y1 - y0) * u]); } pts.push([x1, y1]);
+  g.save(); g.globalAlpha = cl(a); g.lineJoin = 'round'; g.lineCap = 'round';
+  for (const [w, c] of [[30, 'rgba(190,210,255,0.35)'], [12, '#e8f0ff'], [5, '#ffffff']]) { g.lineWidth = w; g.strokeStyle = c; g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke(); }
+  g.restore();
+};
+const polvo = (x, y, a, r = 200) => { if (a <= 0.01) return; g.save(); g.globalAlpha = cl(a) * 0.85; C.masa(g, [[x - r * 0.6, y - r * 0.3, r * 0.5], [x, y - r * 0.6, r * 0.65], [x + r * 0.6, y - r * 0.25, r * 0.5], [x - r * 0.2, y, r * 0.55], [x + r * 0.3, y + r * 0.05, r * 0.5]], '#b7b0a3', { lw: 0, sombra: 18 }); g.restore(); };
+const oscuro = (a, col = '#0c0d12') => C.fundido(g, a, col);
+const sepia = a => { if (a <= 0) return; g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'color'; g.globalAlpha = a; g.fillStyle = '#a8865a'; g.fillRect(0, 0, W, HH); g.restore(); };
+
+const escribiendo = (t, quien, hoja, foco = true) => {
+  escena(LUG.casa_noche, { t, px: 0, z: 1.12, fx: sx(0), focos: [{ x: sx(-250), y: PISO - 120, r: 600, fuerza: 1 }] }, () => {
+    const golpe = Math.sin(t * 9) * 6;
+    per(quien, { t, x: sx(0), y: PISO - 40, k: quien === 'mary' ? 1.0 : 1.15, cara: 'neutral', mira: [0.2, 0.9], pose: { cab: 14 }, manoD: [56 + golpe, -112] });
+    obj('mesa', { x: sx(0), y: PISO + 90, t, k: 1.2 });
+    const top = PISO + 90 - 150 * ESC * 1.2;
+    obj(hoja, { x: sx(60), y: top, t, k: 0.5, trazo: 1 });
+    obj('vela', { x: sx(-250), y: top, t, k: 0.85 });
+  });
+};
+const inserto = (t, hojas) => {
+  escena(LUG.casa_noche, { t, px: 0, z: 1, focos: [{ x: sx(-300), y: PISO - 200, r: 700, fuerza: 1 }] }, () => { obj('mesa', { x: sx(0), y: PISO + 640, t, k: 3.4 }); });
+  oscuro(0.3);
+  for (const h of hojas) H.obj(h.id).dibujar(g, { x: h.x ?? CX, y: h.y ?? (V ? 1020 : 900), t, escala: ESC * (h.k ?? (V ? 3.0 : 3.1)), trazo: h.trazo ?? 1, rot: h.rot || 0 });
+};
+const TOMAS = [];
+const toma = (ini, fn) => { if (ini != null) TOMAS.push({ ini, fn }); };
+
+/* Parte 1 · El rayo y el primer esqueleto (S01–S07). Cada toma empieza en la frase del guion que la abre. */
+(() => {
+  const tRayo = T('cae sobre un árbol'), tMuertas = T('y mata a tres mujeres'), tBebe = T('Una de ellas cargaba'), tVive = T('La bebé sobrevive.');
+  const mujer = (x, k, o = {}) => per('vecina', { x, y: PISO, k, ...o });
+  toma(0, t => {
+    escena(LUG.tormenta, { t, px: t * 8, z: 1 + t * 0.012, fx: sx(80) }, () => {
+      obj('olmo', { x: sx(170), y: PISO - 10, t, k: 0.95 });
+      silueta(() => { mujer(sx(-250), 0.95, { t, giro: 0.4 }); mujer(sx(-120), 0.95, { t: t + 2, giro: 0.2 }); }, 0.75);
+      cargaBebe('vecina', { t, x: sx(60), y: PISO, k: 1.05, giro: -0.2, cara: 'neutral', pelo: [8, 0] });
+    });
+    C.lluvia(g, t, { k: 0.8, n: 260 });
+    rayo(sx(140), -20, sx(170) + 10, PISO - 760 * ESC * 0.95 * 0.75, cl(1 - Math.abs(t - tRayo - 0.08) / 0.18));
+    C.destello(g, t, tRayo, { fuerza: 0.6 });
+    etiqueta('19 AGO 1800', ent(t, 0.4) * (1 - ent(t, tRayo - 0.1, 0.1)));
+  });
+  toma(tMuertas, (t, u) => {
+    escena(LUG.campo, { t, px: -u * 10, z: 1 }, () => {
+      obj('olmo', { x: sx(220), y: PISO - 60, t, k: 0.55 });
+      silueta(() => { for (const [dx, k] of [[-40, 0.36], [90, 0.36], [180, 0.36]]) { G.save(); G.translate(sx(dx), PISO + 30 + dx * 0.05); G.rotate(-Math.PI / 2); H.per('vecina').dibujar(G, { t, x: 0, y: 0, escala: ESC * k, sombra: false, vivo: false, sinParpadeo: true, cara: 'dormida' }); G.restore(); } }, 0.7);
+    });
+    C.destello(g, t, tMuertas - 0.02, { fuerza: 0.35, baja: 0.6 });
+  });
+  toma(tBebe, (t, u) => {
+    escena(LUG.campo, { t, px: 0, z: 1.0 + u * 0.01 }, () => {
+      const vive = ent(t, tVive, 0.5), mov = vive * Math.sin(t * 6) * 0.04;
+      g.save(); g.translate(sx(0), PISO + 60); g.rotate(mov); H.obj('bebe').dibujar(g, { x: 0, y: 0, t, escala: ESC * 1.9 }); g.restore();
+    });
+    const a = ent(t, tVive, 0.8); if (a > 0) { g.save(); g.globalCompositeOperation = 'screen'; const gr = g.createRadialGradient(sx(0), PISO - 40, 20, sx(0), PISO - 40, 520); gr.addColorStop(0, `rgba(255,236,180,${0.45 * a})`); gr.addColorStop(1, 'rgba(255,236,180,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, HH); g.restore(); }
+  });
+
+  const tNombre = T('Se llama Mary Anning.'), tDesp = T('Veintitrés años después'), tFraude = T('es un fraude.', { vez: 1 }), tSala = T('Y la sala donde lo discutan');
+  toma(tNombre, (t, u) => {
+    escena(LUG.playa, { t, px: u * 12, z: 1.05 + u * 0.02, fx: sx(-60) }, () => {
+      obj('canasta', { x: sx(-260), y: PISO + 30, t, k: 0.8, lleno: 1 });
+      per('mary', { t, x: sx(-60), y: PISO + 40, k: 1.35, giro: 0.3, cara: 'tranquila', mira: [0.4, -0.1], pelo: [10, 0], manoD: [58, -100] });
+      enMano({ t, x: sx(-60), y: PISO + 40, k: 1.35, manoD: [58, -100] }, 'manoD', 'martillo', { rot: 165 });
+    });
+    titular('MARY ANNING', ent(t, tNombre + 0.2, 0.5));
+  });
+  toma(tDesp, (t, u) => {
+    const llamas = [[sx(-380), PISO - 200], [sx(380), PISO - 200]];
+    escena(LUG.sala, { t, px: u * 6, z: 1 + u * 0.015, focos: llamas.map(([x, y]) => ({ x, y: y - 130, r: 520, fuerza: 0.9 })) }, () => {
+      silueta(() => { [-340, -170, 170, 340].forEach((dx, i) => per(i % 2 ? 'socio' : 'clerigo', { t: t + i, x: sx(dx), y: PISO - 20, k: 1.0, giro: dx < 0 ? 0.4 : -0.4 })); }, 0.85);
+      obj('mesa_sala', { x: sx(0), y: PISO + 60, t, k: 0.7 });
+      obj('plesio_mesa', { x: sx(0), y: PISO + 60 - 160 * ESC * 0.7 + 4, t, k: 0.34 });
+      llamas.forEach(([x, y]) => obj('vela', { x, y: PISO + 60 - 160 * ESC * 0.7, t, k: 0.8 }));
+    });
+    etiqueta('1823', ent(t, tDesp + 0.1));
+    if (tFraude) sello('¿FRAUDE?', CX, V ? 760 : 400, ent(t, tFraude, 0.25));
+  });
+  toma(tSala, (t, u) => {
+    escena(LUG.pasillo, { t, px: -u * 8, z: 1 + u * 0.02, fx: sx(120), focos: [{ x: sx(160), y: PISO - 10, r: 300, fuerza: 0.6 }] }, () => {
+      obj('puerta', { x: sx(170), y: PISO, t, k: 1.0, abierta: 0 });
+      per('mary', { t, x: sx(-190), y: PISO + 20, k: 1.0, giro: 0.6, cara: 'triste', mira: [0.8, 0] });
+    });
+  });
+
+  const tPobre = T('Mary nace en una familia pobre.'), tCarp = T('Su papá es carpintero'), tCur = T('Les dicen curiosidades.'), tHerm = T('Y lleva el nombre de su hermana mayor'), tDiez = T('De diez hijos');
+  toma(tPobre, (t, u) => {
+    escena(LUG.casa, { t, px: u * 6, z: 1 + u * 0.01 }, () => {
+      obj('ventana', { x: sx(-420), y: PISO - 330, t, k: 0.8 });
+      obj('silla', { x: sx(400), y: PISO + 10, t, k: 0.9 });
+      cargaBebe('molly', { t, x: sx(-110), y: PISO + 20, k: 1.1, giro: 0.35, cara: 'tranquila', mira: [0, 0.4] });
+      per('richard', { t, x: sx(170), y: PISO + 20, k: 1.12, giro: -0.35, cara: 'feliz', mira: [-0.6, 0.2] });
+    });
+  });
+  toma(tCarp, (t, u) => {
+    const km = 0.85, top = PISO + 40 - 150 * ESC * km;
+    escena(LUG.playa, { t, px: u * 10, z: 1 + u * 0.01 }, () => {
+      per('joseph', { t, x: sx(330), y: PISO + 10, k: 0.75, giro: -0.3, cara: 'feliz' });
+      per('mary_nina', { t, x: sx(420), y: PISO + 10, k: 0.7, giro: -0.4, cara: 'tranquila' });
+      per('richard', { t, x: sx(70), y: PISO + 10, k: 1.0, giro: -0.2, cara: 'feliz', mira: [-0.6, 0] });
+      obj('mesa', { x: sx(40), y: PISO + 40, t, k: km });
+      [[-120, 'amonita'], [-30, 'amonita_g'], [70, 'amonita'], [150, 'amonita']].forEach(([dx, id]) => obj(id, { x: sx(40) + dx * ESC * km * 0.9, y: top, t, k: 0.55 }));
+      const tu = { t, x: sx(-300), y: PISO + 20, k: 1.0, giro: 0.5, cara: 'feliz', manoD: [110, -170] };
+      per('socio', tu); enMano(tu, 'manoD', 'monedas', { k: 0.45, cuantas: 3 });
+    });
+    etiqueta('LYME REGIS', ent(t, tCarp + 0.2));
+  });
+  toma(tCur, (t, u) => {
+    escena(LUG.playa, { t, px: 260 + u * 14, z: 1 }, () => {
+      const km = 2.2, top = PISO + 300 - 150 * ESC * km * 0.55;
+      obj('mesa', { x: sx(0), y: PISO + 300, t, k: km * 0.55 });
+      [[-200, 'amonita_g', 0.9], [-30, 'amonita', 1.1], [140, 'amonita_g', 0.8]].forEach(([dx, id, k]) => obj(id, { x: sx(dx), y: top, t, k }));
+    });
+    titular('CURIOSIDADES', ent(t, tCur + 0.1));
+  });
+  toma(tHerm, (t, u) => {
+    const vx = sx(110), vy = PISO - 130;
+    escena(LUG.casa_noche, { t, px: u * 5, z: 1 + u * 0.012, focos: [{ x: sx(-330), y: PISO - 300, r: 600, fuerza: 0.7 }] }, () => {
+      obj('cama_nina', { x: sx(240), y: PISO + 30, t, k: 0.75 });
+      obj('mesa', { x: vx - 40, y: PISO + 20, t, k: 0.5 });
+      obj('vela', { x: vx - 40, y: PISO + 20 - 150 * ESC * 0.5, t, k: 0.8, encendida: 0 });
+      obj('vela', { x: sx(-330), y: PISO - 220, t, k: 0.0001, encendida: 0 });
+      cargaBebe('molly', { t, x: sx(-300), y: PISO + 30, k: 1.08, giro: 0.4, cara: 'triste', mira: [0.7, 0.1] });
+    });
+  });
+  toma(tDiez, (t, u) => {
+    const km = 0.82, top = PISO + 60 - 160 * ESC * km;
+    const focos = [];
+    escena(LUG.casa_noche, { t, px: 0, z: 1, focos }, () => {
+      per('mary_nina', { t, x: sx(-110), y: PISO - 30, k: 1.0, cara: 'triste' });
+      per('joseph', { t, x: sx(110), y: PISO - 30, k: 1.05, cara: 'triste' });
+      obj('mesa_sala', { x: sx(0), y: PISO + 60, t, k: km });
+      for (let i = 0; i < 10; i++) {
+        const x = sx((i - 4.5) * 92), vive = i === 3 || i === 6, off = vive ? 1 : 1 - ent(t, tDiez + 0.6 + [0, 1, 2, 9, 3, 4, 9, 5, 6, 7][i] * 0.22, 0.12);
+        obj('vela', { x, y: top, t: t + i, k: V ? 0.6 : 0.85, encendida: off > 0.5 ? 1 : 0 });
+      }
+    });
+    titular('10 HIJOS · 2 SOBREVIVEN', ent(t, tDiez + 1.0), { tam: V ? 70 : 92 });
+  });
+
+  const tOnce = T('Cuando Mary tiene once años'), tRes = T('resbala de noche'), tLast = T('Se lastima,'), tDeu = T('Deja deudas'), tPide = T('Su mamá le pide'), tSalen = T('Mary y su hermano Joseph salen'), tParr = T('la parroquia les da');
+  toma(tOnce, (t, u) => {
+    const top = PISO - (V ? 640 : 400), borde = V ? W * 0.38 + 30 : W * 0.38 + 40, x0 = V ? W * 0.9 : W * 0.78, tc = tRes + 0.9;
+    const cae = cl((t - tc) / 0.7), x = Math.max(borde, x0 - u * (V ? 40 : 75));
+    escena(LUG.noche, { t, px: 0, z: 1 }, () => {
+      per('richard', { t, x: x - cae * 40, y: top + 14 + cae * cae * 380, k: 0.62, giro: -0.9, pose: cae > 0 ? { bi: [-60, -30], bd: [60, -30] } : (x > borde ? C.caminar(t, { dir: -1 }) : {}), cara: cae > 0 ? 'terror' : t > tc - 0.4 ? 'miedo' : 'neutral', sombra: cae <= 0 });
+      if (cae > 0) polvo(borde, top + 20, (1 - cae) * 0.8, 60);
+    });
+    etiqueta('1810', ent(t, tOnce + 0.2));
+    oscuro(cl((t - tc - 0.35) / 0.35));
+  });
+  toma(tLast, (t, u) => {
+    escena(LUG.casa_noche, { t, px: u * 4, z: 1 + u * 0.01, focos: [{ x: sx(330), y: PISO - 300, r: 560, fuerza: 0.9 }] }, () => {
+      obj('cama', { x: sx(V ? 60 : 80), y: PISO + 40, t, k: V ? 0.75 : 0.9, dentro: [(gg, a) => H.per('richard').dibujar(gg, { ...a, t, cara: 'dolor', sombra: false })] });
+      per('mary_nina', { t, x: sx(-560), y: PISO + 60, k: 0.85, giro: 0.5, cara: 'triste' });
+      per('joseph', { t, x: sx(-460), y: PISO + 60, k: 0.9, giro: 0.5, cara: 'triste' });
+      per('molly', { t, x: sx(330), y: PISO + 40, k: 1.0, giro: -0.4, cara: 'triste', mira: [-0.6, 0.3] });
+      obj('vela', { x: sx(330), y: PISO - 170, t, k: 0.0001 });
+    });
+  });
+  toma(tDeu, (t, u) => {
+    escena(LUG.casa_noche, { t, px: 0, z: 1 + u * 0.02, focos: [{ x: sx(260), y: PISO - 120, r: 520, fuerza: 1 }] }, () => {
+      obj('mesa', { x: sx(0), y: PISO + 260, t, k: 1.55 });
+      const top = PISO + 260 - 150 * ESC * 1.55;
+      obj('deudas', { x: sx(-40), y: top, t, k: 1.1, abierto: 1 });
+      obj('vela', { x: sx(260), y: top, t, k: 1.0 });
+    });
+    titular('DEUDAS', ent(t, tDeu + 0.2), { color: '#ffb4a2' });
+  });
+  toma(tPide, (t, u) => {
+    escena(LUG.casa, { t, px: u * 6, z: 1.05 + u * 0.01 }, () => {
+      obj('ventana', { x: sx(-460), y: PISO - 330, t, k: 0.8 });
+      per('molly', { t, x: sx(-150), y: PISO + 40, k: 1.2, giro: 0.45, cara: 'triste', mira: [0.6, 0.4], manoD: [120, -170] });
+      per('mary_nina', { t, x: sx(170), y: PISO + 40, k: 0.95, giro: -0.45, cara: C.mezclarCara2('triste', 'apretada', ent(t, tPide + 2.2, 0.6)), mira: [-0.6, -0.4] });
+    });
+  });
+  toma(tSalen, (t, u) => {
+    const px = u * 50;
+    escena(LUG.playa, { t, px, z: 1 }, () => {
+      const m = { t, x: sx(-60) + px * 0.9, y: PISO + 20, k: 0.92, giro: 0.8, pose: C.caminar(t, { dir: 1, amp: 0.7 }), cara: 'neutral', manoI: [-55, -100] };
+      const j = { t: t + 0.4, x: sx(140) + px * 0.9, y: PISO + 20, k: 0.98, giro: 0.8, pose: C.caminar(t + 0.4, { dir: 1, amp: 0.7 }), cara: 'neutral', manoD: [55, -100] };
+      per('mary_nina', m); enMano(m, 'manoI', 'canasta', { k: 0.42, dy: 70 });
+      per('joseph', j); enMano(j, 'manoD', 'martillo', { k: 0.8, rot: 20 });
+    });
+    etiqueta('AYUDA DE LA PARROQUIA', ent(t, tParr), { tam: V ? 50 : 54 });
+  });
+
+  const tOtono = T('Otoño de mil ochocientos once.'), tAsoma = T('asomando entre las rocas'), tLargo = T('un cráneo largo'), tCoco = T('Creen que es de un cocodrilo.'), tResto = T('Un año después, Mary encuentra'), tTrece = T('Tiene trece años.');
+  toma(tOtono, (t, u) => {
+    escena(LUG.playa_tarde, { t, px: u * 10, z: 1 + u * 0.012, fx: sx(120) }, () => {
+      const a = ent(t, tAsoma, 0.8);
+      per('joseph', { t, x: sx(-250), y: PISO + 20, k: 1.0, giro: 0.5, cara: a > 0 ? 'sorpresa' : 'neutral', mira: [0.8, 0.3], manoD: a > 0 ? [150, -240] : [60, -100] });
+      g.save(); g.globalAlpha = 0.35 + 0.65 * a; obj('craneo', { x: sx(200), y: PISO + 60 - (1 - a) * 30, t, k: 0.9 }); g.restore();
+      obj('roca', { x: sx(390), y: PISO + 80, t, k: 0.6 }); obj('roca_c', { x: sx(40), y: PISO + 90, t, k: 0.6 });
+    });
+    etiqueta('OTOÑO 1811', ent(t, tOtono + 0.1));
+    aro(sx(200) * 1, PISO + 60 - 60 * ESC * 0.9, 300 * ESC * 0.9 * 0.6 * (V ? 0.9 : 1), ent(t, tLargo, 0.4) * (1 - ent(t, tCoco, 0.2)));
+    sello('¿COCODRILO?', CX, V ? 720 : 300, ent(t, tCoco, 0.25));
+  });
+  toma(tResto, (t, u) => {
+    const rev = suave((t - tResto - 0.5) / 4.5);
+    escena(LUG.playa, { t, px: u * 6, z: 1 + u * 0.01, marea: 0.2 + u * 0.06 }, () => {
+      obj('ictio', { x: sx(110), y: PISO + (V ? -50 : 70), t, k: 0.62 * (V ? 0.75 : 1), revela: rev });
+      const golpe = Math.max(0, Math.sin(t * 7)), o = { t, x: sx(-330), y: PISO + 30, k: 0.95, giro: 0.6, pose: { suelo: true, tor: 18, cab: 10 }, cara: 'apretada', mira: [0.9, 0.5], manoD: [125 + golpe * 25, -150 + golpe * 60] };
+      per('mary_nina', o); enMano(o, 'manoD', 'martillo', { k: 0.9, rot: 20 + golpe * 90 });
+    });
+    etiqueta('1812', ent(t, tResto + 0.2));
+    titular('13 AÑOS', ent(t, tTrece), { y: V ? 560 : 210 });
+  });
+
+  const tAnota = T('Desde entonces, Mary anota');
+  toma(tAnota, (t, u) => {
+    if (u < 1.6) escribiendo(t, 'mary_nina', 'hueso');
+    else inserto(t, [{ id: 'hueso', trazo: suave((u - 1.6) / 2.4), k: V ? 2.6 : 2.4 }]);
+  });
+
+  const tPaga = T('El señor del pueblo les paga'), tViaja = T('y el esqueleto viaja a Londres.'), tHome = T('Poco después, el cirujano del rey'), tSir = T('sir Everard Home'), tHabla = T('Habla de los huesos.'), tNada = T('De quién los desenterró');
+  toma(tPaga, (t, u) => {
+    const va = t >= tViaja;
+    escena(LUG.playa, { t, px: va ? (t - tViaja) * 40 : u * 8, z: 1 }, () => {
+      if (!va) {
+        const h = { t, x: sx(-170), y: PISO + 20, k: 1.05, giro: 0.45, cara: 'neutral', manoD: [130, -160] };
+        per('molly', { t, x: sx(190), y: PISO + 20, k: 1.0, giro: -0.45, cara: 'tranquila', manoI: [-120, -160] });
+        per('henley', h); enMano(h, 'manoD', 'monedas', { k: 0.5, cuantas: 6 });
+      } else {
+        const x = sx(-200) + (t - tViaja) * 160 * K;
+        obj('carreta', { x, y: PISO + 40, t, k: 0.75, giro: (t - tViaja) * 3, dentro: [(gg, a) => H.obj('caja').dibujar(gg, { x: 0, y: 0, t, escala: 0.62 })] });
+        per('mary_nina', { t, x: sx(-380), y: PISO + 30, k: 0.85, giro: 0.6, cara: 'triste', mira: [1, 0] });
+      }
+    });
+    titular('23 LIBRAS', ent(t, T('veintitrés libras')) * (va ? 1 - ent(t, tViaja, 0.2) : 1));
+  });
+  toma(tHome, (t, u) => {
+    escena(LUG.estudio, { t, px: u * 6, z: 1 + u * 0.01 }, () => {
+      obj('ventana', { x: sx(-420), y: PISO - 330, t, k: 0.8 });
+      obj('escritorio', { x: sx(60), y: PISO + 40, t, k: 1.1, dentro: [(gg, a) => H.per('clerigo').dibujar(gg, { ...a, t, cara: 'neutral', pose: { sentado: true, pi: [10, 0], pd: [10, 0], cab: 10 }, mira: [0.3, 0.8] })] });
+      obj('libro', { x: sx(110), y: PISO + 40 - 178 * ESC * 1.1, t, k: 0.6, abierto: 1 });
+    });
+    etiqueta('LONDRES · 1814', ent(t, tHome + 0.2));
+    titular('SIR EVERARD HOME', ent(t, tSir), { tam: V ? 72 : 88, y: V ? 470 : 200 });
+  });
+  toma(tHabla, (t, u) => {
+    const k = V ? 2.8 : 3.2, yb = V ? 1060 : 980;
+    escena(LUG.estudio, { t, px: 0, z: 1 }, () => {
+      obj('mesa', { x: sx(0), y: PISO + 520, t, k: 3 });
+      obj('articulo', { x: CX, y: yb, t, k, trazo: 1 });
+    });
+    aro(CX + 4 * k * ESC, yb - 46 * k * ESC, 60 * k * ESC, ent(t, tHabla + 0.2) * (1 - ent(t, tNada, 0.2)));
+    sello('SIN SU NOMBRE', CX, V ? 640 : 300, ent(t, tNada + 0.5, 0.25));
+  });
+})();
+
+/* Parte 2 · El alquiler y el cuello largo (S08–S12). */
+const copiasDibujo = (t, t0) => {
+  const n = 9;
+  for (let i = 0; i < n; i++) {
+    const a = suave((t - t0 - i * 0.22) / 0.7), ang = (i - (n - 1) / 2) * 0.32, r = (V ? 300 : 520) * a;
+    H.obj('dibujo').dibujar(g, { x: CX + Math.sin(ang) * r * 1.2, y: (V ? 860 : 660) - Math.cos(ang) * r * 0.55 + 140, rot: ang * 22, t, escala: ESC * (V ? 1.25 : 1.4), trazo: 1 });
+  }
+};
+const ruta = (t, t0) => {
+  const pts = V ? [[300, 1000], [620, 760], [760, 470]] : [[480, 700], [960, 520], [1460, 300]], nombres = ['LYME REGIS', 'LONDRES', 'PARÍS'];
+  const u = cl((t - t0) / 2.2), seg = u * 2, i = Math.min(1, Math.floor(seg)), f = seg - i;
+  g.save(); g.setLineDash([18, 16]); g.lineWidth = 8; g.strokeStyle = 'rgba(255,231,168,0.85)'; g.beginPath(); g.moveTo(...pts[0]); g.lineTo(...pts[1]); g.lineTo(...pts[2]); g.stroke(); g.restore();
+  pts.forEach(([x, y], k) => { g.save(); g.fillStyle = k === 2 ? '#ffd54a' : '#ffe7a8'; g.strokeStyle = C.LINEA; g.lineWidth = 5; g.beginPath(); g.arc(x, y, 16, 0, TAU); g.fill(); g.stroke(); g.font = `800 ${V ? 50 : 54}px ${C.FUENTE}`; g.textAlign = 'center'; g.lineWidth = 12; g.strokeText(nombres[k], x, y - 44); g.fillStyle = '#fff'; g.fillText(nombres[k], x, y - 44); g.restore(); });
+  const p = [pts[i][0] + (pts[i + 1][0] - pts[i][0]) * f, pts[i][1] + (pts[i + 1][1] - pts[i][1]) * f];
+  H.obj('sobre').dibujar(g, { x: p[0], y: p[1] + 40, t, escala: 1.1, rot: Math.sin(t * 3) * 6 });
+};
+(() => {
+  const tTorm = T('Después de una tormenta'), tCome = T('se come un pedazo'), tApar = T('Los fósiles aparecen.'), tMarea = T('Mary tiene que llegar'), tSi = T('Si encuentra algo que valga'), tNo = T('Si no, venden otro mueble.');
+  const caen = (t, t0, x0, n = 6) => { for (let i = 0; i < n; i++) { const d = t - t0 - i * 0.12; if (d < 0) continue; const y = Math.min(PISO + 40 - C.hash(i) * 30, PISO - AC.alto + 60 + d * d * 1600); H.obj(i % 2 ? 'roca' : 'roca_c').dibujar(G, { x: x0 + (C.hash(i * 3) - 0.5) * 260, y, t, escala: 0.3 + C.hash(i * 7) * 0.25, rot: d * 120 * (C.hash(i) - 0.5) }); } };
+  toma(tTorm, (t, u) => {
+    const temb = cl(1 - Math.abs(t - tCome - 0.6) / 1.2) * 14;
+    escena(LUG.playa_nub, { t, px: u * 22, z: 1, temblor: temb, marea: 0.3 }, () => {
+      caen(t, tCome + 0.2, sx(-260) + u * 22);
+      polvo(sx(-260) + u * 22, PISO - 40, cl((t - tCome - 0.5) / 0.4) * (1 - cl((t - tCome - 2) / 1.5)), 220);
+      const m = { t, x: sx(180) + u * 22, y: PISO + 30, k: 1.0, giro: -0.6, pose: t < tCome + 0.4 ? C.caminar(t, { dir: -1 }) : { cab: -6 }, cara: t > tCome + 0.4 ? 'miedo' : 'neutral', manoD: [55, -100], pelo: [-12, 0] };
+      per('mary', m); enMano(m, 'manoD', 'canasta', { k: 0.42, dy: 70 });
+      if (t > tApar) [-120, 30, 160].forEach((dx, i) => obj(i === 1 ? 'amonita_g' : 'amonita', { x: sx(-280 + dx) + u * 22, y: PISO + 70 + i * 12, t, k: 0.5 * ent(t, tApar + i * 0.3, 0.3) + 0.001 }));
+    });
+    C.lluvia(g, t, { k: 0.6 });
+  });
+  toma(tMarea, (t, u) => {
+    const temb = cl(1 - Math.abs(t - tMarea - 2.4) / 0.6) * 10;
+    escena(LUG.playa_nub, { t, px: 300, z: 1.05, marea: 0.35 + cl(u / 8) * 0.45, temblor: temb }, () => {
+      caen(t, tMarea + 2.0, sx(-420) + 300, 4);
+      const golpe = Math.max(0, Math.sin(t * 8)), o = { t, x: sx(-40) + 300, y: PISO + 40, k: 1.05, giro: 0.6, pose: { suelo: true, tor: 20, cab: 8 }, cara: 'apretada', mira: [0.9, 0.5], manoD: [125 + golpe * 25, -150 + golpe * 60], pelo: [-10, 0] };
+      per('mary', o); enMano(o, 'manoD', 'martillo', { k: 0.9, rot: 20 + golpe * 90 });
+      obj('canasta', { x: sx(-260) + 300, y: PISO + 70, t, k: 0.75, lleno: t > tSi ? 1 : 0.4 });
+    });
+    C.lluvia(g, t, { k: 0.5 });
+    sello('ALQUILER ✓', V ? CX : CX - 360, V ? 400 : 260, ent(t, tSi + 0.4, 0.25), { color: '#2f8a4f', rot: -6 });
+    sello('OTRO MUEBLE ✗', V ? CX : CX + 360, V ? 540 : 260, ent(t, tNo + 0.3, 0.25), { color: '#d8432f', rot: 5 });
+  });
+
+  const tVeinte = T('En mil ochocientos veinte, no lo encuentra.'), tDoce = T('Casi doce meses'), tSin = T('Sin fósiles, no hay dinero.'), tVenden = T('Los Anning empiezan a vender');
+  toma(tVeinte, (t, u) => {
+    escena(LUG.playa_tarde, { t, px: u * 8, z: 1 + u * 0.015, fx: sx(0) }, () => {
+      const m = { t, x: sx(0), y: PISO + 40, k: 1.2, giro: 0.2, cara: 'triste', mira: [0.2, 0.7], manoD: [55, -100], pelo: [-10, 0] };
+      per('mary', m); enMano(m, 'manoD', 'canasta', { k: 0.42, dy: 70, lleno: 0 });
+    });
+    etiqueta('1820', ent(t, tVeinte + 0.2));
+    titular('CASI 12 MESES SIN NADA', ent(t, tDoce), { tam: V ? 66 : 88 });
+  });
+  toma(tSin, (t, u) => {
+    const sale = cl((t - tSin) / 4.5);
+    escena(LUG.casa, { t, px: 0, z: 1 }, () => {
+      obj('ventana', { x: sx(-420), y: PISO - 330, t, k: 0.8 });
+      per('molly', { t, x: sx(-200), y: PISO + 30, k: 1.1, giro: 0.5, cara: 'triste', mira: [1, 0] });
+      const c = { t, x: sx(120) + sale * (V ? 520 : 900), y: PISO + 30, k: 1.05, giro: 0.8, pose: C.caminar(t, { dir: 1, amp: 0.6 }), manoD: [80, -150], manoI: [-20, -150] };
+      silueta(() => { per('socio', c); obj('silla', { x: c.x + 60 * ESC, y: PISO + 30 - 40 * ESC, t, k: 0.8 }); }, 0.8);
+    });
+  });
+  toma(tVenden, (t, u) => {
+    escena(LUG.casa, { t, px: u * 6, z: 1.04 + u * 0.01 }, () => {
+      g.save(); g.fillStyle = 'rgba(255,255,255,0.13)'; for (const dx of [-120, 260]) g.fillRect(sx(dx) - 90, PISO - 420, 180, 260); g.restore();
+      obj('ventana', { x: sx(-420), y: PISO - 330, t, k: 0.8 });
+      per('molly', { t, x: sx(200), y: PISO + 30, k: 1.1, giro: -0.4, cara: 'triste', mira: [-0.6, 0.5] });
+      const m = { t, x: sx(-150), y: PISO + 40, k: 1.05, giro: 0.3, pose: { suelo: true, cab: 10 }, cara: 'triste', mira: [0.2, 0.8], manoD: [40, -110], manoI: [-40, -110] };
+      per('mary', m); obj('hueso', { x: sx(-150), y: PISO + 40 - 0 * ESC, t, k: 0.75, trazo: 1 });
+    });
+  });
+
+  const tBirch = T('Un coronel, Thomas Birch'), tRaro = T('Y hace algo muy raro'), tCuat = T('Reúne más de cuatrocientas libras.');
+  toma(tBirch, (t, u) => {
+    escena(LUG.estudio, { t, px: u * 6, z: 1.05 + u * 0.01, fx: sx(0) }, () => {
+      obj('lampara', { x: sx(-380), y: PISO + 20, t, k: 0.9 });
+      const b = { t, x: sx(0), y: PISO + 40, k: 1.3, giro: 0.2, cara: C.mezclarCara2('neutral', 'triste', ent(t, tBirch + 2.5, 0.6)), mira: [0.1, 0.7], manoD: [40, -150], manoI: [-40, -150], pose: { cab: 8 } };
+      per('birch', b); H.obj('carta').dibujar(g, { x: b.x, y: b.y - 66 * ESC * KP(b), t, escala: ESC * KP(b) * 0.72 });
+    });
+    titular('CORONEL THOMAS BIRCH', ent(t, tBirch + 0.3), { tam: V ? 64 : 84 });
+  });
+  toma(tRaro, (t, u) => {
+    const golpes = [T('vende su colección entera'), T('en una subasta en Londres')];
+    escena(LUG.subasta, { t, px: u * 5, z: 1 + u * 0.006 }, () => {
+      [-470, -330, 330, 470].forEach((dx, i) => silueta(() => obj('silla', { x: sx(dx), y: PISO + 90, t, k: 0.85, dentro: [(gg, a) => H.per(i % 2 ? 'clerigo' : 'socio').dibujar(gg, { ...a, t: t + i, giro: dx < 0 ? 0.5 : -0.5, pose: { sentado: true, pi: [10, 0], pd: [10, 0] } })] }), 0.8));
+      obj('escritorio', { x: sx(0), y: PISO - 20, t, k: 0.85, dentro: [(gg, a) => H.per('henley').dibujar(gg, { ...a, t, cara: 'feliz', manoD: [120 + Math.max(0, Math.sin((t - golpes[1]) * 5)) * 20, -280] })] });
+      per('birch', { t, x: sx(V ? 380 : 230), y: PISO + 40, k: 1.0, giro: -0.4, cara: 'tranquila' });
+      obj('mesa', { x: sx(-60), y: PISO + 120, t, k: 0.8 });
+      const top = PISO + 120 - 150 * ESC * 0.8;
+      obj('craneo', { x: sx(-90), y: top, t, k: 0.38 }); obj('amonita_g', { x: sx(40), y: top, t, k: 0.4 });
+    });
+    etiqueta('SUBASTA · LONDRES', ent(t, golpes[1]));
+  });
+  toma(tCuat, (t, u) => {
+    escena(LUG.subasta, { t, px: 200, z: 1 }, () => {
+      obj('mesa', { x: sx(0), y: PISO + 300, t, k: 1.7 });
+      obj('monedas', { x: sx(-40), y: PISO + 300 - 150 * ESC * 1.7, t, k: 1.6, cuantas: 3 + Math.min(15, u * 9) });
+      obj('sobre', { x: sx(220), y: PISO + 300 - 150 * ESC * 1.7, t, k: 0.9 });
+    });
+    titular('+400 LIBRAS', ent(t, tCuat + 0.3), { color: '#ffe7a8' });
+  });
+
+  const tResp = T('Con eso, la familia respira.'), tOtros = T('van compradores de otros países');
+  toma(tResp, (t, u) => {
+    escena(LUG.casa, { t, px: u * 6, z: 1 + u * 0.01 }, () => {
+      obj('ventana', { x: sx(-420), y: PISO - 330, t, k: 0.8 });
+      obj('silla', { x: sx(400), y: PISO + 10, t, k: 0.9 });
+      per('molly', { t, x: sx(-150), y: PISO + 40, k: 1.1, giro: 0.35, cara: 'tranquila' });
+      per('mary', { t, x: sx(140), y: PISO + 40, k: 1.12, giro: -0.35, cara: 'feliz' });
+    });
+  });
+  toma(tOtros, (t, u) => {
+    escena(LUG.subasta, { t, px: u * 8, z: 1 }, () => {
+      silueta(() => { [-380, -150, 150, 380].forEach((dx, i) => per(i % 2 ? 'socio' : 'clerigo', { t: t + i, x: sx(dx), y: PISO + 40, k: 1.05, giro: dx < 0 ? 0.5 : -0.5, manoD: i === 1 ? [70, -170] : undefined })); }, 0.78);
+      H.obj('carta').dibujar(g, { x: sx(-150) + 70 * ESC * KP({ k: 1.05 }), y: PISO + 40 - 140 * ESC * KP({ k: 1.05 }), t, escala: ESC * 0.8 });
+    });
+    titular('ANNING', ent(t, T('el apellido Anning')), { tam: V ? 120 : 140, color: '#ffe7a8' });
+  });
+
+  const tTres = T('Tres años después, diez de diciembre'), tCompleto = T('nadie había visto uno completo.'), tHall = T('Es su hallazgo más importante'), tMide = T('Mary lo mide, lo dibuja'), tEscribe = T('le escribe a un caballero'), tCirc = T('Ese dibujo empieza a circular'), tParis = T('Hasta llegar a París.');
+  toma(tTres, (t, u) => {
+    const rev = suave((t - tTres - 1) / 14);
+    escena(LUG.playa_nub, { t, px: 120 + u * 4, z: 1, marea: 0.25 }, () => {
+      obj('plesio', { x: sx(V ? 120 : 160), y: PISO + (V ? -50 : 80), t, k: V ? 0.48 : 0.62, revela: rev });
+      const golpe = Math.max(0, Math.sin(t * 7)), o = { t, x: sx(-420) + 120, y: PISO + 40, k: 0.95, giro: 0.6, pose: { suelo: true, tor: 18, cab: 8 }, cara: 'apretada', mira: [0.9, 0.4], manoD: [125 + golpe * 25, -150 + golpe * 60], pelo: [-10, 0] };
+      per('mary', o); enMano(o, 'manoD', 'martillo', { k: 0.9, rot: 20 + golpe * 90 });
+    });
+    C.niebla(g, t, { k: 0.5, y: PISO - 200 });
+    etiqueta('10 DIC 1823', ent(t, tTres + 0.3));
+    aro(sx(V ? 120 : 160) - 120, PISO - 100, V ? 380 : 520, ent(t, tCompleto, 0.4));
+  });
+  toma(tHall, (t, u) => {
+    escena(LUG.playa_nub, { t, px: 120 - u * 10, z: 1, marea: 0.25 }, () => {
+      obj('plesio', { x: sx(V ? 120 : 160), y: PISO + (V ? -50 : 80), t, k: V ? 0.48 : 0.62, revela: 1 });
+      per('mary', { t, x: sx(-430), y: PISO + 40, k: 1.05, giro: 0.6, cara: C.mezclarCara2('sorpresa', 'feliz', ent(t, tHall + 1.2, 0.6)), mira: [0.9, 0.2], manoD: [55, -100] });
+    });
+  });
+  toma(tMide, (t, u) => {
+    if (u < 1.4) escribiendo(t, 'mary', 'dibujo');
+    else if (t < tEscribe) inserto(t, [{ id: 'dibujo', trazo: suave((u - 1.4) / Math.max(1, tEscribe - tMide - 1.8)) }]);
+    else { const e = t - tEscribe; inserto(t, [{ id: 'dibujo', x: V ? CX - 170 : CX - 380, y: V ? 860 : 860, k: V ? 1.6 : 2.2, rot: -6 }, { id: 'carta', x: V ? CX + 150 : CX + 330, y: V ? 1200 : 900, k: V ? 1.9 : 2.3, rot: 4, trazo: suave(e / 3) }]); if (e > 3.2) H.obj('sobre').dibujar(g, { x: V ? CX + 150 : CX + 330, y: (V ? 1260 : 960) - 20 * suave((e - 3.2) / 0.5), t, escala: ESC * 1.5 }); }
+  });
+  toma(tCirc, (t, u) => {
+    escena(LUG.estudio, { t, px: 0, z: 1 }, () => {});
+    oscuro(0.45);
+    copiasDibujo(t, tCirc + 0.2);
+  });
+  toma(tParis, (t, u) => {
+    escena(LUG.estudio, { t, px: 0, z: 1 }, () => {});
+    oscuro(0.62);
+    ruta(t, tParis);
+  });
+})();
+
+/* Parte 3 · La sala sin mujeres (S13–S16). */
+const salaMesa = (t, o = {}) => {
+  const km = o.km ?? 0.8, top = PISO + 80 - 160 * ESC * km;
+  obj('mesa_sala', { x: sx(0), y: PISO + 80, t, k: km });
+  obj('plesio_mesa', { x: sx(o.dx ?? 30), y: top + 4, t, k: o.kp ?? (V ? 0.32 : 0.5) });
+  obj('dibujo', { x: sx(V ? -250 : -330), y: top, t, k: o.kd ?? 0.75 });
+  for (const dx of [-440, 440]) obj('vela', { x: sx(dx), y: top, t: t + dx, k: 0.75 });
+  return top;
+};
+const focosSala = () => [-440, 0, 440].map(dx => ({ x: sx(dx), y: PISO + 80 - 160 * ESC * 0.8 - 120, r: dx ? 620 : 760, fuerza: dx ? 1 : 0.7 }));
+const hojaGrande = (t, o = {}) => {
+  const k = V ? 3.0 : 3.1, x = CX, y = V ? 1000 : 860;
+  H.obj('dibujo').dibujar(g, { x, y, t, escala: ESC * k * (o.zoom || 1), trazo: 1, rot: o.rot || 0 });
+  return { x, y, k: ESC * k * (o.zoom || 1) };
+};
+(() => {
+  const tParis = T('En París, el científico más respetado'), tCuv = T('Georges Cuvier'), tVe = T('Ve un dibujo.'), tCuello = T('Un cuello larguísimo.'), tCabeza = T('Una cabeza diminuta.'), tDecide = T('Y decide que no pueden ser'), tDice = T('Dice que es un fraude'), tElla = T('quien la vendió es ella.', { vez: 1 }), tSi = T('Y si es una falsificación');
+  toma(tParis, (t, u) => {
+    escena(LUG.paris, { t, px: u * 6, z: 1.04 + u * 0.01, fx: sx(0) }, () => {
+      obj('ventana', { x: sx(-430), y: PISO - 330, t, k: 0.8 }); obj('lampara', { x: sx(420), y: PISO + 20, t, k: 0.9 });
+      const c = { t, x: sx(0), y: PISO + 40, k: 1.3, giro: -0.15, cara: 'neutral', mira: [0, 0.7], manoD: [44, -150], manoI: [-44, -150], pose: { cab: 8 } };
+      per('cuvier', c); H.obj('dibujo').dibujar(g, { x: c.x, y: c.y - 118 * ESC * KP(c), t, escala: ESC * KP(c) * 0.7, trazo: 1 });
+    });
+    titular('GEORGES CUVIER', ent(t, tCuv), { tam: V ? 76 : 92 });
+    etiqueta('PARÍS', ent(t, tParis + 0.2));
+  });
+  toma(tVe, (t, u) => {
+    escena(LUG.paris, { t, px: 0, z: 1 }, () => { obj('mesa', { x: sx(0), y: PISO + 600, t, k: 3.2 }); });
+    const h = hojaGrande(t, { zoom: 1 + u * 0.01 });
+    const P = (px, py) => [h.x + (14 + 1.05 * px) * h.k, h.y + (-58.8 + 1.05 * py) * h.k];
+    const [nx, ny] = P(-50, -17), [cx2, cy2] = P(-81, -43);
+    aro(nx, ny, 34 * h.k, ent(t, tCuello, 0.3) * (1 - ent(t, tCabeza - 0.1, 0.15)));
+    aro(cx2, cy2, 12 * h.k, ent(t, tCabeza, 0.3) * (1 - ent(t, tDecide - 0.1, 0.15)));
+  });
+  toma(tDecide, (t, u) => {
+    escena(LUG.paris, { t, px: u * 5, z: 1.15, fx: sx(0) }, () => {
+      obj('lampara', { x: sx(420), y: PISO + 20, t, k: 0.9 });
+      const no = Math.sin((t - tDecide) * 7) * 6 * cl(1 - (t - tDecide - 1.5) / 1);
+      const c = { t, x: sx(0), y: PISO + 60, k: 1.45, giro: no * 0.03, cara: 'apretada', mira: [0, 0.2], manoD: [44, -150], manoI: [-44, -150] };
+      per('cuvier', c); H.obj('dibujo').dibujar(g, { x: c.x, y: c.y - 118 * ESC * KP(c), t, escala: ESC * KP(c) * 0.7, trazo: 1 });
+    });
+  });
+  toma(tDice, (t, u) => {
+    escena(LUG.paris, { t, px: 0, z: 1 }, () => { obj('mesa', { x: sx(0), y: PISO + 600, t, k: 3.2 }); });
+    const h = hojaGrande(t, { rot: Math.sin(u * 0.6) * 1.5 });
+    sello('¿FRAUDE?', CX, V ? 660 : 330, ent(t, T('es un fraude', { vez: 2 }), 0.25), { tam: V ? 100 : 120 });
+    const a = ent(t, T('que alguien pegó'), 0.4);
+    if (a > 0) { C.rotulo(g, 'cabeza de serpiente  +  cuerpo de reptil', a, { tam: V ? 40 : 50, y: V ? 1450 : 110, color: '#ffe7a8' }); }
+  });
+  toma(tSi, (t, u) => {
+    escena(LUG.playa_tarde, { t, px: u * 8, z: 1.1 + u * 0.03, fx: sx(0) }, () => {
+      per('mary', { t, x: sx(0), y: PISO + 60, k: 1.4, giro: 0.15, cara: C.mezclarCara2('neutral', 'miedo', ent(t, tElla, 0.5)), mira: [0.3, 0], pelo: [-12, 0] });
+    });
+    etiqueta('MARY ANNING · LYME REGIS', ent(t, tSi + 0.3), { tam: V ? 50 : 56 });
+  });
+
+  const tDuque = T('Un duque, el de Buckingham'), tFeb = T('Y el veinte de febrero'), tPeq = T('Es una sala pequeña');
+  toma(tDuque, (t, u) => {
+    escena(LUG.estudio, { t, px: u * 10, z: 1 + u * 0.01 }, () => {
+      obj('ventana', { x: sx(-430), y: PISO - 330, t, k: 0.8 });
+      obj('caja', { x: sx(-40), y: PISO + 90, t, k: V ? 0.7 : 0.9 });
+      obj('monedas', { x: sx(V ? 330 : 470), y: PISO + 80, t, k: 1.3, cuantas: Math.min(12, 3 + u * 4) });
+    });
+    titular('150 GUINEAS', ent(t, T('ciento cincuenta guineas')), { color: '#ffe7a8' });
+  });
+  toma(tFeb, (t, u) => {
+    const x = sx(-520) + u * 120 * K;
+    escena(LUG.calle, { t, px: u * 30, z: 1 }, () => {
+      obj('carreta', { x: x + u * 30, y: PISO + 70, t, k: 0.75, giro: u * 3, dentro: [(gg, a) => H.obj('caja').dibujar(gg, { x: 0, y: 0, t, escala: 0.62 })] });
+      for (const [dx, id] of [[-260, 'socio'], [380, 'clerigo']]) per(id, { t: t + dx, x: x + u * 30 + dx * ESC * 0.6, y: PISO + 90, k: 0.95, giro: 0.8, pose: C.caminar(t + dx, { dir: 1, amp: 0.6 }) });
+    });
+    etiqueta('20 FEB 1824 · LONDRES', ent(t, tFeb + 0.3), { tam: V ? 50 : 58 });
+    titular('SOCIEDAD GEOLÓGICA', ent(t, T('a la Sociedad Geológica', { vez: 1 })), { tam: V ? 66 : 86 });
+  });
+  toma(tPeq, (t, u) => {
+    escena(LUG.sala, { t, px: u * 8, z: 1 + u * 0.015, focos: focosSala() }, () => { salaMesa(t); });
+  });
+
+  const tDet = T('Hay un detalle.'), tMuj = T('no deja entrar a mujeres.'), tSoc = T('Ni de socias.'), tInv = T('Ni de invitadas.'), tLyme = T('Mary se queda en Lyme Regis'), tMiente = T('O si ella miente.');
+  toma(tDet, (t, u) => {
+    escena(LUG.pasillo, { t, px: 0, z: 1.05 + u * 0.03, fx: sx(0), focos: [{ x: sx(0), y: PISO, r: 340, fuerza: 0.8 }] }, () => {
+      obj('puerta', { x: sx(0), y: PISO + 40, t, k: V ? 1.25 : 1.0, abierta: 0 });
+    });
+    sello('SOLO HOMBRES', CX, V ? 600 : 220, ent(t, tMuj, 0.25), { tam: V ? 84 : 96 });
+    etiqueta('NI SOCIAS', ent(t, tSoc, 0.2), { y: V ? 780 : 380, tam: V ? 60 : 64, color: '#ffffff' });
+    etiqueta('NI INVITADAS', ent(t, tInv, 0.2), { y: V ? 880 : 470, tam: V ? 60 : 64, color: '#ffffff' });
+  });
+  toma(tLyme, (t, u) => {
+    const cerca = t >= tMiente;
+    escena(LUG.playa_tarde, { t, px: 200 + u * 6, z: cerca ? 1.35 + (t - tMiente) * 0.05 : 1, fx: sx(-200) + 200 }, () => {
+      per('mary', { t, x: sx(-200) + 200, y: PISO + 40, k: 1.15, giro: 0.6, cara: cerca ? 'apretada' : 'triste', mira: [0.9, -0.1], pelo: [-14, 0] });
+    });
+  });
+
+  const tAdentro = T('Adentro, el reverendo William Conybeare'), tAhi = T('Pero el esqueleto está ahí');
+  toma(tAdentro, (t, u) => {
+    escena(LUG.sala, { t, px: u * 6, z: 1, focos: focosSala() }, () => {
+      silueta(() => [-300, -120, 120, 300].forEach((dx, i) => per(i % 2 ? 'socio' : 'clerigo', { t: t + i, x: sx(dx), y: PISO - 10, k: 1.0, giro: dx < 0 ? 0.4 : -0.4 })), 0.85);
+      salaMesa(t);
+      per('clerigo', { t, x: sx(V ? 330 : 600), y: PISO + 120, k: 1.15, giro: -0.4, cara: 'miedo', mira: [-0.7, 0.4] });
+    });
+    titular('WILLIAM CONYBEARE', ent(t, tAdentro + 0.6), { tam: V ? 66 : 84 });
+  });
+  toma(tAhi, (t, u) => {
+    escena(LUG.sala, { t, px: 0, z: 1.35 + u * 0.04, fx: sx(-60), focos: focosSala() }, () => { salaMesa(t, { kd: 0.9 }); });
+  });
+})();
+
+/* Parte 4 · El crédito y la hoja (S16b–S19) y cierre del completo. */
+(() => {
+  const tDeb = T('Tras el debate'), tReal = T('El animal es real.'), tArt = T('Y el artículo que lo describe'), tAmiga = T('Años después, una amiga');
+  toma(tDeb, (t, u) => {
+    escena(LUG.sala, { t, px: u * 6, z: 1, focos: focosSala() }, () => {
+      silueta(() => [-300, 300].forEach((dx, i) => per(i ? 'socio' : 'clerigo', { t: t + i, x: sx(dx), y: PISO - 10, k: 1.0, giro: dx < 0 ? 0.4 : -0.4 })), 0.85);
+      salaMesa(t);
+      const si = Math.max(0, Math.sin((t - tDeb) * 6)) * 8 * cl(1 - (t - tDeb - 2) / 1);
+      per('cuvier', { t, x: sx(V ? -330 : -600), y: PISO + 120, k: 1.15, giro: 0.4, cara: 'tranquila', pose: { cab: si } });
+    });
+    titular('CUVIER', ent(t, tDeb + 0.3), { tam: V ? 72 : 88 });
+    sello('REAL', CX, V ? 700 : 330, ent(t, tReal, 0.25), { color: '#2f8a4f', tam: V ? 110 : 130 });
+  });
+  toma(tArt, (t, u) => {
+    escena(LUG.estudio, { t, px: 0, z: 1 }, () => { obj('mesa', { x: sx(0), y: PISO + 600, t, k: 3.2 }); });
+    const k = ESC * (V ? 3.0 : 2.85), x = CX, y = V ? 1060 : 930;
+    H.obj('articulo').dibujar(g, { x, y, t, escala: k, trazo: 1 });
+    etiqueta('FIRMA: W. D. CONYBEARE', ent(t, T('lo firma Conybeare')), { tam: V ? 50 : 58, y: V ? 420 : 90 });
+    const a = ent(t, T('con un dibujo que Mary le mandó'), 0.4);
+    aro(x + 4 * k, y - 46 * k, 50 * k, a);
+    if (a > 0) C.rotulo(g, 'dibujo: Mary Anning', a, { tam: V ? 44 : 46, y: y - 6 * k, color: '#ffe7a8' });
+  });
+  toma(tAmiga, (t, u) => {
+    escena(LUG.casa, { t, px: u * 5, z: 1 + u * 0.01 }, () => {
+      obj('ventana', { x: sx(-460), y: PISO - 330, t, k: 0.8 });
+      per('amiga', { t, x: sx(-220), y: PISO + 40, k: 1.1, giro: 0.4, cara: C.mezclarCara2('neutral', 'triste', ent(t, tAmiga + 4, 0.6)), mira: [0.7, 0.2] });
+      per('mary', { t, x: sx(250), y: PISO + 40, k: 1.12, giro: -0.4, cara: 'triste', mira: [-0.6, 0.6], manoI: [-110, -150] });
+      obj('mesa', { x: sx(40), y: PISO + 140, t, k: 0.75 });
+      obj('libro', { x: sx(40), y: PISO + 140 - 150 * ESC * 0.75, t, k: 0.7, abierto: 0 });
+    });
+    titular('ANNA PINNEY, SU AMIGA', ent(t, tAmiga + 0.4), { tam: V ? 60 : 80 });
+  });
+
+  const tSigue = T('Mary sigue yendo al acantilado.'), tDerr = T('un derrumbe mata a Tray'), tCarta = T('En una carta cuenta'), tMuere = T('Y el nueve de marzo'), tCuar = T('Tiene cuarenta y siete años.');
+  toma(tSigue, (t, u) => {
+    const tc = tDerr + 0.5, para = Math.min(t, tc + 0.2), px = (para - tSigue) * 50;
+    escena(LUG.playa, { t, px, z: 1, temblor: cl(1 - Math.abs(t - tc - 0.4) / 1) * 14 }, () => {
+      const anda = t < tc;
+      const xd = sx(V ? -20 : -60) + px * 0.95;
+      if (t < tc + 0.5) H.obj('tray').dibujar(G, { x: xd, y: PISO + 70, t, escala: ESC * 0.75, camina: anda, espejo: false });
+      for (let i = 0; i < 7; i++) { const d = t - tc - i * 0.07; if (d < 0) continue; const y = Math.min(PISO + 60 - C.hash(i) * 50, PISO - AC.alto + 80 + d * d * 1800); H.obj(i % 2 ? 'roca' : 'roca_c').dibujar(G, { x: xd + (C.hash(i * 3) - 0.5) * 220, y, t, escala: 0.35 + C.hash(i * 7) * 0.3 }); }
+      polvo(xd, PISO + 20, cl((t - tc - 0.3) / 0.3) * (1 - cl((t - tc - 3) / 2)), 240);
+      per('mary', { t, x: sx(V ? -380 : -380) + px * 0.95, y: PISO + 40, k: 1.05, giro: anda ? 0.8 : 0.5, pose: anda ? C.caminar(t, { dir: 1, amp: 0.7 }) : { bd: [-80, -20] }, cara: anda ? 'tranquila' : 'terror', mira: [1, 0.2], manoD: anda ? undefined : [150, -200] });
+    });
+    etiqueta('1833', ent(t, tDerr));
+  });
+  toma(tCarta, (t, u) => {
+    escena(LUG.casa_noche, { t, px: 0, z: 1 + u * 0.015, focos: [{ x: sx(250), y: PISO - 150, r: 560, fuerza: 1 }] }, () => {
+      obj('mesa', { x: sx(0), y: PISO + 260, t, k: 1.6 });
+      const top = PISO + 260 - 150 * ESC * 1.6;
+      obj('carta', { x: sx(-60), y: top, t, k: 1.5, trazo: suave(u / 4) });
+      obj('vela', { x: sx(250), y: top, t, k: 1.0 });
+    });
+  });
+  toma(tMuere, (t, u) => {
+    escena(LUG.casa_noche, { t, px: u * 4, z: 1 + u * 0.01 }, () => {
+      obj('cama', { x: sx(150), y: PISO + 40, t, k: V ? 0.7 : 0.85 });
+      obj('mesa', { x: sx(-320), y: PISO + 60, t, k: 0.6 });
+      const top = PISO + 60 - 150 * ESC * 0.6;
+      obj('dibujo', { x: sx(-350), y: top, t, k: 0.6 }); obj('vela', { x: sx(-240), y: top, t, k: 0.7, encendida: t < tMuere + 2.5 ? 1 : 0 });
+    });
+    etiqueta('9 MAR 1847', ent(t, tMuere + 0.4));
+    titular('47 AÑOS', ent(t, tCuar), { y: V ? 560 : 210 });
+    oscuro(0.25 * ent(t, tMuere + 2.5, 1));
+  });
+
+  const tAnio = T('Un año después, en esa misma sociedad'), tDLB = T('Henry De la Beche'), tPrim = T('Es la primera vez'), tVent = T('Más tarde, los socios pagan'), tDijo = T('Ese día, la sala dijo'), tYa = T('Mary ya no estaba para oírlo.');
+  const salon = (t, z, fx, conVoz) => {
+    escena(LUG.sala, { t, px: 0, z, fx, focos: [{ x: sx(0), y: PISO - 350, r: 900, fuerza: 0.7 }] }, () => {
+      obj('escritorio', { x: sx(0), y: PISO - 40, t, k: 0.85, dentro: [(gg, a) => H.per('presidente').dibujar(gg, { ...a, t, cara: 'tranquila', manoD: [90, -250] })] });
+      [-500, -360, 360, 500].forEach((dx, i) => silueta(() => obj('silla_sala', { x: sx(dx), y: PISO + 120, t, k: 0.85, dentro: [(gg, a) => H.per(i % 2 ? 'socio' : 'clerigo').dibujar(gg, { ...a, t: t + i, giro: dx < 0 ? 0.5 : -0.5, pose: { sentado: true, pi: [10, 0], pd: [10, 0] } })] }), 0.8));
+      obj('silla_sala', { x: sx(0), y: PISO + 220, t, k: 0.95 });
+    });
+    g.save(); g.globalCompositeOperation = 'screen'; const gr = g.createRadialGradient(sx(0), PISO + 40, 20, sx(0), PISO + 40, 360); gr.addColorStop(0, 'rgba(255,236,190,0.28)'); gr.addColorStop(1, 'rgba(255,236,190,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, HH); g.restore();
+  };
+  toma(tAnio, (t, u) => {
+    salon(t, 1 + (t >= tPrim ? (t - tPrim) * 0.035 : 0), sx(0));
+    etiqueta('1848', ent(t, tAnio + 0.3));
+    titular('HENRY DE LA BECHE', ent(t, tDLB) * (1 - ent(t, tPrim, 0.3)), { tam: V ? 66 : 84 });
+  });
+  toma(tVent, (t, u) => {
+    escena(LUG.iglesia, { t, px: u * 6, z: 1 + u * 0.01 }, () => {
+      obj('vitral', { x: sx(0), y: PISO - 80, t, k: V ? 1.0 : 0.82 });
+    });
+    g.save(); g.globalCompositeOperation = 'screen'; for (let i = 0; i < 3; i++) { const gr = g.createLinearGradient(sx(0), 0, sx(0) + 300, HH); gr.addColorStop(0, `rgba(${['255,210,140', '160,200,255', '255,160,160'][i]},0.16)`); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.beginPath(); g.moveTo(sx(-80 + i * 60), PISO - 600); g.lineTo(sx(-20 + i * 60), PISO - 600); g.lineTo(sx(300 + i * 160), HH); g.lineTo(sx(100 + i * 160), HH); g.closePath(); g.fill(); } g.restore();
+    etiqueta('IGLESIA DE LYME REGIS', ent(t, tVent + 1), { tam: V ? 52 : 58 });
+  });
+  toma(tDijo, (t, u) => {
+    if (t < tYa) salon(t, 1.25 + u * 0.03, sx(0));
+    else escena(LUG.sala, { t, px: 0, z: 2.0 + (t - tYa) * 0.06, fx: sx(0), focos: [{ x: sx(0), y: PISO - 200, r: 700, fuerza: 0.8 }] }, () => obj('silla_sala', { x: sx(0), y: PISO + 220, t, k: 0.95 }));
+  });
+
+  const tEnse = T('Esos hombres enseñaron'), tApr = T('Lo aprendieron, en buena parte'), tUnico = T('Pero lo único de ella'), tCambio = T('Y esa hoja cambió');
+  toma(tEnse, (t, u) => {
+    escena(LUG.sala, { t, px: u * 10, z: 1.05, focos: focosSala() }, () => { salaMesa(t); });
+  });
+  toma(tApr, (t, u) => {
+    escena(LUG.playa, { t, px: u * 6, z: 1, marea: 0.3 }, () => {
+      obj('ictio', { x: sx(140), y: PISO + (V ? -50 : 70), t, k: V ? 0.45 : 0.6, revela: 1 });
+      const golpe = Math.max(0, Math.sin(t * 6)), o = { t, x: sx(-400), y: PISO + 40, k: 1.0, giro: 0.6, pose: { suelo: true, tor: 18, cab: 8 }, cara: 'apretada', mira: [0.9, 0.4], manoD: [125 + golpe * 25, -150 + golpe * 60] };
+      per('mary', o); enMano(o, 'manoD', 'martillo', { k: 0.9, rot: 20 + golpe * 90 });
+    });
+    sepia(0.55);
+  });
+  toma(tUnico, (t, u) => {
+    escena(LUG.sala, { t, px: 0, z: 1 + u * 0.12, fx: sx(V ? -250 : -330), focos: [{ x: sx(V ? -250 : -330), y: PISO - 80, r: 520, fuerza: 1.1 }] }, () => {
+      const km = 0.8, top = PISO + 80 - 160 * ESC * km;
+      obj('mesa_sala', { x: sx(0), y: PISO + 80, t, k: km });
+      obj('dibujo', { x: sx(V ? -250 : -330), y: top, t, k: 0.75 });
+      obj('vela', { x: sx(V ? -110 : -170), y: top, t, k: 0.75 });
+    });
+  });
+  toma(tCambio, (t, u) => {
+    escena(LUG.museo, { t, px: 0, z: 1 + u * 0.02, fx: sx(0) }, () => {
+      obj('vitrina', { x: sx(0), y: PISO + 40, t, k: V ? 0.72 : 0.6, dentro: [(gg, a) => H.obj('dibujo').dibujar(gg, { x: 0, y: -40, t, escala: 1.25 })] });
+    });
+    g.save(); g.globalCompositeOperation = 'screen'; const gr = g.createRadialGradient(sx(0), PISO - 420, 30, sx(0), PISO - 420, 520); gr.addColorStop(0, 'rgba(255,236,190,0.3)'); gr.addColorStop(1, 'rgba(255,236,190,0)'); g.fillStyle = gr; g.fillRect(0, 0, W, HH); g.restore();
+    const a = ent(t, T('podía existir.', { fin: true }) + 0.3, 0.6);
+    if (a > 0) { C.rotulo(g, 'Mary Anning', a, { tam: V ? 96 : 104, y: V ? 420 : 140 }); C.rotulo(g, 'Lyme Regis · 1799–1847', a, { tam: V ? 50 : 52, y: V ? 520 : 236, color: '#ffe7a8' }); }
+  });
+  if (q('Sígueme para no perderte') == null) toma(T('podía existir.', { fin: true }) + 3.0, (t, u) => {
+    oscuro(1, '#141019');
+    C.rotulo(g, 'Esa Es Otra Historia', ent(t, t - u + 0.1, 0.5), { tam: 96, y: HH * 0.4, color: '#ffe7a8' });
+    C.rotulo(g, 'Suscríbete para más historias reales', ent(t, t - u + 0.5, 0.5), { tam: 56, y: HH * 0.56 });
+  });
+})();
+
+/* Solo reels: entradas (partes 2–4), cierres (partes 1–3) y "sígueme". En el completo estas frases no existen y q() las salta. */
+(() => {
+  const e2 = q('Mary Anning vive de vender fósiles'), e2b = q('A los trece años ya había desenterrado');
+  toma(e2, (t, u) => {
+    const km = 0.85, top = PISO + 40 - 150 * ESC * km;
+    escena(LUG.playa, { t, px: u * 10, z: 1 }, () => {
+      per('mary', { t, x: sx(60), y: PISO + 10, k: 1.05, giro: -0.2, cara: 'tranquila' });
+      obj('mesa', { x: sx(40), y: PISO + 40, t, k: km });
+      [[-120, 'amonita'], [-30, 'amonita_g'], [70, 'amonita'], [150, 'amonita']].forEach(([dx, id]) => obj(id, { x: sx(40) + dx * ESC * km * 0.9, y: top, t, k: 0.55 }));
+    });
+  });
+  toma(e2b, (t, u) => {
+    escena(LUG.playa, { t, px: 260 + u * 8, z: 1 }, () => {
+      obj('ictio', { x: sx(120), y: PISO - 50, t, k: 0.45, revela: 1 });
+      per('mary_nina', { t, x: sx(-330), y: PISO + 40, k: 1.0, giro: 0.6, cara: 'feliz', mira: [0.9, 0.3] });
+    });
+    titular('13 AÑOS', ent(t, e2b + 0.3), { y: 560 });
+  });
+  const e3 = q('Mary Anning, una joven pobre inglesa, dibujó'), e3b = q('Ese dibujo ya circula');
+  toma(e3, (t, u) => {
+    if (u < 2.2) escribiendo(t, 'mary', 'dibujo');
+    else inserto(t, [{ id: 'dibujo', trazo: suave((u - 2.2) / 2.5) }]);
+  });
+  toma(e3b, (t, u) => { escena(LUG.estudio, { t, px: 0, z: 1 }, () => {}); oscuro(0.45); copiasDibujo(t, e3b + 0.1); });
+  const e4 = q('Un experto llamó fraude'), e4b = q('En Londres, solo hombres decidían');
+  toma(e4, (t, u) => {
+    escena(LUG.paris, { t, px: u * 6, z: 1.05, fx: sx(0) }, () => {
+      const c = { t, x: sx(0), y: PISO + 40, k: 1.3, giro: -0.15, cara: 'apretada', mira: [0, 0.7], manoD: [44, -150], manoI: [-44, -150], pose: { cab: 8 } };
+      per('cuvier', c); H.obj('dibujo').dibujar(g, { x: c.x, y: c.y - 118 * ESC * KP(c), t, escala: ESC * KP(c) * 0.7, trazo: 1 });
+    });
+    sello('¿FRAUDE?', CX, 470, ent(t, e4 + 0.9, 0.25));
+  });
+  toma(e4b, (t, u) => {
+    escena(LUG.sala, { t, px: u * 6, z: 1, focos: focosSala() }, () => {
+      silueta(() => [-300, -120, 120, 300].forEach((dx, i) => per(i % 2 ? 'socio' : 'clerigo', { t: t + i, x: sx(dx), y: PISO - 10, k: 1.0, giro: dx < 0 ? 0.4 : -0.4 })), 0.85);
+      salaMesa(t);
+    });
+    sello('SOLO HOMBRES', CX, 640, ent(t, e4b + 0.6, 0.25));
+  });
+
+  const c1 = q('Los fósiles son lo único'), c1b = q('¿Qué pasa el día que la roca');
+  toma(c1, (t, u) => {
+    escena(LUG.playa_tarde, { t, px: u * 8, z: 1 + u * 0.02, fx: sx(0) }, () => {
+      obj('mesa', { x: sx(260), y: PISO + 60, t, k: 0.7 });
+      obj('amonita', { x: sx(230), y: PISO + 60 - 150 * ESC * 0.7, t, k: 0.5 });
+      const m = { t, x: sx(-80), y: PISO + 40, k: 1.15, giro: 0.3, cara: t > c1b ? 'triste' : 'neutral', mira: [0.4, 0.6], manoD: [55, -100] };
+      per('mary_nina', m); enMano(m, 'manoD', 'canasta', { k: 0.42, dy: 70, lleno: 0 });
+    });
+  });
+  const c2 = q('Un cuello así, una cabeza así'), c2b = q('¿Y a quién le van a creer');
+  toma(c2, (t, u) => {
+    escena(LUG.paris, { t, px: 0, z: 1 }, () => { obj('mesa', { x: sx(0), y: PISO + 600, t, k: 3.2 }); });
+    hojaGrande(t, { zoom: 1 + u * 0.01 });
+    sello('¿REAL?', CX - 220, 640, ent(t, q('¿animal real'), 0.25), { color: '#2f8a4f', rot: -8 });
+    sello('¿FRAUDE?', CX + 200, 800, ent(t, q('o fraude?'), 0.25), { rot: 6 });
+  });
+  toma(c2b, (t, u) => {
+    escena(LUG.sala, { t, px: u * 6, z: 1, focos: focosSala() }, () => {
+      silueta(() => [-300, -120, 120, 300].forEach((dx, i) => per(i % 2 ? 'socio' : 'clerigo', { t: t + i, x: sx(dx), y: PISO - 10, k: 1.0, giro: dx < 0 ? 0.4 : -0.4 })), 0.85);
+      salaMesa(t);
+      per('mary', { t, x: sx(-420), y: PISO + 200, k: 1.15, giro: 0.4, cara: 'triste', mira: [0.8, -0.2] });
+    });
+  });
+  const c3 = q('Cuvier dijo fraude.');
+  toma(c3, (t, u) => {
+    escena(LUG.pasillo, { t, px: -u * 8, z: 1 + u * 0.02, fx: sx(120), focos: [{ x: sx(160), y: PISO - 10, r: 300, fuerza: 0.6 }] }, () => {
+      obj('puerta', { x: sx(170), y: PISO, t, k: 1.0, abierta: 0 });
+      per('mary', { t, x: sx(-190), y: PISO + 20, k: 1.0, giro: 0.6, cara: 'triste', mira: [0.8, 0] });
+    });
+    sello('¿QUIÉN LA DEFIENDE?', CX, 640, ent(t, q('¿Quién va a defender'), 0.25), { tam: 64, color: '#ffe7a8', rot: -4 });
+  });
+
+  for (let n = 1; n <= 4; n++) {
+    const s = q('Sígueme para no perderte', { vez: n });
+    if (s == null) continue;
+    const ultima = q('Sígueme para no perderte nuevas historias.') != null && Math.abs(q('Sígueme para no perderte nuevas historias.') - s) < 0.5;
+    toma(s, (t, u) => {
+      escena(LUG.casa_noche, { t, px: 0, z: 1, focos: [{ x: sx(-200), y: PISO - 150, r: 600, fuerza: 1 }] }, () => {
+        obj('mesa', { x: sx(0), y: PISO + 260, t, k: 1.6 });
+        const top = PISO + 260 - 150 * ESC * 1.6;
+        obj('dibujo', { x: sx(60), y: top, t, k: 1.5 }); obj('vela', { x: sx(-260), y: top, t, k: 1.0 });
+      });
+      oscuro(0.55);
+      C.rotulo(g, 'Sígueme', ent(t, s + 0.1, 0.4), { tam: 110, y: 560 });
+      C.rotulo(g, 'Esa Es Otra Historia', ent(t, s + 0.3, 0.4), { tam: 72, y: 690, color: '#ffe7a8' });
+      if (!ultima) C.rotulo(g, `Parte ${n + 1} en el perfil`, ent(t, s + 0.6, 0.4), { tam: 56, y: 800 });
+    });
+  }
+})();
+
+/* Cuadro: busca la toma vigente, la dibuja y encima pone el rótulo de historia real (inicio de cada video o reel)
+   y los subtítulos sacados de la voz. */
+TOMAS.sort((a, b) => a.ini - b.ini);
+const INICIOS = [0, q('Mary Anning vive de vender fósiles'), q('Mary Anning, una joven pobre inglesa, dibujó'), q('Un experto llamó fraude')].filter(x => x != null);
+const FIN_VOZ = Math.max(...Object.values(C.D.bloques).map(b => b.fin));
+window.renderAt = t => {
+  g.limpiar();
+  let i = 0; while (i + 1 < TOMAS.length && TOMAS[i + 1].ini <= t) i++;
+  const tm = TOMAS[i]; g.save(); tm.fn(t, t - tm.ini, (TOMAS[i + 1] ? TOMAS[i + 1].ini : FIN_VOZ + 5) - tm.ini); g.restore();
+  g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  const ini = Math.max(...INICIOS.filter(x => x <= t + 0.01));
+  const a = cl((t - ini) / 0.3) * cl((ini + 3.0 - t) / 0.4);
+  if (a > 0) {
+    g.save(); g.globalAlpha = a; g.font = `600 ${V ? 38 : 30}px ${C.FUENTE}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    const txt = 'Historia real · reconstrucción animada' + (INICIOS.length > 1 ? ' · Parte ' + (INICIOS.indexOf(ini) + 1) : ''), w = g.measureText(txt).width + 44, y = V ? 285 : 46;
+    g.fillStyle = 'rgba(12,13,18,0.62)'; g.beginPath(); g.roundRect(CX - w / 2, y - 30, w, 60, 30); g.fill(); g.fillStyle = '#ffffff'; g.fillText(txt, CX, y + 1); g.restore();
+  }
+  oscuro(1 - cl((t - ini) / 0.35));
+  C.subtitulos(g, t, V ? { y: 1190 } : {});
+};
+window.listo = true;
+
+</script></body></html>
