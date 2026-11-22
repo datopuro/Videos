@@ -52,7 +52,7 @@ Fondo (`fondos/*.json`): `{id, hora, capas:{cielo|lejos|fondo|medio|frente:[{mod
 | Personaje integrado a la luz | envolver `dibujar` en `C.iluminar` |
 | Fondo enorme que gira | `C.cache` + `drawImage` |
 | Susto | `cam.temblor` + `C.relampago` + `plato:1` |
-| Sonido real (papel, puerta, pasos) | `SONIDO.md`: `sfx_buscar.py` (Freesound CC0, solo en la laptop) + `m.archivo(ruta, amp)` en `mezcla.py` |
+| Sonido real (papel, puerta, pasos) | `python3 /home/claude/repo/comun/sonidos.py buscar puerta` → `copiar <carpeta> id` → `m.archivo('sonidos/<id>.ogg', amp)` en `mezcla.py`. 890 sonidos sin internet; ver `comun/LEEME.md`. `sfx_buscar.py` (Freesound) solo en la laptop |
 | Transición tinta o puertas | `dato-puro/kit/mod/transiciones.js` (tipos `tinta`, `puertas`, `papel`…): copiar con `cp`, probar |
 | Íconos (5 963, Tabler) | `<script>__MOD:iconos__</script>` + `K.ico(g, 'nombre', x, y, tam)`; buscar con `comun/iconos.py buscar <palabra>` |
 | Cosas que caen, rebotan o se apilan | `__MOD:fisica__` (matter-js precalculado), ver `comun/LEEME.md` |

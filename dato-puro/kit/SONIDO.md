@@ -1,3 +1,5 @@
+**En la nube usar primero `comun/sonidos.py`** (890 sonidos con licencia, sin internet; ver `comun/LEEME.md`). Lo de abajo (`sfx_buscar.py`, Freesound) solo funciona en la laptop.
+
 # Efectos de sonido reales (Freesound)
 
 `sfx.py` sintetiza sus sonidos. Para sonidos reales (papel, clic de un botón, golpe en un control, agua) se usa `sfx_buscar.py`, tomado de video-shotcraft (Apache-2.0). **Solo funciona donde hay red a freesound.org: en la laptop sí, en la nube de claude.ai no** (está bloqueado).
