@@ -11,6 +11,7 @@ Una carpeta por historia: `historias/videos/<titulo>/`. Solo texto y código; na
 |---|---|---|
 | ada-blackjack | Ada Blackjack (1921–1923) | 6:44 |
 | larisa-savitskaya | Larisa Savitskaya, vuelo 811 (1981) | 5:23, 3 reels |
+| angela-woodruff | Angela Woodruff y Kathleen Grundy, Hyde (1998–2000) | 5:10 horizontal + 4 reels verticales; Shipman siempre silueta plana |
 | mary-anning | Mary Anning, Lyme Regis (1800–1848) | 6:18 horizontal + 4 reels verticales a pantalla completa (misma escena.html, se adapta al formato) |
 
 Para no repetir personajes, fondos ni recursos, revisa aquí lo que ya se usó (busca con grep las funciones de dibujo en `fuentes/`).

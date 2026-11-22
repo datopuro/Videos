@@ -52,7 +52,7 @@ Fondo (`fondos/*.json`): `{id, hora, capas:{cielo|lejos|fondo|medio|frente:[{mod
 | Personaje integrado a la luz | envolver `dibujar` en `C.iluminar` |
 | Fondo enorme que gira | `C.cache` + `drawImage` |
 | Susto | `cam.temblor` + `C.relampago` + `plato:1` |
-| Sonido real (papel, puerta, pasos) | `SONIDO.md`: `sfx_buscar.py` (Freesound CC0, solo en la laptop) + `m.archivo(ruta, amp)` en `mezcla.py` |
+| Sonido real (papel, puerta, pasos) | `python3 /home/claude/repo/comun/sonidos.py buscar puerta` → `copiar <carpeta> id` → `m.archivo('sonidos/<id>.ogg', amp)` en `mezcla.py`. 890 sonidos sin internet; ver `comun/LEEME.md`. `sfx_buscar.py` (Freesound) solo en la laptop |
 | Transición tinta o puertas | `dato-puro/kit/mod/transiciones.js` (tipos `tinta`, `puertas`, `papel`…): copiar con `cp`, probar |
 | Íconos (5 963, Tabler) | `<script>__MOD:iconos__</script>` + `K.ico(g, 'nombre', x, y, tam)`; buscar con `comun/iconos.py buscar <palabra>` |
 | Cosas que caen, rebotan o se apilan | `__MOD:fisica__` (matter-js precalculado), ver `comun/LEEME.md` |
@@ -85,7 +85,7 @@ Misma receta y mismas opciones que `C.personaje2` (que se conserva para los vide
 Regla del canal (16 nov 2026, del usuario): nada de figuras sueltas "intentando ser algo". Todo objeto que salga en una historia viene de la utilería; si falta, se agrega a `mod/utileria.js` con el mismo acabado (sombra propia, brillo, contorno, sombra de piso) y se prueba en `escenas/demo_utileria` antes de usarlo.
 - `const H = C.historia({personajes:{ana:{...receta}}, objetos:{sofa:{tipo:'sillon', plazas:2, color:'#b5523b'}}})` una sola vez por video. `H.per('ana')`, `H.obj('sofa')`. El color y el tamaño viven ahí: pasarlos al dibujar da error, así un objeto no cambia entre escenas.
 - `H.obj('bote').dibujar(g, {x, y, escala, rot, t, espejo, dentro:[(gg, a) => H.per('ana').dibujar(gg, {t, x:a.x, y:a.y, escala:a.escala, pose:{sentado:true}}), …]})`: dibuja atrás → ocupantes recortados al interior → frente. Los pies no pueden asomar bajo la borda ni fuera de las ventanas.
-- Tipos (36): sillon, silla, banca, asiento_avion, escritorio, cama, mesa, lampara, planta, puerta, ventana, tienda, fogata, bote, velero, coche, avion, arbol, roca, hoja, libro, canasta, martillo, amonita, craneo, ictiosaurio, plesiosaurio, vela, bulto, caja, carreta, sobre, monedas, vitral, vitrina, perro (detalle en UTILERIA.md).
+- Tipos (54; los 18 de Angela Woodruff en UTILERIA.md): sillon, silla, banca, asiento_avion, escritorio, cama, mesa, lampara, planta, puerta, ventana, tienda, fogata, bote, velero, coche, avion, arbol, roca, hoja, libro, canasta, martillo, amonita, craneo, ictiosaurio, plesiosaurio, vela, bulto, caja, carreta, sobre, monedas, vitral, vitrina, perro (detalle en UTILERIA.md).
 - Vertical: `C.vineta` ya usa min/max de ancho y alto (antes oscurecía un círculo en 1080×1920). Para un video que sale horizontal y vertical con la misma escena, ver `historias/videos/mary-anning/fuentes/mary0.js` (PISO, ESC y separación según `C.H > C.W`). Verlos todos: `python3 kit/render.py muestras kit/escenas/catalogo_utileria 1.0`.
 - **Para agregar uno nuevo, leer `kit/UTILERIA.md`** (pasos, plantilla, medidas del personaje y lista de revisión). El catálogo corre `C.probarUtileria`, que falla si un objeto queda mal armado.
 - Piezas propias con el mismo acabado: `C.forma(g, camino, color, {sombra, brillo, lw, dentro})` con `C.caminos.rr/poli/elip`; `C.sombraContacto(g, x, ancho)`. Dirección de luz global: `C.LUZ`.

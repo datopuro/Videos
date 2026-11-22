@@ -744,6 +744,264 @@
     };
   };
 
+  /* Objetos agregados para Angela Woodruff (21 nov 2026): documentos tecleados, máquina de escribir, teléfono, lupa,
+     tubo de ensayo, maletín, reloj de pared, calendario, monitor, carpa, tablero de corcho, taza, manta, lápida,
+     carpeta, archivero y estrado. Sin logos ni marcas. */
+  TIPOS.documento = o => {
+    const est = o.estilo || 'limpio', papel = o.papel || (est === 'certificado' ? '#eef0e6' : '#f4f0e4'), ink = '#2a2730', W = 150, H = 200;
+    const filas = est === 'firmas' ? 4 : 10;
+    return {
+      ancho: W, anclas: [],
+      atras(g, e) {
+        const k = e.trazo ?? 1, hu = e.huellas ?? 0, ta = e.tachado ?? 0;
+        forma(g, rr(-W / 2, -H, W, H, 3), papel, { sombra: 3, brillo: 2, lw: 3.5, dentro: gg => {
+          gg.lineCap = 'round';
+          if (est === 'certificado') { gg.fillStyle = '#5a6a5a'; gg.fillRect(-W / 2, -H, W, 26); gg.strokeStyle = 'rgba(42,39,48,0.45)'; gg.lineWidth = 2; for (let i = 0; i < 4; i++) { gg.beginPath(); gg.moveTo(-W / 2 + 16, -H + 48 + i * 14); gg.lineTo(-W / 2 + 16 + 80 + C.hash(i) * 30, -H + 48 + i * 14); gg.stroke(); } gg.strokeRect(-W / 2 + 14, -H + 116, W - 28, 40); gg.fillStyle = ink; gg.font = `800 22px ${C.FUENTE}`; gg.textAlign = 'center'; gg.textBaseline = 'middle'; gg.fillText(o.texto || 'VEJEZ', 0, -H + 137); if (ta > 0) { gg.strokeStyle = '#c0392b'; gg.lineWidth = 5; gg.beginPath(); gg.moveTo(-W / 2 + 18, -H + 150); gg.lineTo(-W / 2 + 18 + (W - 36) * ta, -H + 124); gg.stroke(); } return; }
+          const torpe = est === 'torpe';
+          gg.fillStyle = ink; gg.font = `700 11px ${C.FUENTE}`;
+          for (let i = 0; i < filas; i++) {
+            const n = Math.round((torpe ? 14 : 17) * (0.55 + 0.45 * C.hash(i * 2.3 + (torpe ? 1 : 0))) * C.clamp(k * filas - i));
+            const y0 = -H + 24 + i * (est === 'firmas' ? 14 : 13), inc = torpe ? (C.hash(i * 5.1) - 0.5) * 0.06 : 0;
+            for (let j = 0; j < n; j++) { const x = -W / 2 + 14 + j * 7, y = y0 + j * 7 * inc + (torpe ? (C.hash(i * 31 + j) - 0.5) * 2.4 : 0); gg.globalAlpha = torpe ? 0.45 + 0.55 * C.hash(j * 7 + i) : 0.85; gg.fillRect(x, y, 5, torpe && C.hash(j + i * 13) > 0.85 ? 7 : 5); }
+          }
+          gg.globalAlpha = 1;
+          if (torpe && k > 0.5) { gg.strokeStyle = ink; gg.lineWidth = 2; gg.beginPath(); gg.moveTo(-20, -H + 66); gg.lineTo(30, -H + 66); gg.stroke(); }
+          const fy = est === 'firmas' ? -H + 110 : -36;
+          gg.strokeStyle = 'rgba(42,39,48,0.5)'; gg.lineWidth = 1.5; gg.strokeRect(-W / 2 + 14, fy - 18, W - 28, 30);
+          if (k > 0.9) { gg.strokeStyle = '#1f2a5a'; gg.lineWidth = torpe ? 2.6 : 2; gg.beginPath(); if (torpe) { gg.moveTo(-40, fy); gg.lineTo(-30, fy - 10); gg.lineTo(-22, fy + 4); gg.lineTo(-6, fy - 8); gg.lineTo(6, fy + 2); gg.lineTo(18, fy - 6); } else { gg.moveTo(-44, fy); gg.bezierCurveTo(-30, fy - 16, -20, fy + 10, -6, fy - 4); gg.bezierCurveTo(6, fy - 14, 16, fy + 6, 30, fy - 6); gg.bezierCurveTo(38, fy - 10, 44, fy - 2, 50, fy - 4); } gg.stroke(); }
+          if (est === 'firmas') { for (let i = 0; i < 2; i++) { const yy = -H + 160 + i * 0; gg.strokeStyle = '#1f2a5a'; gg.lineWidth = 2; gg.beginPath(); gg.moveTo(-50, yy); gg.bezierCurveTo(-34, yy - 14, -24, yy + 8, -8, yy - 4); gg.bezierCurveTo(4, yy - 12, 14, yy + 6, 34, yy - 6); gg.stroke(); } }
+          if (hu > 0) { gg.fillStyle = `rgba(40,80,200,${0.35 * hu})`; gg.fillRect(-W / 2, -H, W, H); gg.strokeStyle = `rgba(220,240,255,${0.9 * hu})`; gg.lineWidth = 1.4; for (const [cx, cy] of [[-30, -120], [36, -70], [10, -150]]) for (let r = 3; r < 16; r += 3) { gg.beginPath(); gg.ellipse(cx, cy, r, r * 1.3, 0.3, 0.3, TAU - 0.4); gg.stroke(); } }
+        } });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.maquina = o => {
+    const col = o.color || '#d9cfb4', osc = tono(col, -0.35);
+    return {
+      ancho: 260, anclas: [],
+      atras(g, e) {
+        contacto(g, 0, 280, 0.25);
+        const hoja = e.hoja ?? 0;
+        if (hoja > 0) forma(g, rr(-70, -150 - 70 * hoja, 140, 70 * hoja + 20, 2), '#f4f0e4', { sombra: 2, lw: 3, dentro: gg => { gg.fillStyle = '#2a2730'; for (let i = 0; i < Math.floor(hoja * 5); i++) gg.fillRect(-56, -140 - 70 * hoja + 10 + i * 12, 70 + C.hash(i) * 40, 4); } });
+        forma(g, rr(-120, -150, 240, 24, 10), osc, { sombra: 4, lw: 4 });
+        forma(g, elip(-128, -138, 12, 12), '#2a2a2a', { sombra: 2, lw: 3 }); forma(g, elip(128, -138, 12, 12), '#2a2a2a', { sombra: 2, lw: 3 });
+        forma(g, poli([[-130, -126], [130, -126], [140, -10], [-140, -10]]), col, { sombra: 10, dentro: gg => raya(gg, [[-120, -112], [120, -112]], tono(col, 0.25), 3) });
+        const tecla = (e.t || 0) * 11;
+        for (let f = 0; f < 3; f++) for (let c = 0; c < 9 - f; c++) { const x = -96 + f * 12 + c * 24, y = -88 + f * 22, baja = e.teclea && Math.floor(tecla) % 9 === c && f === Math.floor(tecla / 9) % 3 ? 3 : 0; forma(g, elip(x, y + baja, 9, 7), '#2f2f33', { sombra: 1, brillo: 2, lw: 2.5 }); }
+        forma(g, rr(-60, -26, 120, 12, 6), '#2f2f33', { sombra: 2, lw: 3 });
+        forma(g, rr(-150, -12, 300, 12, 4), osc, { sombra: 3, lw: 3.5 });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.telefono = o => {
+    const col = o.color || '#3a3a40';
+    return {
+      ancho: 160, anclas: [],
+      atras(g, e) {
+        const tiembla = e.suena ? Math.sin((e.t || 0) * 60) * 3 : 0, desc = e.descolgado ?? 0;
+        contacto(g, 0, 170, 0.22);
+        g.save(); g.translate(tiembla, 0);
+        forma(g, poli([[-70, -60], [70, -60], [80, 0], [-80, 0]]), col, { sombra: 8, dentro: gg => { gg.fillStyle = '#e8e2d2'; gg.beginPath(); gg.arc(0, -30, 20, 0, TAU); gg.fill(); gg.fillStyle = col; for (let i = 0; i < 10; i++) { const a = i / 10 * TAU; gg.beginPath(); gg.arc(Math.cos(a) * 14, -30 + Math.sin(a) * 14, 3, 0, TAU); gg.fill(); } } });
+        if (desc < 0.5) forma(g, gg => { gg.beginPath(); gg.moveTo(-84, -66); gg.quadraticCurveTo(0, -98, 84, -66); gg.lineTo(84, -52); gg.lineTo(56, -52); gg.quadraticCurveTo(0, -74, -56, -52); gg.lineTo(-84, -52); gg.closePath(); }, col, { sombra: 5, lw: 4 });
+        if (e.suena) { g.strokeStyle = 'rgba(255,255,255,0.8)'; g.lineWidth = 4; for (const s of [-1, 1]) for (let r = 0; r < 2; r++) { g.beginPath(); g.arc(s * 100, -80, 14 + r * 12, s > 0 ? -0.8 : Math.PI - 0.8, s > 0 ? 0.8 : Math.PI + 0.8); g.stroke(); } }
+        g.restore();
+      },
+      frente() {}
+    };
+  };
+  TIPOS.auricular = o => {
+    const col = o.color || '#3a3a40';
+    return { ancho: 60, anclas: [], atras(g) { forma(g, gg => { gg.beginPath(); gg.moveTo(-14, -90); gg.quadraticCurveTo(-30, -45, -14, 0); gg.lineTo(6, 0); gg.quadraticCurveTo(-6, -45, 6, -90); gg.closePath(); }, col, { sombra: 4, lw: 4 }); forma(g, elip(-4, -92, 16, 9), col, { sombra: 3, lw: 3.5 }); forma(g, elip(-4, 2, 16, 9), col, { sombra: 3, lw: 3.5 }); }, frente() {} };
+  };
+
+  TIPOS.lupa = o => {
+    const metal = o.color || '#3b3b42';
+    return {
+      ancho: 160, anclas: [],
+      atras(g) { forma(g, rr(-10, -10, 20, 100, 8), '#5a3b26', { sombra: 3, lw: 3.5 }); },
+      frente(g) {
+        g.save(); g.globalAlpha = 0.25; g.fillStyle = '#cfe8ff'; g.beginPath(); g.arc(0, -70, 58, 0, TAU); g.fill(); g.restore();
+        raya(g, [[-30, -108], [-10, -118]], 'rgba(255,255,255,0.8)', 6);
+        g.save(); g.lineWidth = 16; g.strokeStyle = C.LINEA; g.beginPath(); g.arc(0, -70, 60, 0, TAU); g.stroke(); g.lineWidth = 9; g.strokeStyle = metal; g.stroke(); g.restore();
+      }
+    };
+  };
+
+  TIPOS.tubo = o => {
+    const liq = o.color || '#c9474a';
+    return {
+      ancho: 120, anclas: [],
+      atras(g) {
+        contacto(g, 0, 130, 0.2);
+        forma(g, rr(-60, -60, 120, 60, 6), '#8a8f98', { sombra: 5, lw: 4 });
+        forma(g, rr(-14, -170, 28, 150, 14), 'rgba(230,240,250,0.9)', { sombra: 2, lw: 3.5, dentro: gg => { gg.fillStyle = liq; gg.fillRect(-14, -90, 28, 80); } });
+        forma(g, rr(-17, -178, 34, 14, 4), '#4a6a9a', { sombra: 2, lw: 3 });
+        forma(g, rr(-13, -150, 26, 34, 2), '#f4f0e4', { sombra: 0.01, lw: 2.5, dentro: gg => { gg.fillStyle = '#2a2730'; gg.fillRect(-9, -144, 18, 3); gg.fillRect(-9, -136, 12, 3); } });
+      },
+      frente(g) { forma(g, rr(-60, -60, 120, 26, 4), tono('#8a8f98', -0.1), { sombra: 3, lw: 3.5 }); }
+    };
+  };
+
+  TIPOS.maletin = o => {
+    const col = o.color || '#3a2418';
+    return {
+      ancho: 200, anclas: [],
+      atras(g) {
+        contacto(g, 0, 210, 0.22);
+        raya(g, [[-30, -110], [0, -150, 30, -110]], C.LINEA, 14); raya(g, [[-30, -110], [0, -150, 30, -110]], tono(col, 0.1), 8);
+        forma(g, gg => { gg.beginPath(); gg.moveTo(-90, -110); gg.lineTo(90, -110); gg.quadraticCurveTo(104, -60, 96, 0); gg.lineTo(-96, 0); gg.quadraticCurveTo(-104, -60, -90, -110); gg.closePath(); }, col, { sombra: 10, dentro: gg => raya(gg, [[-92, -96], [92, -96]], tono(col, 0.2), 3) });
+        forma(g, rr(-14, -104, 28, 14, 3), '#c9a54a', { sombra: 2, lw: 3 });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.reloj = o => {
+    const marco = o.color || '#5a3b26';
+    return {
+      ancho: 160, anclas: [],
+      atras(g, e) {
+        forma(g, elip(0, -80, 80, 80), marco, { sombra: 6 }); forma(g, elip(0, -80, 64, 64), '#f4efe2', { sombra: 2, lw: 3, dentro: gg => { gg.fillStyle = '#2a2730'; for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; gg.fillRect(Math.cos(a) * 52 - 2, -80 + Math.sin(a) * 52 - 2, 4, 4); } } });
+        const t = e.t || 0, h = (e.hora ?? 11.5) / 12 * TAU - Math.PI / 2, m = (e.hora ?? 11.5) % 1 * TAU - Math.PI / 2 + t * 0.05;
+        raya(g, [[0, -80], [Math.cos(h) * 32, -80 + Math.sin(h) * 32]], '#2a2730', 6); raya(g, [[0, -80], [Math.cos(m) * 48, -80 + Math.sin(m) * 48]], '#2a2730', 4);
+        const s = t * TAU / 60 * 6 - Math.PI / 2; raya(g, [[0, -80], [Math.cos(s) * 50, -80 + Math.sin(s) * 50]], '#c0392b', 2);
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.calendario = o => {
+    const col = o.color || '#c0392b';
+    return {
+      ancho: 200, anclas: [],
+      atras(g, e) {
+        forma(g, rr(-100, -240, 200, 240, 6), '#f4f0e4', { sombra: 5, dentro: gg => {
+          gg.fillStyle = col; gg.fillRect(-100, -240, 200, 46); gg.fillStyle = '#fff'; gg.font = `800 28px ${C.FUENTE}`; gg.textAlign = 'center'; gg.textBaseline = 'middle'; gg.fillText(o.mes || 'JUNIO', 0, -216);
+          gg.fillStyle = '#2a2730'; gg.font = `600 14px ${C.FUENTE}`; for (let i = 0; i < 30; i++) { const c = i % 7, f = Math.floor(i / 7); gg.fillText(String(i + 1), -78 + c * 26, -170 + f * 32); }
+          const d = (o.dia || 24) - 1, c = d % 7, f = Math.floor(d / 7), a = e.marca ?? 1;
+          if (a > 0) { gg.strokeStyle = col; gg.lineWidth = 4; gg.beginPath(); gg.arc(-78 + c * 26, -170 + f * 32, 14, 0, TAU * a); gg.stroke(); }
+        } });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.monitor = o => {
+    const col = o.color || '#d9d2bd';
+    return {
+      ancho: 300, anclas: [],
+      atras(g, e) {
+        contacto(g, 0, 300, 0.22);
+        forma(g, rr(-130, -40, 260, 40, 6), col, { sombra: 5 });
+        forma(g, rr(-140, -280, 280, 230, 18), col, { sombra: 10 });
+        forma(g, rr(-116, -258, 232, 180, 10), '#163a2a', { sombra: 0.01, lw: 3.5, dentro: gg => {
+          gg.font = `700 15px monospace`; gg.textBaseline = 'middle'; const fil = o.filas || ['12/03/98', '04/05/98', '30/05/98', '15/06/98', '25/06/98', '26/06/98'];
+          fil.forEach((f, i) => { const hi = (e.resalta ?? 0) > 0 && i >= fil.length - 2; if (hi) { gg.fillStyle = `rgba(255,213,74,${0.35 * e.resalta})`; gg.fillRect(-110, -244 + i * 26, 220, 22); } gg.fillStyle = hi ? '#ffd54a' : '#6fe38f'; gg.fillText(f, -102, -233 + i * 26); gg.fillRect(0, -236 + i * 26, 60 + C.hash(i) * 40, 4); });
+          gg.fillStyle = 'rgba(111,227,143,0.07)'; for (let y = -258; y < -78; y += 6) gg.fillRect(-116, y, 232, 2);
+        } });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.carpa = o => {
+    const tela = o.color || '#f2f2ee';
+    return {
+      ancho: 520, anclas: [],
+      atras(g, e) {
+        const luz = e.luz ?? 0;
+        if (luz > 0) { g.save(); g.globalCompositeOperation = 'screen'; const gr = g.createRadialGradient(0, -160, 30, 0, -160, 520); gr.addColorStop(0, `rgba(230,240,255,${0.5 * luz})`); gr.addColorStop(1, 'rgba(230,240,255,0)'); g.fillStyle = gr; g.fillRect(-600, -700, 1200, 800); g.restore(); }
+        contacto(g, 0, 560, 0.25);
+        forma(g, poli([[-250, 0], [-250, -230], [0, -330], [250, -230], [250, 0]]), tela, { sombra: 12, dentro: gg => { raya(gg, [[0, -330], [0, 0]], frio(tela, 0.2), 4); raya(gg, [[-250, -230], [250, -230]], frio(tela, 0.15), 3); if (luz > 0) { gg.fillStyle = `rgba(255,250,220,${0.35 * luz})`; gg.fillRect(-250, -330, 500, 330); } } });
+        forma(g, poli([[-60, 0], [-60, -170], [60, -170], [60, 0]]), frio(tela, 0.25), { sombra: 3, lw: 3 });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.tablero = o => {
+    const corcho = o.color || '#b98c58', N = o.n || 15;
+    return {
+      ancho: 640, anclas: [],
+      atras(g, e) {
+        forma(g, rr(-320, -420, 640, 400, 8), '#6b4a30', { sombra: 6 });
+        forma(g, rr(-300, -400, 600, 360, 4), corcho, { sombra: 0.01, lw: 3, dentro: gg => { gg.fillStyle = 'rgba(80,50,20,0.18)'; for (let i = 0; i < 80; i++) gg.fillRect(-300 + C.hash(i) * 600, -400 + C.hash(i * 3) * 360, 3, 3); } });
+        const m = e.marcas ?? 0;
+        for (let i = 0; i < N; i++) { const c = i % 5, f = Math.floor(i / 5), x = -240 + c * 120, y = -370 + f * 112;
+          forma(g, rr(x - 44, y, 88, 90, 4), ['#e9d9a6', '#d8e4ee', '#efe0d0'][i % 3], { sombra: 2, lw: 3, dentro: gg => { gg.fillStyle = '#2a2730'; gg.font = `800 26px ${C.FUENTE}`; gg.textAlign = 'center'; gg.fillText(String(i + 1), x, y + 52); } });
+          forma(g, elip(x, y + 4, 7, 7), '#c0392b', { sombra: 1, lw: 2.5 });
+          if (m > i) { raya(g, [[x + 14, y + 66], [x + 24, y + 78], [x + 42, y + 52]], '#c0392b', 6); } }
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.taza = o => {
+    const col = o.color || '#e8e2d2';
+    return { ancho: 80, anclas: [], atras(g) { contacto(g, 0, 90, 0.2); raya(g, [[30, -50], [52, -40, 30, -20]], C.LINEA, 12); raya(g, [[30, -50], [52, -40, 30, -20]], col, 6); forma(g, poli([[-32, -64], [32, -64], [26, 0], [-26, 0]]), col, { sombra: 5, dentro: gg => raya(gg, [[-30, -48], [30, -48]], '#8a5a9a', 4) }); forma(g, elip(0, -64, 32, 7), '#5a3a26', { sombra: 1, lw: 3 }); }, frente() {} };
+  };
+
+  TIPOS.manta = o => {
+    const col = o.color || '#8aa0b8';
+    return { ancho: 220, anclas: [], atras(g) { contacto(g, 0, 230, 0.2); forma(g, rr(-110, -50, 220, 50, 14), col, { sombra: 8, dentro: gg => { for (let x = -90; x < 110; x += 40) raya(gg, [[x, -50], [x, 0]], frio(col, 0.25), 6); raya(gg, [[-110, -26], [110, -26]], tono(col, 0.2), 3); } }); }, frente() {} };
+  };
+
+  TIPOS.lapida = o => {
+    const piedra = o.color || '#9a9a96';
+    return {
+      ancho: 220, anclas: [],
+      atras(g, e) {
+        contacto(g, 0, 260, 0.28);
+        forma(g, gg => { gg.beginPath(); gg.moveTo(-90, 0); gg.lineTo(-90, -220); gg.arc(0, -220, 90, Math.PI, 0); gg.lineTo(90, 0); gg.closePath(); }, piedra, { sombra: 12, dentro: gg => { raya(gg, [[-40, -230], [40, -230]], frio(piedra, 0.35), 5); raya(gg, [[-50, -190], [50, -190]], frio(piedra, 0.3), 3); raya(gg, [[-46, -170], [46, -170]], frio(piedra, 0.3), 3); raya(gg, [[-30, -150], [30, -150]], frio(piedra, 0.3), 3); } });
+        forma(g, rr(-110, -16, 220, 16, 4), tono(piedra, -0.15), { sombra: 3, lw: 3.5 });
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.carpeta = o => {
+    const col = o.color || '#c9a45a';
+    return {
+      ancho: 220, anclas: [],
+      atras(g, e) {
+        forma(g, poli([[-110, -150], [-40, -150], [-28, -164], [20, -164], [32, -150], [110, -150], [110, 0], [-110, 0]]), col, { sombra: 6, dentro: gg => { if (o.texto || e.texto) { gg.fillStyle = '#f4f0e4'; gg.fillRect(-70, -110, 140, 40); gg.strokeStyle = '#2a2730'; gg.lineWidth = 2; gg.strokeRect(-70, -110, 140, 40); gg.fillStyle = '#2a2730'; gg.font = `800 16px ${C.FUENTE}`; gg.textAlign = 'center'; gg.textBaseline = 'middle'; gg.fillText(e.texto || o.texto, 0, -89); } } });
+        if (e.grosor) for (let i = 1; i < 4; i++) raya(g, [[-104, -i * 5], [104, -i * 5]], '#f4f0e4', 3);
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.archivero = o => {
+    const col = o.color || '#7d848c';
+    return {
+      ancho: 220, anclas: [],
+      atras(g, e) {
+        contacto(g, 0, 240, 0.25);
+        forma(g, rr(-100, -440, 200, 440, 6), col, { sombra: 10 });
+        const ab = e.abierto ?? 0;
+        for (let i = 0; i < 4; i++) { const sale = i === 1 ? ab * 40 : 0; forma(g, rr(-88 - sale * 0.2, -428 + i * 106, 176 + sale * 0.4, 96 + sale * 0.3, 4), tono(col, 0.08), { sombra: 4, lw: 3.5, dentro: gg => { gg.fillStyle = '#f4f0e4'; gg.fillRect(-30, -414 + i * 106, 60, 18); } }); forma(g, rr(-26, -380 + i * 106 + sale * 0.15, 52, 10, 5), '#3b3b42', { sombra: 1, lw: 2.5 }); }
+      },
+      frente() {}
+    };
+  };
+
+  TIPOS.estrado = o => {
+    const madera = o.color || '#6b4528', W = o.ancho || 300;
+    return {
+      ancho: W, anclas: [{ x: 0, y: -110, escala: 1 }],
+      interior(g) { g.beginPath(); g.rect(-W, -2000, W * 2, 1790); },
+      atras(g) { contacto(g, 0, W * 1.1, 0.25); forma(g, rr(-W / 2, -260, W, 40, 4), tono(madera, -0.2), { sombra: 4 }); },
+      frente(g) {
+        forma(g, rr(-W / 2, -230, W, 230, 6), madera, { sombra: 10, dentro: gg => { for (let x = -W / 2 + 30; x < W / 2; x += 60) forma(gg, rr(x, -200, 40, 170, 6), tono(madera, 0.08), { sombra: 3, brillo: 2, lw: 2.5 }); } });
+        forma(g, rr(-W / 2 - 10, -244, W + 20, 20, 6), tono(madera, 0.15), { sombra: 3, lw: 3.5 });
+      }
+    };
+  };
+
   C.TIPOS_UTILERIA = TIPOS;
   const PROHIBIDO = ['color', 'cojin', 'maceta', 'borde', 'plazas', 'largo', 'ancho', 'alto'];
   C.utileria = (tipo, receta = {}) => {
