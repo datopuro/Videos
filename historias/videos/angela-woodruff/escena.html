@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__CARICATURA__</script>
+<script>__MOD:utileria__</script>
+<script>__MOD:fondos__</script>
+<script>__MOD:voz__</script>
+<script>
+/* Angela Woodruff · base de la escena (completo horizontal y reels verticales con el mismo código).
+   Referencias:
+   https://bbctodays.pages.dev/2/hi/in_depth/uk/2000/the_shipman_murders/the_shipman_files/609972.stm : testamento,
+     máquina de escribir del consultorio, oficinas de Hyde y Warwick (archivo BBC, 31 ene 2000).
+   https://www.crimeandinvestigation.co.uk/crime-files/harold-shipman/trial : juicio en Preston, Angela primera testigo.
+   https://www.gov.uk/government/publications/the-shipman-inquiry-second-report-the-police-investigation-of-march-1988 :
+     la investigación cerrada el 17 de abril de 1998.
+   historias/videos/mary-anning/fuentes/mary0.js : cámara, ayudas de rótulos y adaptación horizontal/vertical.
+   kit/INDICE.md y kit/UTILERIA.md : C.historia, C.lugar, C.cuando y C.subtitulos. */
+const D = __DATA__; C.datos(D); const g = C.lienzo();
+C.probarVoz();
+const V = C.H > C.W, W = C.W, HH = C.H, CX = W / 2, TAU = Math.PI * 2;
+const PISO = V ? 1180 : 840, ESC = V ? 1.7 : 1.4, K = V ? 0.66 : 1;
+const KP = o => V ? Math.min(o.k ?? 1, 1.12) : (o.k ?? 1);
+const sx = d => CX + d * K;
+const cl = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v)), suave = u => { u = cl(u); return u * u * (3 - 2 * u); };
+const q = (frase, o) => { try { return C.cuando(frase, o); } catch (e) { return null; } };
+const T = (frase, o) => C.cuando(frase, o);
+const ent = (t, t0, d = 0.35) => t0 == null ? 0 : suave((t - t0) / d);
+
+const H = C.historia({
+  personajes: {
+    angela: { cuerpo: { complexion: 'medio' }, piel: '#f0d2b8', pelo: { estilo: 'corto', color: '#4a3426' }, ropa: { arriba: { tipo: 'saco', color: '#2c3a52' }, abajo: { tipo: 'falda', color: '#5a5a60' }, pies: { color: '#2a2220' } } },
+    kathleen: { cuerpo: { complexion: 'delgado', estatura: 0.94 }, piel: '#f0d2b8', pelo: { estilo: 'rizado', color: '#e6e6e6' }, ropa: { arriba: { tipo: 'saco', color: '#8a6a9a' }, abajo: { tipo: 'falda', color: '#4a4a52' }, pies: { color: '#3a2c25' } } },
+    kathleen_joven: { cuerpo: { complexion: 'delgado' }, piel: '#f0d2b8', pelo: { estilo: 'coleta', color: '#5b4636' }, ropa: { arriba: { tipo: 'camisa', color: '#d8d0c0' }, abajo: { tipo: 'falda', color: '#5a5a60' }, pies: { color: '#2a2220' } } },
+    abogado: { cuerpo: { complexion: 'medio' }, piel: '#e8c3a4', pelo: { estilo: 'corto', color: '#6a5a4a' }, ropa: { arriba: { tipo: 'saco', color: '#3a3f4f' }, abajo: { tipo: 'pantalon', color: '#3a3f4f' }, pies: { color: '#1a1a1a' } } },
+    detective: { cuerpo: { complexion: 'robusto' }, piel: '#e8c3a4', pelo: { estilo: 'corto', color: '#9a9a9a' }, bigote: '#9a9a9a', ropa: { arriba: { tipo: 'saco', color: '#5a5a52' }, abajo: { tipo: 'pantalon', color: '#2a2a2a' }, pies: { color: '#1a1a1a' } } },
+    perito: { cuerpo: { complexion: 'delgado' }, piel: '#f0d2b8', pelo: { estilo: 'corto', color: '#4a3a2a' }, ropa: { arriba: { tipo: 'saco', color: '#f2f2f2' }, abajo: { tipo: 'pantalon', color: '#3a3a40' }, pies: { color: '#1a1a1a' } } },
+    doctor: { cuerpo: { complexion: 'medio' }, piel: '#1a1a1a', pelo: { estilo: 'corto', color: '#1a1a1a' }, ropa: { arriba: { tipo: 'saco', color: '#1a1a1a' }, abajo: { tipo: 'pantalon', color: '#1a1a1a' }, pies: { color: '#1a1a1a' } } },
+    doctora: { cuerpo: { complexion: 'delgado' }, piel: '#1a1a1a', pelo: { estilo: 'coleta', color: '#1a1a1a' }, ropa: { arriba: { tipo: 'saco', color: '#1a1a1a' }, abajo: { tipo: 'falda', color: '#1a1a1a' }, pies: { color: '#1a1a1a' } } },
+    vecino: { cuerpo: { complexion: 'robusto' }, piel: '#e8c3a4', pelo: { estilo: 'calvo', color: '#6a5a4a' }, ropa: { arriba: { tipo: 'saco', color: '#3a3a44' }, abajo: { tipo: 'pantalon', color: '#2a2a30' }, pies: { color: '#1a1a1a' } } },
+    vecina: { cuerpo: { complexion: 'medio' }, piel: '#f0d2b8', pelo: { estilo: 'corto', color: '#cfcfcf' }, ropa: { arriba: { tipo: 'vestido', color: '#6a5a5a' }, pies: { color: '#3a2c25' } } }
+  },
+  objetos: {
+    sillon: { tipo: 'sillon', color: '#8a6a5a', cojin: '#b9a58a' },
+    manta: { tipo: 'manta', color: '#8aa0b8' },
+    taza: { tipo: 'taza' },
+    mesita: { tipo: 'mesa', color: '#7a5236', ancho: 220, alto: 90 },
+    mesa: { tipo: 'mesa', color: '#7a5a3e', ancho: 420 },
+    mesa_larga: { tipo: 'mesa', color: '#c9b79a', ancho: 900 },
+    escritorio: { tipo: 'escritorio', color: '#5a3b26' },
+    escritorio_c: { tipo: 'escritorio', color: '#8a8f98' },
+    ventana: { tipo: 'ventana', exterior: 'lluvia', cortina: '#9a7a8a' },
+    ventana_of: { tipo: 'ventana', exterior: 'dia', cortina: '#6a7a8a' },
+    puerta: { tipo: 'puerta', color: '#2f4a3a' },
+    puerta2: { tipo: 'puerta', color: '#7a2f2f' },
+    puerta_c: { tipo: 'puerta', color: '#5a5a62' },
+    silla: { tipo: 'silla', color: '#7a5236' },
+    silla_espera: { tipo: 'silla', color: '#5a6a7a', cojin: '#8a9aaa' },
+    banca: { tipo: 'banca', color: '#6b4528' },
+    lampara: { tipo: 'lampara', color: '#d9b46a' },
+    testamento: { tipo: 'documento', estilo: 'torpe' },
+    original: { tipo: 'documento', estilo: 'limpio' },
+    certificado: { tipo: 'documento', estilo: 'certificado', texto: 'VEJEZ' },
+    firmas: { tipo: 'documento', estilo: 'firmas' },
+    sobre: { tipo: 'sobre', color: '#e8dcbc' },
+    maquina: { tipo: 'maquina' },
+    telefono: { tipo: 'telefono' },
+    auricular: { tipo: 'auricular' },
+    lupa: { tipo: 'lupa' },
+    tubo: { tipo: 'tubo' },
+    maletin: { tipo: 'maletin' },
+    reloj: { tipo: 'reloj' },
+    calendario: { tipo: 'calendario', mes: 'JUNIO 1998', dia: 24 },
+    monitor: { tipo: 'monitor' },
+    carpa: { tipo: 'carpa' },
+    tablero: { tipo: 'tablero', n: 15 },
+    lapida: { tipo: 'lapida' },
+    carpeta: { tipo: 'carpeta', texto: 'GRUNDY · 1986' },
+    carpeta_p: { tipo: 'carpeta', color: '#9aa8b8' },
+    archivero: { tipo: 'archivero' },
+    estrado: { tipo: 'estrado' },
+    juez: { tipo: 'estrado', ancho: 700, color: '#4f3220' },
+    libreta: { tipo: 'libro', chico: true, color: '#2c3a52' },
+    coche: { tipo: 'coche', color: '#e8e8e4' },
+    arbol: { tipo: 'arbol', alto: 700, color: '#4f6a46' }
+  }
+});
+const AC = {};
+const LUG = {
+  casa_k: C.lugar('interior', { hora: 'nublado', piso: PISO, pared: '#c9b8a8', tapiz: 'puntos', suelo: 'madera', alfombra: '#7a5a6a' }),
+  oficina_h: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#a8b4a0', tapiz: 'madera', suelo: 'loseta' }),
+  oficina_w: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#b8a890', tapiz: 'rayas', suelo: 'madera', alfombra: '#2c3a52' }),
+  oficina_w_tarde: C.lugar('interior', { hora: 'tarde', piso: PISO, pared: '#b8a890', tapiz: 'rayas', suelo: 'madera', alfombra: '#2c3a52' }),
+  casa_a: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#d6c9a8', tapiz: 'madera', suelo: 'madera' }),
+  club: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#b9c9b0', tapiz: 'madera', suelo: 'loseta' }),
+  antigua: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#c8b48c', tapiz: 'madera', suelo: 'madera' }),
+  calle: C.lugar('calle', { hora: 'nublado', piso: PISO, colores: ['#9a5a44', '#a8664c', '#8e5240', '#b07258'] }),
+  calle_alba: C.lugar('calle', { hora: 'tarde', piso: PISO, colores: ['#9a5a44', '#a8664c', '#8e5240', '#b07258'] }),
+  cementerio: C.lugar('campo', { hora: 'nublado', piso: PISO, pasto: '#5f7a54' }),
+  cementerio_n: C.lugar('campo', { hora: 'noche', piso: PISO, pasto: '#3f5a44' }),
+  comisaria: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#9aa8b0', tapiz: 'rayas', suelo: 'loseta' }),
+  consultorio: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#c8d4cc', friso: false, suelo: 'loseta' }),
+  lab: C.lugar('interior', { hora: 'noche', piso: PISO, pared: '#8fa6b8', friso: false, suelo: 'loseta' }),
+  espera: C.lugar('interior', { hora: 'nublado', piso: PISO, pared: '#c4ccc0', friso: false, suelo: 'loseta' }),
+  juicio: C.lugar('interior', { hora: 'dia', piso: PISO, pared: '#6b4a32', tapiz: 'madera', suelo: 'madera', alfombra: '#5a2a2a' }),
+  pasillo: C.lugar('interior', { hora: 'nublado', piso: PISO, pared: '#a8a49a', tapiz: 'rayas', suelo: 'loseta' })
+};
+const escena = (L, e, fn) => {
+  const t = e.t, px = e.px || 0, z = e.z || 1, fx = e.fx ?? CX, sh = e.temblor ? [C.ruido(t * 23, 3) * e.temblor, C.ruido(t * 19, 7) * e.temblor] : [0, 0];
+  L.dibujar(g, { t, x: px + sh[0] * 0.3, marea: e.marea });
+  g.save(); g.translate(sh[0], sh[1]); g.translate(fx, PISO); g.scale(z, z); g.translate(-fx - px, -PISO);
+  fn();
+  g.restore();
+  L.frente(g, { t, x: px }); L.luz(g, { t, x: px, focos: e.focos });
+};
+let G = g;
+const SIL = { doctor: 1, doctora: 1 };
+const per = (id, o) => {
+  const d = { ...(id === 'kathleen' ? { lentes: true } : {}), ...o, escala: ESC * KP(o) };
+  if (SIL[id] && G === g) return C.iluminar(g, gg => H.per(id).dibujar(gg, { ...d, cara: 'neutral', sombra: false }), { tinte: 'rgba(16,16,22,1)' });
+  H.per(id).dibujar(G, d);
+};
+const obj = (id, o) => H.obj(id).dibujar(G, { ...o, escala: ESC * (o.k ?? 1) });
+const enMano = (o, mano, id, oo = {}) => { const k = ESC * KP(o), m = o[mano], p = o.pose || {}, ox = (p.dx || 0), oy = (p.suelo ? 92 : 0) + (p.dy || 0); H.obj(id).dibujar(G, { t: o.t, ...oo, x: o.x + (m[0] + ox) * k + (oo.dx || 0) * k, y: o.y + (m[1] + oy) * k + (oo.dy || 0) * k, escala: k * (oo.k ?? 1) }); };
+const silueta = (fn, a = 0.82) => C.iluminar(g, gg => { const v = G; G = gg; try { fn(); } finally { G = v; } }, { tinte: `rgba(22,22,34,${a})` });
+const cargaBebe = (id, o) => { const k = ESC * KP(o); per(id, { ...o, manoD: [30, -136], manoI: [-30, -140] }); H.obj('bebe').dibujar(G, { x: o.x - 6 * k, y: o.y - 118 * k, t: o.t, escala: k * 0.62 }); };
+
+/* Textos en pantalla (después de L.luz). */
+const etiqueta = (txt, a, o = {}) => C.rotulo(g, txt, a, { tam: o.tam || (V ? 62 : 58), y: o.y ?? (V ? 360 : 100), color: o.color || '#ffe7a8' });
+const titular = (txt, a, o = {}) => C.rotulo(g, txt, a, { tam: o.tam || (V ? 96 : 104), y: o.y ?? (V ? 450 : 170), color: o.color || '#ffffff' });
+const sello = (txt, x, y, a, o = {}) => {
+  if (a <= 0.01) return;
+  const tam = o.tam || (V ? 80 : 90), col = o.color || '#d8432f', s = 1 + 0.6 * (1 - suave(a));
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = cl(a); g.translate(x, y); g.rotate((o.rot ?? -8) * Math.PI / 180); g.scale(s, s);
+  g.font = `900 ${tam}px ${C.FUENTE}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  const w = g.measureText(txt).width + tam * 0.7, h = tam * 1.35;
+  g.fillStyle = 'rgba(255,248,235,0.86)'; g.beginPath(); g.roundRect(-w / 2, -h / 2, w, h, tam * 0.18); g.fill();
+  g.lineWidth = tam * 0.1; g.strokeStyle = col; g.stroke(); g.fillStyle = col; g.fillText(txt, 0, tam * 0.04);
+  g.restore();
+};
+const aro = (x, y, r, a) => { if (a <= 0.01) return; g.save(); g.globalAlpha = cl(a); g.lineWidth = 9; g.strokeStyle = '#ffd54a'; g.setLineDash([22, 14]); g.lineDashOffset = -a * 60; g.beginPath(); g.ellipse(x, y, r * (1.3 - 0.3 * suave(a)), r * 0.8 * (1.3 - 0.3 * suave(a)), 0, 0, TAU); g.stroke(); g.restore(); };
+const rayo = (x0, y0, x1, y1, a) => {
+  if (a <= 0.01) return;
+  const pts = [[x0, y0]]; for (let i = 1; i < 9; i++) { const u = i / 9; pts.push([x0 + (x1 - x0) * u + (C.hash(i * 7.3) - 0.5) * 90, y0 + (y1 - y0) * u]); } pts.push([x1, y1]);
+  g.save(); g.globalAlpha = cl(a); g.lineJoin = 'round'; g.lineCap = 'round';
+  for (const [w, c] of [[30, 'rgba(190,210,255,0.35)'], [12, '#e8f0ff'], [5, '#ffffff']]) { g.lineWidth = w; g.strokeStyle = c; g.beginPath(); pts.forEach((p, i) => i ? g.lineTo(p[0], p[1]) : g.moveTo(p[0], p[1])); g.stroke(); }
+  g.restore();
+};
+const polvo = (x, y, a, r = 200) => { if (a <= 0.01) return; g.save(); g.globalAlpha = cl(a) * 0.85; C.masa(g, [[x - r * 0.6, y - r * 0.3, r * 0.5], [x, y - r * 0.6, r * 0.65], [x + r * 0.6, y - r * 0.25, r * 0.5], [x - r * 0.2, y, r * 0.55], [x + r * 0.3, y + r * 0.05, r * 0.5]], '#b7b0a3', { lw: 0, sombra: 18 }); g.restore(); };
+const oscuro = (a, col = '#0c0d12') => C.fundido(g, a, col);
+const sepia = a => { if (a <= 0) return; g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'color'; g.globalAlpha = a; g.fillStyle = '#a8865a'; g.fillRect(0, 0, W, HH); g.restore(); };
+
+/* Inserto: primer plano de papeles sobre una mesa oscurecida. */
+const inserto = (t, hojas, L = LUG.oficina_w, os = 0.35) => {
+  escena(L, { t, px: 0, z: 1 }, () => { obj('mesa', { x: sx(0), y: PISO + 640, t, k: 3.4 }); });
+  oscuro(os);
+  for (const h of hojas) H.obj(h.id).dibujar(g, { t, ...h, x: h.x ?? CX, y: h.y ?? (V ? 1080 : 960), escala: ESC * (h.k ?? (V ? 2.6 : 2.7)), rot: h.rot || 0 });
+};
+const texto = (txt, x, y, a, o = {}) => { if (a <= 0.01) return; g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = cl(a); g.font = `800 ${o.tam || 48}px ${C.FUENTE}`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round'; g.lineWidth = (o.tam || 48) * 0.22; g.strokeStyle = '#0e0c14'; g.strokeText(txt, x, y); g.fillStyle = o.color || '#ffffff'; g.fillText(txt, x, y); g.restore(); };
+const TOMAS = [];
+const toma = (ini, fn) => { if (ini != null) TOMAS.push({ ini, fn }); };
+
+/* Parte 1 · El testamento que llegó el mismo día (S01–S06). Cada toma empieza en la frase del guion que la abre. */
+const salaK = (t, u, o = {}) => {
+  escena(LUG.casa_k, { t, px: u * 6, z: o.z ?? 1.04 + u * 0.01 }, () => {
+    obj('ventana', { x: sx(-420), y: PISO - 340, t, k: 0.85 });
+    obj('sillon', { x: sx(40), y: PISO + 40, t, k: 1.0, dentro: o.dentro });
+    if (!o.dentro) obj('manta', { x: sx(-20), y: PISO - 80, t, k: 0.75 });
+    obj('mesita', { x: sx(330), y: PISO + 70, t, k: 0.9 });
+    obj('taza', { x: sx(330), y: PISO + 70 - 90 * ESC * 0.9, t, k: 0.75 });
+    if (o.extra) o.extra();
+  });
+};
+const oficinaH = (t, u, fn) => {
+  escena(LUG.oficina_h, { t, px: u * 5, z: 1 + u * 0.01 }, () => {
+    obj('archivero', { x: sx(-430), y: PISO + 20, t, k: 0.85 });
+    obj('escritorio', { x: sx(40), y: PISO + 60, t, k: 1.05, dentro: [(gg, a) => H.per('abogado').dibujar(gg, { ...a, t, cara: 'sorpresa', pose: { sentado: true, pi: [10, 0], pd: [10, 0], cab: 8 }, mira: [0, 0.8], manoD: [70, -230] })] });
+    if (fn) fn(PISO + 60 - 178 * ESC * 1.05);
+  });
+};
+const oficinaW = (t, u, fn, L = LUG.oficina_w) => {
+  escena(L, { t, px: u * 5, z: 1 + u * 0.01 }, () => {
+    obj('ventana_of', { x: sx(-440), y: PISO - 340, t, k: 0.8 });
+    obj('archivero', { x: sx(430), y: PISO + 20, t, k: 0.85 });
+    if (fn) fn();
+  });
+};
+(() => {
+  const t0 = 0, tDia = T('Ese mismo día, a una oficina'), tTodo = T('Deja todo a su médico.'), tNada = T('Nada para su hija.');
+  toma(t0, (t, u) => {
+    salaK(t, u, { z: 1.08 + u * 0.015 });
+    C.rotulo(g, 'Murió sana.', ent(t, 0.2, 0.3), { tam: V ? 92 : 96, y: V ? 470 : 200 });
+    C.rotulo(g, 'El testamento llegó ese mismo día.', ent(t, 0.5, 0.3), { tam: V ? 54 : 62, y: V ? 580 : 300, color: '#ffe7a8' });
+    etiqueta('24 JUN 1998 · HYDE', ent(t, 1.0), { y: V ? 1420 : 380, tam: V ? 46 : 44 });
+  });
+  toma(tDia, (t, u) => {
+    if (t < tTodo) {
+      oficinaH(t, u, top => {
+        const cae = suave((t - tDia - 0.6) / 0.6);
+        obj('sobre', { x: sx(-140), y: top - (1 - cae) * 300, t, k: 0.9, rot: (1 - cae) * 30 });
+      });
+    } else {
+      inserto(t, [{ id: 'testamento', trazo: 1 }], LUG.oficina_h);
+      const h = { x: CX, y: V ? 1080 : 960, k: ESC * (V ? 2.6 : 2.7) };
+      aro(h.x + 5 * h.k, h.y - 134 * h.k, 34 * h.k, ent(t, tTodo, 0.3));
+      sello('NADA PARA SU HIJA', CX, V ? 520 : 150, ent(t, tNada, 0.25), { tam: V ? 64 : 70 });
+    }
+  });
+
+  const tKath = T('Se llamaba Kathleen Grundy.'), tHija = T('Su hija es abogada'), tCaro = T('Ese detalle le va a costar');
+  toma(tKath, (t, u) => {
+    salaK(t, u, { dentro: [(gg, a) => H.per('kathleen').dibujar(gg, { ...a, t, cara: 'feliz', lentes: true, pose: { sentado: true } })] });
+    titular('KATHLEEN GRUNDY', ent(t, tKath + 0.2), { tam: V ? 78 : 96 });
+  });
+  toma(tHija, (t, u) => {
+    oficinaW(t, u, () => {
+      obj('escritorio', { x: sx(0), y: PISO + 60, t, k: 1.05, dentro: [(gg, a) => H.per('angela').dibujar(gg, { ...a, t, cara: 'neutral', pose: { sentado: true, pi: [10, 0], pd: [10, 0] }, mira: [0.2, 0.6], manoD: [60, -250] })] });
+      obj('telefono', { x: sx(-120), y: PISO + 60 - 178 * ESC * 1.05, t, k: 0.6, descolgado: 1 });
+    });
+    titular('ANGELA WOODRUFF', ent(t, tHija + 0.3), { tam: V ? 72 : 92 });
+    etiqueta('SU HIJA · ABOGADA', ent(t, tHija + 0.6));
+  });
+  toma(tCaro, (t, u) => {
+    inserto(t, [{ id: 'testamento', trazo: 1 }]);
+    const k = ESC * (V ? 2.6 : 2.7), x = CX + Math.sin(u * 1.2) * 60 * k, y = (V ? 1080 : 960) - 120 * k + Math.cos(u * 0.9) * 30 * k;
+    H.obj('lupa').dibujar(g, { x, y: y + 70 * k * 0.9, t, escala: k * 0.9 });
+  });
+
+  const tClub = T('Kathleen había sido alcaldesa'), tNo = T('Ese día no llegó.');
+  const club = (t, u, con) => {
+    escena(LUG.club, { t, px: u * 6, z: 1 }, () => {
+      obj('reloj', { x: sx(0), y: PISO - 420, t, k: 0.8, hora: 12.1 });
+      silueta(() => { [-380, -240, 240, 380].forEach((dx, i) => obj('silla', { x: sx(dx), y: PISO + 30, t, k: 0.85, dentro: [(gg, a) => H.per(i % 2 ? 'vecina' : 'vecino').dibujar(gg, { ...a, t: t + i, giro: dx < 0 ? 0.5 : -0.5, pose: { sentado: true, pi: [10, 0], pd: [10, 0] } })] })); }, 0.75);
+      obj('mesa_larga', { x: sx(0), y: PISO + 110, t, k: 0.8 });
+      const top = PISO + 110 - 150 * ESC * 0.8;
+      [-300, -100, 100, 300].forEach(dx => obj('taza', { x: sx(dx), y: top, t, k: 0.55 }));
+      if (con) per('kathleen', { t, x: sx(-60), y: PISO + 140, k: 1.05, giro: 0.4, cara: 'feliz', manoD: [100, -170] });
+      else obj('silla', { x: sx(-60), y: PISO + 180, t, k: 0.95 });
+    });
+  };
+  toma(tClub, (t, u) => { club(t, u, true); etiqueta('EXALCALDESA DE HYDE', ent(t, tClub + 0.4)); });
+  toma(tNo, (t, u) => { club(t, u, false); });
+
+  const tDoc = T('Su médico de años'), tLe = T('Le dice a la hija, Angela'), tCert = T('En el certificado escribe'), tAntes = T('Unos días antes, Angela'), tEnt = T('Pero no hay autopsia, y la entierran.');
+  toma(tDoc, (t, u) => {
+    const x = sx(-420) + Math.min(u, 3.2) * 110 * K, entra = u > 3.4;
+    escena(LUG.calle, { t, px: 0, z: 1 }, () => {
+      obj('puerta', { x: sx(260), y: PISO - 30, t, k: 1.0, abierta: 0.6 * cl((u - 2) / 0.6) * (1 - cl((u - 3.4) / 0.4)) });
+      g.globalAlpha = 1 - cl((u - 3.0) / 0.4); if (!entra) { const d = { t, x, y: PISO + 40, k: 1.1, giro: 0.95, pose: C.caminar(t, { dir: 1, amp: 0.6 }), manoD: [40, -100] }; per('doctor', d); silueta(() => enMano(d, 'manoD', 'maletin', { k: 0.5, dy: 56 }), 1); } g.globalAlpha = 1;
+    });
+    etiqueta('ESA MAÑANA', ent(t, tDoc + 0.4));
+    titular('HAROLD SHIPMAN · SU MÉDICO', ent(t, T('el doctor Harold Shipman')), { tam: V ? 52 : 74 });
+  });
+  toma(tLe, (t, u) => {
+    escena(LUG.casa_a, { t, px: u * 5, z: 1.05 + u * 0.01, fx: sx(-60) }, () => {
+      obj('mesita', { x: sx(200), y: PISO + 60, t, k: 1.0 });
+      obj('telefono', { x: sx(200), y: PISO + 60 - 90 * ESC, t, k: 0.6, descolgado: 1 });
+      const a = { t, x: sx(-60), y: PISO + 40, k: 1.15, giro: 0.2, cara: C.mezclarCara2('neutral', 'triste', ent(t, tLe + 1.5, 0.6)), mira: [0.2, 0.3], manoI: [-30, -300] };
+      per('angela', a); enMano(a, 'manoI', 'auricular', { k: 0.8, dy: 40 });
+    });
+  });
+  toma(tCert, (t, u) => {
+    inserto(t, [{ id: 'certificado' }], LUG.casa_a, 0.45);
+  });
+  toma(tAntes, (t, u) => {
+    escena(LUG.casa_k, { t, px: u * 6, z: 1 }, () => {
+      obj('ventana', { x: sx(-420), y: PISO - 340, t, k: 0.85 });
+      obj('mesita', { x: sx(200), y: PISO + 60, t, k: 1.0 });
+      obj('telefono', { x: sx(200), y: PISO + 60 - 90 * ESC, t, k: 0.6, descolgado: 1 });
+      const k = { t, x: sx(-40), y: PISO + 40, k: 1.12, giro: 0.25, cara: 'feliz', mira: [0.3, 0], manoI: [-30, -300] };
+      per('kathleen', k); enMano(k, 'manoI', 'auricular', { k: 0.8, dy: 40 });
+    });
+    sepia(0.6);
+    etiqueta('DÍAS ANTES', ent(t, tAntes + 0.2));
+  });
+  toma(tEnt, (t, u) => {
+    escena(LUG.cementerio, { t, px: u * 8, z: 1 }, () => {
+      obj('arbol', { x: sx(-420), y: PISO - 40, t, k: 0.8 });
+      [[-200, 0.55], [250, 0.5], [420, 0.45]].forEach(([dx, k]) => obj('lapida', { x: sx(dx), y: PISO - 70, t, k }));
+      silueta(() => [-60, 40, 140].forEach((dx, i) => per(i % 2 ? 'vecino' : 'vecina', { t: t + i, x: sx(dx), y: PISO - 30, k: 0.6, giro: 0.3 })), 0.9);
+      obj('lapida', { x: sx(70), y: PISO + 90, t, k: 0.9 });
+    });
+    C.niebla(g, t, { k: 0.8, y: PISO - 150 });
+  });
+
+  const tPocos = T('Pocos días después, una oficina'), tNunca = T('Nunca habían trabajado'), tCopia = T('Y tienen una copia');
+  toma(tPocos, (t, u) => {
+    escena(LUG.casa_a, { t, px: u * 5, z: 1.05 }, () => {
+      obj('mesita', { x: sx(200), y: PISO + 60, t, k: 1.0 });
+      const contesta = u > 1.6;
+      obj('telefono', { x: sx(200), y: PISO + 60 - 90 * ESC, t, k: 0.6, suena: !contesta, descolgado: contesta ? 1 : 0 });
+      const a = { t, x: sx(-60), y: PISO + 40, k: 1.15, giro: 0.4, cara: contesta ? 'sorpresa' : 'neutral', mira: [0.8, 0.2], manoI: contesta ? [-30, -300] : undefined };
+      per('angela', a); if (contesta) enMano(a, 'manoI', 'auricular', { k: 0.8, dy: 40 });
+    });
+  });
+  toma(tNunca, (t, u) => {
+    oficinaH(t, u, top => { obj('telefono', { x: sx(-160), y: top, t, k: 0.55, descolgado: 1 }); obj('sobre', { x: sx(170), y: top, t, k: 0.8 }); });
+    etiqueta('OFICINA DE ABOGADOS · HYDE', ent(t, tNunca + 0.2), { tam: V ? 46 : 52 });
+  });
+  toma(tCopia, (t, u) => {
+    inserto(t, [{ id: 'calendario', x: V ? CX - 250 : CX - 380, y: V ? 960 : 900, k: V ? 1.2 : 2.0, marca: suave((t - T('el mismo día en que murió.')) / 0.6) }, { id: 'testamento', x: V ? CX + 250 : CX + 360, y: V ? 980 : 940, k: V ? 1.3 : 2.2, rot: 4 }], LUG.oficina_h);
+  });
+
+  const tWar = T('La oficina de Angela, en Warwick'), tNuevo = T('El nuevo deja todo al doctor Shipman.'), tNi = T('Ni Angela ni sus hijos');
+  toma(tWar, (t, u) => {
+    oficinaW(t, u, () => {
+      obj('escritorio', { x: sx(-120), y: PISO + 60, t, k: 1.0 });
+      const a = { t, x: sx(250), y: PISO + 50, k: 1.1, giro: 0.5, cara: 'apretada', mira: [0.7, 0.2], manoD: [90, -170] };
+      per('angela', a); enMano(a, 'manoD', 'carpeta', { k: 0.45, dy: 20 });
+    });
+    etiqueta('WARWICK · TESTAMENTO DE 1986', ent(t, tWar + 0.5), { tam: V ? 44 : 52 });
+  });
+  toma(tNuevo, (t, u) => {
+    const P = V ? [[CX - 245, 1080], [CX + 245, 1080]] : [[CX - 330, 960], [CX + 330, 960]], k = V ? 1.55 : 2.4;
+    inserto(t, [{ id: 'original', x: P[0][0], y: P[0][1], k, rot: -3 }, { id: 'testamento', x: P[1][0], y: P[1][1], k, rot: 3 }]);
+    texto('ORIGINAL · 1986', P[0][0], P[0][1] - 200 * ESC * k - 40, 1, { tam: V ? 34 : 44, color: '#ffe7a8' }); texto('NUEVO', P[1][0], P[1][1] - 200 * ESC * k - 40, 1, { tam: V ? 34 : 44, color: '#ffb4a2' });
+    const kk = ESC * k; aro(P[1][0] + 5 * kk, P[1][1] - 134 * kk, 34 * kk, ent(t, tNuevo + 0.6, 0.3));
+    sello('NADA', P[1][0], P[1][1] - 90 * kk, ent(t, tNi + 0.4, 0.25), { tam: V ? 70 : 84 });
+  });
+})();
+
+/* Parte 2 · Lo que vio Angela (S07–S13). */
+const escritorioAngela = (t, u, o = {}) => oficinaW(t, u, () => {
+  obj('escritorio', { x: sx(0), y: PISO + 60, t, k: 1.05, dentro: [(gg, a) => H.per('angela').dibujar(gg, { ...a, t, cara: o.cara || 'neutral', pose: { sentado: true, pi: [10, 0], pd: [10, 0], cab: 10 }, mira: [0, 0.8], manoD: [55, -160], manoI: [-55, -160] })] });
+  const top = PISO + 60 - 178 * ESC * 1.05;
+  (o.hojas || ['testamento']).forEach((id, i, arr) => obj(id, { x: sx((i - (arr.length - 1) / 2) * 120), y: top + 6, t, k: 0.42 }));
+  if (!V) obj('lampara', { x: sx(-330), y: PISO + 20, t, k: 0.9 });
+}, o.L);
+const lapidaNiebla = (t, u, o = {}) => {
+  escena(o.noche ? LUG.cementerio_n : LUG.cementerio, { t, px: u * 6, z: (o.z ?? 1.1) + u * (o.dz ?? 0.02), fx: sx(0) }, () => {
+    obj('arbol', { x: sx(-430), y: PISO - 60, t, k: 0.75 });
+    [[-260, 0.45], [300, 0.5]].forEach(([dx, k]) => obj('lapida', { x: sx(dx), y: PISO - 80, t, k }));
+    obj('lapida', { x: sx(0), y: PISO + 80, t, k: 1.0 });
+  });
+  C.niebla(g, t, { k: 0.9, y: PISO - 120 });
+};
+(() => {
+  const tMal = T('El testamento nuevo está mal escrito'), tCasa = T('Menciona una sola casa'), tFirma = T('Y la firma no parece');
+  toma(tMal, (t, u) => {
+    inserto(t, [{ id: 'testamento', k: V ? 2.9 : 2.9 }]);
+    const k = ESC * (V ? 2.9 : 2.9), x = CX, y = V ? 1080 : 960;
+    aro(x - 10 * k, y - 160 * k, 46 * k, ent(t, tMal + 1.0, 0.3) * (1 - ent(t, tCasa, 0.2)));
+    aro(x + 5 * k, y - 134 * k, 30 * k, ent(t, tCasa, 0.3) * (1 - ent(t, tFirma, 0.2)));
+    texto('1 CASA', x - 90 * k, y - 220 * k, ent(t, tCasa + 0.3), { tam: V ? 56 : 60, color: '#ffb4a2' });
+    texto('TENÍA 2', x + 90 * k, y - 220 * k, ent(t, T('y Kathleen tenía dos.')), { tam: V ? 56 : 60, color: '#ffe7a8' });
+    aro(x - 6 * k, y - 36 * k, 50 * k, ent(t, tFirma, 0.3));
+  });
+
+  const tMas = T('Hay algo más.'), tEsa = T('Ese papel no parece escrito por ella.');
+  toma(tMas, (t, u) => {
+    escena(LUG.antigua, { t, px: u * 5, z: 1.05 + u * 0.01 }, () => {
+      obj('ventana_of', { x: sx(-430), y: PISO - 340, t, k: 0.8 });
+      obj('escritorio', { x: sx(20), y: PISO + 60, t, k: 1.05, dentro: [(gg, a) => H.per('kathleen_joven').dibujar(gg, { ...a, t, cara: 'tranquila', pose: { sentado: true, pi: [10, 0], pd: [10, 0], cab: 8 }, mira: [0, 0.8], manoD: [50 + Math.sin(t * 22) * 6, -240], manoI: [-50 + Math.cos(t * 19) * 6, -240] })] });
+      obj('maquina', { x: sx(20), y: PISO + 60 - 178 * ESC * 1.05 + 4, t, k: 0.45, teclea: true, hoja: 0.35 * cl(u / 6) });
+    });
+    sepia(0.7);
+    etiqueta('ESTUDIÓ PARA SECRETARIA', ent(t, T('Kathleen había estudiado para secretaria.')), { tam: V ? 46 : 54 });
+  });
+  toma(tEsa, (t, u) => { escritorioAngela(t, u, { cara: 'neutral', hojas: ['original', 'testamento'] }); });
+
+  const tPero = T('Pero Angela no se queda con la intuición.'), tPreg = T('Se pregunta si alguien quiso'), tRevisa = T('Así que revisa'), tNoSe = T('No se parecen.');
+  toma(tPero, (t, u) => {
+    escritorioAngela(t, u, { cara: 'neutral' });
+    sello('¿QUIÉN USÓ SU NOMBRE?', CX, V ? 520 : 170, ent(t, tPreg + 0.4, 0.25), { tam: V ? 52 : 64, color: '#2c3a52', rot: -4 });
+  });
+  toma(tRevisa, (t, u) => {
+    const k = V ? 1.15 : 1.9, xs = V ? [CX - 330, CX, CX + 330] : [CX - 520, CX, CX + 520], y = V ? 1000 : 920;
+    inserto(t, [{ id: 'firmas', x: xs[0], y, k, rot: -3 }, { id: 'testamento', x: xs[1], y, k }, { id: 'firmas', x: xs[2], y, k, rot: 3 }]);
+    const kk = ESC * k, lx = xs[1] + Math.sin(u * 1.4) * 260 * K;
+    H.obj('lupa').dibujar(g, { x: lx, y: y - 30 * kk + 70 * kk * 0.7, t, escala: kk * 0.7 });
+    texto('BANCO', xs[0], y - 200 * kk - 36, 1, { tam: V ? 34 : 42, color: '#ffe7a8' }); texto('BANCO', xs[2], y - 200 * kk - 36, 1, { tam: V ? 34 : 42, color: '#ffe7a8' });
+    sello('NO SE PARECEN', CX, V ? 560 : 190, ent(t, tNoSe, 0.25), { tam: V ? 62 : 74 });
+  });
+
+  const tTest = T('El testamento tiene dos testigos'), tBusca = T('Angela los busca'), tTerm = T('Cuando termina'), tFalso = T('el testamento es falso.');
+  const visita = (t, u, cual) => {
+    escena(LUG.calle, { t, px: cual * 400 + u * 10, z: 1 }, () => {
+      obj(cual ? 'puerta2' : 'puerta', { x: sx(200) + cual * 400, y: PISO - 30, t, k: 1.0, abierta: 0.7 * cl((u - 0.8) / 0.6) });
+      if (u > 1.2) silueta(() => per(cual ? 'vecina' : 'vecino', { t, x: sx(200) + cual * 400, y: PISO - 30, k: 1.0, giro: -0.4 }), 0.92);
+      per('angela', { t, x: sx(-120) + cual * 400, y: PISO + 40, k: 1.1, giro: 0.6, cara: 'neutral', mira: [0.8, 0], manoD: u < 1 ? [120, -230 + Math.abs(Math.sin(t * 9)) * 20] : undefined });
+    });
+  };
+  toma(tTest, (t, u) => { visita(t, u, 0); etiqueta('2 TESTIGOS', ent(t, tTest + 0.5)); });
+  toma(tBusca, (t, u) => { visita(t, u, 1); etiqueta('2 TESTIGOS', 1); });
+  toma(tTerm, (t, u) => {
+    escena(LUG.calle, { t, px: 900 + u * 8, z: 1.15, fx: sx(0) + 900 }, () => {
+      const a = { t, x: sx(0) + 900, y: PISO + 40, k: 1.15, giro: 0.15, cara: 'neutral', mira: [0, 0.6], manoD: [40, -160] };
+      per('angela', a); enMano(a, 'manoD', 'libreta', { k: 0.4, dy: 10, abierto: u < 2 ? 1 : 0 });
+    });
+    sello('FALSO', CX, V ? 560 : 200, ent(t, tFalso, 0.25), { tam: V ? 100 : 120 });
+  });
+
+  const tCosa = T('Pero un testamento falso es una cosa.'), tUnica = T('Y la única persona que dijo');
+  toma(tCosa, (t, u) => {
+    if (V) { lapidaNiebla(t, u, { z: 1 }); oscuro(0.25); H.obj('testamento').dibujar(g, { x: CX, y: 860, t, escala: ESC * 1.2, rot: -4 }); sello('FALSO ✓', CX, 520, ent(t, tCosa + 0.3, 0.25), { color: '#2f8a4f' }); sello('¿DE QUÉ MURIÓ?', CX, 1050, ent(t, T('Probar de qué murió su mamá'), 0.25), { tam: 60 }); }
+    else { lapidaNiebla(t, u, { z: 1 }); oscuro(0.25); H.obj('testamento').dibujar(g, { x: CX - 460, y: 900, t, escala: ESC * 1.9, rot: -4 }); sello('FALSO ✓', CX - 460, 300, ent(t, tCosa + 0.3, 0.25), { color: '#2f8a4f' }); sello('¿DE QUÉ MURIÓ?', CX + 300, 300, ent(t, T('Probar de qué murió su mamá'), 0.25)); }
+  });
+  toma(tUnica, (t, u) => {
+    lapidaNiebla(t, u, { z: 1.05 });
+    per('doctor', { t, x: sx(V ? 300 : 420), y: PISO + 140, k: 1.2, giro: -0.95 });
+  });
+
+  const tJunta = T('Angela junta lo que encontró'), tDet = T('Un detective revisa todo'), tAcusar = T('Pero la policía no puede acusar'), tSaber = T('Para saber de qué murió Kathleen'), tTumba = T('Y como ya la enterraron');
+  window.comisaria = (t, u, o = {}) => escena(LUG.comisaria, { t, px: u * 5, z: 1 + u * 0.01 }, () => {
+    obj('tablero', { x: sx(-330), y: PISO - 260, t, k: 0.55, marcas: 0 });
+    obj('escritorio_c', { x: sx(60), y: PISO + 60, t, k: 1.05, dentro: [(gg, a) => H.per('detective').dibujar(gg, { ...a, t, cara: o.cara || 'neutral', pose: { sentado: true, pi: [10, 0], pd: [10, 0], cab: o.cab ?? 0 }, mira: o.mira || [0.3, 0.6], manoD: o.manoD, manoI: o.manoI })] });
+    const top = PISO + 60 - 178 * ESC * 1.05;
+    obj('carpeta_p', { x: sx(-10), y: top + 4, t, k: 0.28, grosor: true });
+    if (o.tel) obj('telefono', { x: sx(170), y: top, t, k: 0.5, descolgado: 1 });
+    per('angela', { t, x: sx(V ? 330 : 420), y: PISO + 130, k: 1.1, giro: -0.5, cara: o.caraA || 'neutral', mira: [-0.7, 0.2] });
+  });
+  toma(tJunta, (t, u) => { comisaria(t, u); etiqueta('JULIO 1998', ent(t, tJunta + 0.6)); });
+  toma(tDet, (t, u) => { const si = Math.max(0, Math.sin((t - tDet - 2.2) * 6)) * 8 * cl(1 - (t - tDet - 3.4)); comisaria(t, u, { cab: 10 + si, mira: [0, 0.8], cara: t > tDet + 2.2 ? 'apretada' : 'neutral' }); });
+  toma(tAcusar, (t, u) => { comisaria(t, u, { tel: true, manoI: [-60, -330], caraA: 'triste' }); });
+  toma(tSaber, (t, u) => {
+    lapidaNiebla(t, u, { z: 1.05 });
+    titular('AUTOPSIA', ent(t, T('una autopsia.')), { color: '#ffe7a8' });
+  });
+  toma(tTumba, (t, u) => { lapidaNiebla(t, u, { z: 1.25, dz: 0.05, noche: true }); });
+})();
+
+/* Parte 3 · La tumba y la máquina de escribir (S14–S18). */
+const consultorio = (t, u, fn) => escena(LUG.consultorio, { t, px: u * 5, z: 1 + u * 0.01 }, () => {
+  obj('ventana_of', { x: sx(-440), y: PISO - 340, t, k: 0.8 });
+  obj('archivero', { x: sx(440), y: PISO + 20, t, k: 0.85, abierto: 1 });
+  if (fn) fn();
+});
+const carpaNoche = (t, u, o = {}) => {
+  escena(LUG.cementerio_n, { t, px: u * 6, z: o.z ?? 1, focos: [{ x: sx(0), y: PISO - 150, r: 700, fuerza: 1 }] }, () => {
+    obj('arbol', { x: sx(-440), y: PISO - 60, t, k: 0.75 });
+    if (o.coche) obj('coche', { x: sx(V ? 260 : 520) + Math.max(0, u - 1.5) * 200 * K, y: PISO + 60, t, k: V ? 0.6 : 0.75, giro: 1 });
+    obj('carpa', { x: sx(-40), y: PISO + 40, t, k: V ? 0.9 : 0.85, luz: 1 });
+    if (o.policias) silueta(() => [-380, -300, 280].forEach((dx, i) => per(i % 2 ? 'vecino' : 'detective', { t: t + i, x: sx(dx), y: PISO + 90, k: 0.95, giro: dx < 0 ? 0.5 : -0.5, manoD: [90, -170] })), 0.9);
+  });
+  if (o.policias) [-380, -300, 280].forEach((dx, i) => { const x = sx(dx) + 90 * ESC * KP({ k: 0.95 }) * 0.9 + (dx > 0 ? -180 * K : 0), y = PISO + 90 - 170 * ESC * KP({ k: 0.95 }); g.save(); g.globalCompositeOperation = 'screen'; const gr = g.createRadialGradient(x, y, 4, x, y, 160); gr.addColorStop(0, 'rgba(255,240,190,0.75)'); gr.addColorStop(1, 'rgba(255,240,190,0)'); g.fillStyle = gr; g.fillRect(x - 160, y - 160, 320, 320); g.restore(); });
+};
+(() => {
+  const tAbren = T('Abren la tumba de Kathleen'), tNing = T('Ningún oficial del equipo'), tMient = T('Mientras esperan los resultados');
+  toma(tAbren, (t, u) => { carpaNoche(t, u, { coche: true }); etiqueta('EXHUMACIÓN', ent(t, tAbren + 0.5)); });
+  toma(tNing, (t, u) => { carpaNoche(t, u, { policias: true, z: 1.05 }); });
+  toma(tMient, (t, u) => {
+    consultorio(t, u, () => {
+      obj('escritorio_c', { x: sx(-60), y: PISO + 60, t, k: 1.0 });
+      obj('maquina', { x: sx(-60), y: PISO + 60 - 178 * ESC * 1.0 + 4, t, k: 0.55 });
+      const d = { t, x: sx(V ? 280 : 300), y: PISO + 60, k: 1.1, giro: 0.6, cara: 'neutral', mira: [0.9, 0.2], manoD: [110, -190] };
+      per('detective', d); enMano(d, 'manoD', 'carpeta_p', { k: 0.4, dy: 30 });
+    });
+    etiqueta('CONSULTORIO DE SHIPMAN', ent(t, T('registran el consultorio') + 0.3), { tam: V ? 46 : 54 });
+  });
+
+  const tMaq = T('En su consultorio, una máquina de escribir.'), tPer = T('Los peritos la comparan'), tNoto = T('Lo que Angela notó'), tHue = T('Y en el papel hay huellas'), tNin = T('Las de Kathleen, ninguna.');
+  toma(tMaq, (t, u) => {
+    consultorio(t, u, () => {
+      obj('escritorio_c', { x: sx(0), y: PISO + 80, t, k: 1.3 });
+      obj('maquina', { x: sx(0), y: PISO + 80 - 178 * ESC * 1.3 + 4, t, k: 0.9 });
+    });
+    aro(sx(0), PISO + 80 - 178 * ESC * 1.3 - 70 * ESC * 0.9, 150 * ESC * 0.9, ent(t, tMaq + 0.8, 0.4));
+  });
+  toma(tPer, (t, u) => {
+    const k = V ? 1.5 : 2.2, xs = V ? [CX - 250, CX + 250] : [CX - 330, CX + 330], y = V ? 1050 : 940;
+    inserto(t, [{ id: 'maquina', x: CX, y: V ? 600 : 360, k: V ? 0.75 : 0.7, hoja: 0.8 }], LUG.lab, 0.4);
+    H.obj('testamento').dibujar(g, { x: xs[0], y, t, escala: ESC * k, rot: -2 });
+    H.obj('testamento').dibujar(g, { x: xs[1], y, t, escala: ESC * k, rot: 2 });
+    texto('TESTAMENTO', xs[0], y - 200 * ESC * k - 34, 1, { tam: V ? 32 : 40, color: '#ffe7a8' }); texto('PRUEBA', xs[1], y - 200 * ESC * k - 34, 1, { tam: V ? 32 : 40, color: '#ffe7a8' });
+    sello('COINCIDE', CX, V ? 1300 : 160, ent(t, T('es la misma.'), 0.25), { color: '#2f8a4f', tam: V ? 80 : 90 });
+  });
+  toma(tNoto, (t, u) => { escritorioAngela(t, u, { cara: 'neutral', hojas: ['original', 'testamento'] }); });
+  toma(tHue, (t, u) => {
+    inserto(t, [{ id: 'testamento', huellas: suave((t - tHue - 0.3) / 0.6), k: V ? 2.2 : 2.5, x: V ? CX : CX - 320 }], LUG.lab, 0.55);
+    const x0 = V ? CX : CX + 420, y0 = V ? 1460 : 520;
+    texto('HUELLAS DE SHIPMAN  ✓', x0, y0, ent(t, tHue + 0.6), { tam: V ? 44 : 50, color: '#ffe7a8' });
+    texto('HUELLAS DE KATHLEEN  —', x0, y0 + (V ? 80 : 90), ent(t, tNin), { tam: V ? 44 : 50, color: '#ffb4a2' });
+  });
+
+  const tMan = T('Esa mañana, Shipman había ido'), tRes = T('Llegan los resultados del laboratorio'), tMorf = T('sobredosis de morfina'), tDec = T('El certificado decía vejez.');
+  toma(tMan, (t, u) => {
+    escena(LUG.calle, { t, px: 0, z: 1 }, () => {
+      obj('puerta', { x: sx(260), y: PISO - 30, t, k: 1.0, abierta: 0 });
+      const d = { t, x: sx(-60), y: PISO + 40, k: 1.1, giro: 0.95, manoD: [40, -100] }; per('doctor', d); silueta(() => enMano(d, 'manoD', 'maletin', { k: 0.5, dy: 56 }), 1);
+    });
+    oscuro(0.35);
+    const pts = ['MAÑANA: VISITA', 'HORAS DESPUÉS', 'LA ENCUENTRAN'];
+    pts.forEach((p, i) => texto(p, V ? CX : 360 + i * 600, V ? 420 + i * 110 : 150, ent(t, tMan + 0.6 + i * 0.9), { tam: V ? 50 : 52, color: i === 2 ? '#ffb4a2' : '#ffe7a8' }));
+  });
+  toma(tRes, (t, u) => {
+    escena(LUG.lab, { t, px: u * 5, z: 1.02 + u * 0.01, focos: [{ x: sx(0), y: PISO - 300, r: 800, fuerza: 0.8 }] }, () => {
+      obj('mesa', { x: sx(-120), y: PISO + 80, t, k: 1.0 });
+      obj('tubo', { x: sx(-180), y: PISO + 80 - 150 * ESC, t, k: 0.7 });
+      obj('lupa', { x: sx(-20), y: PISO + 80 - 150 * ESC + 4, t, k: 0.6 });
+      per('perito', { t, x: sx(V ? 300 : 330), y: PISO + 60, k: 1.1, giro: -0.4, cara: 'neutral', mira: [-0.6, 0.5] });
+    });
+    titular('MORFINA', ent(t, tMorf), { color: '#ffb4a2', tam: V ? 110 : 130 });
+  });
+  toma(tDec, (t, u) => { inserto(t, [{ id: 'certificado', tachado: suave((t - tDec - 0.4) / 0.6) }], LUG.lab, 0.45); });
+
+  const tResp = T('Shipman responde'), tNotas = T('Pero las notas que lo prueban'), tCompu = T('La computadora guardó');
+  toma(tResp, (t, u) => {
+    consultorio(t, u, () => {
+      obj('escritorio_c', { x: sx(60), y: PISO + 60, t, k: 1.0 });
+      obj('monitor', { x: sx(60), y: PISO + 60 - 178 * ESC + 4, t, k: 0.6 });
+      per('doctor', { t, x: sx(V ? -280 : -330), y: PISO + 120, k: 1.15, giro: 0.95 });
+    });
+    sello('«ERA ADICTA»', CX, V ? 520 : 170, ent(t, T('era adicta en secreto.'), 0.25), { tam: V ? 64 : 74, color: '#5a5a62', rot: -3 });
+  });
+  toma(tNotas, (t, u) => {
+    escena(LUG.consultorio, { t, px: 0, z: 1 }, () => {});
+    oscuro(0.55);
+    H.obj('monitor').dibujar(g, { x: CX, y: V ? 1120 : 1000, t, escala: V ? 2.5 : 3.0, resalta: ent(t, tCompu, 0.4) });
+    texto('MURIÓ EL 24/06/98', CX, V ? 360 : 90, ent(t, tNotas + 0.6), { tam: V ? 50 : 54, color: '#ffe7a8' });
+    sello('DESPUÉS DE SU MUERTE', V ? CX : CX + 560, V ? 1330 : 560, ent(t, tCompu + 0.6, 0.25), { tam: V ? 56 : 52 });
+  });
+
+  const tSep = T('El siete de septiembre, lo arrestan.');
+  toma(tSep, (t, u) => {
+    escena(LUG.calle_alba, { t, px: u * 6, z: 1 }, () => {
+      obj('puerta_c', { x: sx(-260), y: PISO - 30, t, k: 1.0, abierta: 0 });
+      silueta(() => [180, 320].forEach((dx, i) => per(i ? 'vecino' : 'detective', { t: t + i, x: sx(dx), y: PISO + 60, k: 1.05, giro: -0.6 })), 0.88);
+      per('doctor', { t, x: sx(-60), y: PISO + 50, k: 1.05, giro: 0.95 });
+    });
+    etiqueta('7 SEP 1998 · ARRESTO', ent(t, tSep + 0.1));
+  });
+})();
+
+/* Parte 4 · Lo que había pasado antes (S19–S25) y cierre del completo. */
+const sala = (t, u, o = {}) => escena(LUG.juicio, { t, px: u * 5, z: o.z ?? 1, fx: o.fx ?? sx(0), focos: [{ x: sx(0), y: PISO - 400, r: 900, fuerza: 0.6 }] }, () => {
+  obj('juez', { x: sx(0), y: PISO - 180, t, k: V ? 0.7 : 0.8, dentro: [(gg, a) => C.iluminar(gg, g2 => H.per('vecino').dibujar(g2, { ...a, t, cara: 'neutral' }), { tinte: 'rgba(22,22,34,0.9)' })] });
+  silueta(() => { [-470, -390, -310].forEach((dx, i) => per(i % 2 ? 'vecina' : 'vecino', { t: t + i, x: sx(dx), y: PISO - 20, k: 0.85, giro: 0.5, pose: o.depie ? {} : { sentado: true, pi: [10, 0], pd: [10, 0] } })); obj('banca', { x: sx(-390), y: PISO + 20, t, k: 0.8 }); }, 0.85);
+  if (o.angela !== false) obj('estrado', { x: sx(V ? 300 : 380), y: PISO + 60, t, k: 0.75, dentro: [(gg, a) => H.per('angela').dibujar(gg, { ...a, t, cara: o.cara || 'apretada', giro: -0.5, mira: [-0.6, 0] })] });
+  if (o.evid) { obj('mesa', { x: sx(-60), y: PISO + 200, t, k: 0.8 }); const top = PISO + 200 - 150 * ESC * 0.8; obj('maquina', { x: sx(-120), y: top + 4, t, k: 0.45 }); obj('testamento', { x: sx(60), y: top + 4, t, k: 0.55 }); }
+  if (o.doctor) per('doctor', { t, x: sx(V ? -60 : -120), y: PISO + 300, k: 1.15, giro: 0.95 });
+});
+(() => {
+  const tLuz = T('Y entonces sale a la luz'), tInv = T('La policía investigó en silencio'), tTres = T('Desde ese día, Shipman mató'), tUlt = T('La última fue Kathleen.');
+  toma(tLuz, (t, u) => {
+    escena(LUG.calle, { t, px: u * 8, z: 1 }, () => {
+      obj('puerta', { x: sx(-300), y: PISO - 30, t, k: 0.95, abierta: 0 });
+      obj('puerta_c', { x: sx(320), y: PISO - 30, t, k: 0.95, abierta: 0 });
+      const d = { t, x: sx(-60), y: PISO + 50, k: 1.05, giro: 0.6, manoI: [-30, -300] }; per('doctora', d); silueta(() => enMano(d, 'manoI', 'auricular', { k: 0.8, dy: 40 }), 1);
+    });
+    etiqueta('MARZO 1998 · OTRA DOCTORA AVISA', ent(t, tLuz + 1.2), { tam: V ? 40 : 50 });
+  });
+  toma(tInv, (t, u) => {
+    inserto(t, [{ id: 'carpeta_p', k: V ? 1.9 : 2.4, grosor: true }], LUG.comisaria, 0.45);
+    sello('CERRADO · 17 ABR 1998', CX, V ? 760 : 430, ent(t, T('cerró el caso sin cargos.'), 0.25), { tam: V ? 56 : 66 });
+  });
+  toma(tTres, (t, u) => {
+    escena(LUG.espera, { t, px: u * 4, z: 1 + u * 0.02 }, () => {
+      [-300, 0, 300].forEach((dx, i) => { const a = ent(t, tTres + 1.0 + i * 0.7, 0.3); if (a > 0) { g.save(); g.globalAlpha = a; obj('silla_espera', { x: sx(dx), y: PISO + 60, t, k: 1.0 }); g.restore(); } });
+    });
+    titular('3 PERSONAS MÁS', ent(t, T('tres personas más.')), { tam: V ? 80 : 96 });
+    if (t >= tUlt) texto('KATHLEEN', sx(300), PISO + 60 - 230 * ESC, ent(t, tUlt + 0.2), { tam: V ? 46 : 54, color: '#ffe7a8' });
+  });
+
+  const tEsta = T('Esta vez, la policía revisa'), tQuince = T('Elige quince casos');
+  toma(tEsta, (t, u) => {
+    escena(LUG.comisaria, { t, px: 0, z: 1 }, () => {});
+    oscuro(0.3);
+    H.obj('tablero').dibujar(g, { x: CX, y: V ? 1100 : 1000, t, escala: V ? 1.6 : 2.2, marcas: u * 4 });
+    texto('15 CASOS', CX, V ? 380 : 90, ent(t, tQuince), { tam: V ? 70 : 80, color: '#ffe7a8' });
+  });
+  toma(T('y abre más tumbas.'), (t, u) => {
+    escena(LUG.cementerio_n, { t, px: u * 8, z: 1 }, () => {
+      [[-420, 0.4], [-150, 0.45], [130, 0.5], [400, 0.42]].forEach(([dx, k]) => obj('carpa', { x: sx(dx), y: PISO - 60, t, k: k * (V ? 0.8 : 1), luz: 0.7 }));
+    });
+    C.niebla(g, t, { k: 0.5, y: PISO - 150 });
+  });
+
+  const tJui = T('El juicio empieza en octubre.'), tPrim = T('La primera testigo es Angela.'), tCuenta = T('Cuenta cómo era su mamá'), tVio = T('Y cuenta lo que vio en ese papel.'), tDef = T('La defensa intenta separar'), tLog = T('No lo logra');
+  toma(tJui, (t, u) => {
+    sala(t, u, { doctor: true, cara: 'apretada' });
+    etiqueta('OCT 1999 · PRESTON', ent(t, tJui + 0.2));
+    titular('PRIMERA TESTIGO', ent(t, tPrim), { tam: V ? 72 : 90 });
+  });
+  toma(tCuenta, (t, u) => {
+    sala(t, u, { z: 1.4, fx: sx(V ? 300 : 380), cara: C.mezclarCara2('tranquila', 'triste', ent(t, tCuenta + 2.5, 0.6)) });
+  });
+  toma(tVio, (t, u) => {
+    sala(t, u, { evid: true, z: 1.05 });
+    if (t >= tDef) etiqueta('LA DEFENSA QUIERE SEPARAR EL CASO', ent(t, tDef + 0.2), { tam: V ? 40 : 48 });
+    sello('EL MOTIVO', CX, V ? 640 : 300, ent(t, T('el testamento falso era el motivo.'), 0.25), { tam: V ? 72 : 86 });
+  });
+
+  const tEne = T('El treinta y uno de enero'), tFals = T('y de falsificar el testamento');
+  toma(tEne, (t, u) => {
+    if (t < tFals) { sala(t, u, { depie: true, angela: false, doctor: true }); etiqueta('31 ENE 2000', ent(t, tEne + 0.2)); titular('CULPABLE · 15 ASESINATOS', ent(t, T('quince asesinatos')), { tam: V ? 54 : 78 }); }
+    else { inserto(t, [{ id: 'testamento', k: V ? 2.6 : 2.7 }], LUG.juicio, 0.45); sello('FALSIFICADO', CX, V ? 760 : 520, ent(t, tFals + 0.4, 0.25), { tam: V ? 84 : 100 }); }
+  });
+
+  const tAnios = T('Años después, una investigación pública');
+  toma(tAnios, (t, u) => {
+    g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = '#0c0d14'; g.fillRect(0, 0, W, HH); g.restore();
+    const n = Math.floor(215 * suave(u / 4.5)), cols = V ? 15 : 27, paso = V ? 52 : 56, x0 = CX - (cols - 1) * paso / 2, y0 = V ? 420 : 170;
+    for (let i = 0; i < 215; i++) { const c = i % cols, f = Math.floor(i / cols); g.fillStyle = i < n ? '#ffe7a8' : 'rgba(255,255,255,0.08)'; g.beginPath(); g.arc(x0 + c * paso, y0 + f * paso, V ? 13 : 12, 0, TAU); g.fill(); }
+    texto('AL MENOS ' + n, CX, V ? 1290 : 760, ent(t, tAnios + 0.4), { tam: V ? 96 : 110, color: '#ffffff' });
+    texto('INVESTIGACIÓN PÚBLICA', CX, V ? 1400 : 860, ent(t, tAnios + 0.8), { tam: V ? 44 : 46, color: '#ffe7a8' });
+  });
+  const tPeso = T('Quienes la conocen dicen');
+  toma(tPeso, (t, u) => {
+    escena(LUG.pasillo, { t, px: u * 4, z: 1.08 + u * 0.01 }, () => {
+      obj('ventana_of', { x: sx(-400), y: PISO - 340, t, k: 0.8 });
+      obj('banca', { x: sx(60), y: PISO + 60, t, k: 1.0, dentro: [(gg, a) => H.per('angela').dibujar(gg, { ...a, t, cara: 'triste', giro: -0.3, pose: { sentado: true, pi: [10, 0], pd: [10, 0], cab: 8 }, mira: [-0.3, 0.6], manoD: [40, -150], manoI: [-40, -150] })] });
+    });
+  });
+  const tTodo = T('Todo empezó con un papel'), tHija = T('Y con una hija que conocía');
+  toma(tTodo, (t, u) => {
+    inserto(t, [{ id: 'maquina', x: V ? CX : CX - 330, y: V ? 900 : 900, k: V ? 0.95 : 1.1 }, { id: 'testamento', x: V ? CX : CX + 360, y: V ? 1450 : 920, k: V ? 1.1 : 2.0, rot: 4 }], LUG.oficina_w_tarde, 0.3);
+  });
+  toma(tHija, (t, u) => {
+    oficinaW(t, u, () => {
+      obj('escritorio', { x: sx(160), y: PISO + 60, t, k: 1.0 });
+      const top = PISO + 60 - 178 * ESC;
+      obj('original', { x: sx(110), y: top + 4, t, k: 0.4 }); obj('testamento', { x: sx(220), y: top + 4, t, k: 0.4, rot: 4 });
+      per('angela', { t, x: sx(-220), y: PISO + 40, k: 1.1, giro: -0.7, cara: 'neutral', mira: [-0.9, -0.1] });
+    }, LUG.oficina_w_tarde);
+    const a = ent(t, T('la causa fuera vejez.', { fin: true }) + 0.3, 0.6);
+    if (a > 0) { oscuro(0.45 * a); C.rotulo(g, 'Kathleen Grundy', a, { tam: V ? 92 : 100, y: V ? 460 : 200 }); C.rotulo(g, 'Hyde · 1998', a, { tam: V ? 50 : 54, y: V ? 560 : 300, color: '#ffe7a8' }); C.rotulo(g, 'Basada en el juicio de 2000 y en la investigación pública', a, { tam: V ? 30 : 34, y: V ? 640 : 370 }); }
+  });
+  if (q('Sígueme para no perderte') == null) toma(T('la causa fuera vejez.', { fin: true }) + 3.0, (t, u) => {
+    oscuro(1, '#141019');
+    C.rotulo(g, 'Esa Es Otra Historia', ent(t, t - u + 0.1, 0.5), { tam: 96, y: HH * 0.4, color: '#ffe7a8' });
+    C.rotulo(g, 'Suscríbete para más historias reales', ent(t, t - u + 0.5, 0.5), { tam: 56, y: HH * 0.56 });
+  });
+})();
+
+/* Solo reels: entradas (partes 2–4), cierres (partes 1–3) y "sígueme". En el completo q() las salta. */
+(() => {
+  const e2 = q('Angela Woodruff es abogada.'), e2b = q('Ella ve que es falso.');
+  toma(e2, (t, u) => { escritorioAngela(t, u, { cara: 'neutral', hojas: ['original', 'testamento'] }); titular('ANGELA WOODRUFF', ent(t, e2 + 0.2), { tam: 72 }); });
+  toma(e2b, (t, u) => { inserto(t, [{ id: 'testamento' }]); sello('FALSO', CX, 560, ent(t, e2b + 0.4, 0.25), { tam: 100 }); });
+  const e3 = q('Angela Woodruff convenció a la policía'), e3b = q('Ahora abrirán su tumba');
+  toma(e3, (t, u) => { comisaria(t, u, { cab: 8, mira: [0, 0.8] }); titular('ANGELA WOODRUFF', ent(t, e3 + 0.2), { tam: 72 }); });
+  toma(e3b, (t, u) => { lapidaNiebla(t, u, { z: 1.1, noche: true }); });
+  const e4 = q('Un médico falsificó el testamento'), e4b = q('Ya está arrestado.'), e4c = q('La policía empieza a revisar');
+  toma(e4, (t, u) => { inserto(t, [{ id: 'maquina', x: CX, y: 860, k: 0.95 }, { id: 'testamento', x: CX, y: 1460, k: 1.1, rot: 4 }]); });
+  toma(e4b, (t, u) => {
+    escena(LUG.calle_alba, { t, px: u * 6, z: 1 }, () => { obj('puerta_c', { x: sx(-260), y: PISO - 30, t, k: 1.0, abierta: 0 }); per('doctor', { t, x: sx(-60), y: PISO + 50, k: 1.05, giro: 0.95 }); });
+  });
+  toma(e4c, (t, u) => { escena(LUG.comisaria, { t, px: 0, z: 1 }, () => {}); oscuro(0.3); H.obj('tablero').dibujar(g, { x: CX, y: 1100, t, escala: 1.6, marcas: 0 }); texto('?', CX, 560, ent(t, e4c + 0.3), { tam: 160, color: '#ffe7a8' }); });
+
+  const c1 = q('Algo en ese papel no cuadra.');
+  toma(c1, (t, u) => {
+    inserto(t, [{ id: 'testamento' }]);
+    const k = ESC * 2.6; H.obj('lupa').dibujar(g, { x: CX + Math.sin(u * 1.2) * 60 * k, y: 1080 - 120 * k + 70 * k * 0.9, t, escala: k * 0.9 });
+  });
+  const c2 = q('Un testamento falso no prueba un asesinato.');
+  toma(c2, (t, u) => { lapidaNiebla(t, u, { z: 1.15, noche: true }); sello('¿QUÉ VAN A ENCONTRAR?', CX, 520, ent(t, q('¿Qué van a encontrar') ?? 1e9, 0.25), { tam: 52, color: '#ffe7a8', rot: -3 }); });
+  const c3 = q('Lo arrestan por la muerte de Kathleen.');
+  toma(c3, (t, u) => {
+    escena(LUG.comisaria, { t, px: 0, z: 1 }, () => {}); oscuro(0.3);
+    H.obj('tablero').dibujar(g, { x: CX, y: 1100, t, escala: 1.6, marcas: 1 });
+    sello('¿SOLO ELLA?', CX, 520, ent(t, q('¿Es lo único') ?? 1e9, 0.25), { tam: 70, color: '#ffe7a8', rot: -3 });
+  });
+
+  for (let n = 1; n <= 4; n++) {
+    const s = q('Sígueme para no perderte', { vez: n });
+    if (s == null) continue;
+    const ult = q('Sígueme para no perderte nuevas historias.'), ultima = ult != null && Math.abs(ult - s) < 0.5;
+    toma(s, (t, u) => {
+      inserto(t, [{ id: 'maquina', x: CX, y: 1200, k: 0.9 }], LUG.oficina_w_tarde, 0.55);
+      C.rotulo(g, 'Sígueme', ent(t, s + 0.1, 0.4), { tam: 110, y: 560 });
+      C.rotulo(g, 'Esa Es Otra Historia', ent(t, s + 0.3, 0.4), { tam: 72, y: 690, color: '#ffe7a8' });
+      if (!ultima) C.rotulo(g, `Parte ${n + 1} en el perfil`, ent(t, s + 0.6, 0.4), { tam: 56, y: 800 });
+    });
+  }
+})();
+
+/* Cuadro: busca la toma vigente, la dibuja y encima pone el rótulo de historia real (inicio de cada video o reel)
+   y los subtítulos sacados de la voz. */
+TOMAS.sort((a, b) => a.ini - b.ini);
+const INICIOS = [0, q('Angela Woodruff es abogada.'), q('Angela Woodruff convenció a la policía'), q('Un médico falsificó el testamento')].filter(x => x != null);
+const FIN_VOZ = Math.max(...Object.values(C.D.bloques).map(b => b.fin));
+window.renderAt = t => {
+  g.limpiar();
+  let i = 0; while (i + 1 < TOMAS.length && TOMAS[i + 1].ini <= t) i++;
+  const tm = TOMAS[i]; g.save(); tm.fn(t, t - tm.ini, (TOMAS[i + 1] ? TOMAS[i + 1].ini : FIN_VOZ + 5) - tm.ini); g.restore();
+  g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  const ini = Math.max(...INICIOS.filter(x => x <= t + 0.01));
+  const a = cl((t - ini) / 0.3) * cl((ini + 3.0 - t) / 0.4);
+  if (a > 0) {
+    g.save(); g.globalAlpha = a; g.font = `600 ${V ? 38 : 30}px ${C.FUENTE}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    const txt = 'Historia real · reconstrucción animada' + (INICIOS.length > 1 ? ' · Parte ' + (INICIOS.indexOf(ini) + 1) : ''), w = g.measureText(txt).width + 44, y = V ? 285 : 46;
+    g.fillStyle = 'rgba(12,13,18,0.62)'; g.beginPath(); g.roundRect(CX - w / 2, y - 30, w, 60, 30); g.fill(); g.fillStyle = '#ffffff'; g.fillText(txt, CX, y + 1); g.restore();
+  }
+  oscuro(1 - cl((t - ini) / 0.35));
+  C.subtitulos(g, t, V ? { y: 1190 } : {});
+};
+window.listo = true;
+
+</script></body></html>
