@@ -13,7 +13,7 @@ H.obj('lancha').dibujar(g, { x, y, escala, rot, t, espejo, dentro: [
   (gg, a) => H.per('ana').dibujar(gg, { t, x: a.x, y: a.y, escala: a.escala, pose: { sentado: true, pi: [10, 0], pd: [10, 0] } })
 ] });
 ```
-- Tipos y lugares: ver el catálogo (`escenas/catalogo_utileria`). Hoy: sillon, silla, banca, asiento_avion, escritorio, cama, mesa, lampara, planta, puerta, ventana, tienda, fogata, bote, velero, coche, avion, arbol, roca.
+- Tipos y lugares: ver el catálogo (`escenas/catalogo_utileria`). Hoy: sillon, silla, banca, asiento_avion, escritorio, cama, mesa, lampara, planta, puerta, ventana, tienda, fogata, bote, velero, coche, avion, arbol, roca; desde Mary Anning: hoja (dibujo plesiosaurio|hueso|carta|articulo, `trazo` 0–1), libro (`abierto`), canasta (`lleno`), martillo (origen en la mano), amonita, craneo, ictiosaurio y plesiosaurio (`revela` 0–1, `losa`), vela (`encendida`), bulto (bebé), caja, carreta (`giro`), sobre, monedas (`cuantas`), vitral, vitrina (1 lugar), perro (`camina`).
 - `dentro` lleva una función por lugar (o `null`). El objeto dibuja: atrás → ocupantes recortados → frente. No hay que recortar nada a mano.
 - Pasar `color`, `plazas`, `ancho`… al dibujar da error a propósito: se cambian en `C.historia`.
 - Opciones al dibujar que sí cambian con el tiempo: `abierta` (puerta, 0 a 1), `giro` (ruedas del coche), `cinturon` (asiento de avión), `t`.
