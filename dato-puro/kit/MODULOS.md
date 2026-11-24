@@ -67,6 +67,16 @@ Demo: `galeria/paisaje` (las 9, una tras otra) y `galeria/objetos`.
 - Suelta: `K.transicion(g, tipo, u, {color})` con `u` de 0 a 1.
 - No repetir la misma transición dos veces seguidas en un video ni usar el mismo juego que en el video anterior.
 
+## mod/vitrina.js: acabado de anuncio de producto (no necesita THREE, 24 nov 2026)
+Inspirado en un anuncio de concepto hecho con código (celular flotando con interfaz real, titulares palabra por palabra, resplandor que cambia de color). Demo: `galeria/vitrina` (8 s). Cargar después de `__MOD:iconos__` si la pantalla usa íconos.
+- `K.resplandor(BG, t, [{t:0, c:['#ff2a55','#7a1cff']}, {t:K.S('02'), c:[…]}], {fuerza, manchas, vineta, cambio})`: fondo negro con 3 manchas de luz que flotan; al llegar al `t` de cada tramo pasa a sus colores en 0.8 s. Un tramo por parte del guion.
+- `K.titular(OV, 'línea 1\nlínea 2', t, t0, {hasta, resalta:['palabra'], colorResalta, fs:82, y:330, paso:0.09})`: cada palabra entra de borrosa a nítida y sube un poco; sale con desenfoque. Máximo ~6 palabras: es el titular del momento, no un párrafo. `resalta` en minúsculas y sin signos.
+- `CEL = K.celular({color, borde, giroMax, grosor})` (una vez, fuera de `renderAt`) y `CEL.dibujar(OV, t, {x, y, escala:0.68, giro:-1…1, incl:grados, colorBrillo, pantalla:(g, t, W, H) => {…}})`. La pantalla es un lienzo de 780×1690 donde se dibuja la interfaz; el giro usa perspectiva real (franjas), con canto visible, reflejo que se desliza y brillo debajo. Mover `giro` lento (0.3 → −0.3 en 1–2 s) y una oscilación pequeña en `y` e `incl`: así se ve vivo.
+- `K.ui` para la pantalla: `barra(g, W)`, `titulo(g, s, y, {fs})`, `txt(g, s, x, y, fs, color, peso, al)`, `fila(g, W, y, {icono, colorIcono, texto, sub, valor})`, `tarjeta(g, x, y, w, h, {colores:[a,b], texto})`, `boton(g, x, y, w, h, s)`, `mapa(g, W, H, t, {progreso, ruta:[[x,y]…], punto:[x,y], dx, dy})`, `aviso(g, W, t, t0, {titulo, texto, icono, hasta})` (notificación que baja), `senal(g, x, y, nivel)`. Colores en `K.ui.C`.
+- Cuidado: nada de logos ni interfaces reales de apps (Apple, Google Maps, WhatsApp): la interfaz es genérica e inventada; si se parece a una real, rotular "recreación". Hora de la barra: 12:30 (no 9:41, que es la de los anuncios de Apple).
+- Render: ~2 s por cuadro por proceso en la nube (desenfoque del titular y resplandores de pantalla completa): la demo de 8 s tardó 7 min 48 s con 2 procesos; un video de 45 s, unos 45 min. En la laptop con `KIT_GL=gpu` debería ser bastante menos (no medido).
+- Subtítulos: el celular a escala 0.68 baja hasta y≈1680 y queda bajo los subtítulos; usar estilo `caja` o `limpio` (con sombra) para que se lean encima.
+
 ## mod/objetos.js: objetos 3D frecuentes
 Demo: `galeria/objetos` (en estilo tinta). `const OB = K.objetos()` da materiales estándar; `K.objetos({pieza: TI.pieza})` los dibuja con contorno de tinta. Todos están en metros reales, con el origen en el piso (o en el centro si son de mano), y devuelven `{g, …partes}`.
 - Grandes: `OB.coche({color, freno})` → `rodar(distancia)`; `OB.casa({ancho, fondo, alto, color, colorTecho})`; `OB.persona({color, piel, estatura})` → `caminar(fase)` (muñeco sin cara: no representa a nadie real); `OB.arbol({pino, escala})`; `OB.refri()` → `abrir(u)`; `OB.tele({pantalla: (ctx, w, h) => …})` → `redibujar(f)`; `OB.mesa()` → `alto`; `OB.pared({ancho, alto})`.

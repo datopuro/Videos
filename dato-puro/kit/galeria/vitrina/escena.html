@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__KIT__</script>
+<script>__MOD:iconos__</script>
+<script>__MOD:vitrina__</script>
+<script>
+const D = __DATA__; K.datos(D);
+const BG = K.capa2D('bg', 1), OV = K.capa2D();
+const U = K.ui, CEL = K.celular();
+const TR = [{ t: 0, c: ['#ff2a55', '#7a1cff', '#ff2a55'] }, { t: 2.8, c: ['#1f6bff', '#00c2d1', '#3d2bff'] }, { t: 5.5, c: ['#ff7a1a', '#ff2a55', '#ffb020'] }];
+const sats = [['GPS 12', 4], ['GPS 25', 3], ['Galileo 7', 4], ['GLONASS 3', 2], ['GPS 31', 1]];
+
+const pantalla = t => (g, _, W, H) => {
+  if (t < 5.5) {
+    U.mapa(g, W, H, t, { ruta: [[430, 1000], [470, 820], [360, 640], [560, 470], [600, 300]], progreso: t < 3 ? 0 : K.ease((t - 3) / 2.2), dy: K.lerp(0, 120, K.ease(t / 8)) });
+    U.barra(g, W);
+    U.aviso(g, W, t, 3.4, { titulo: 'Sin conexión', texto: 'La ubicación sigue funcionando', icono: 'wifi-off', colorIcono: '#ff9f0a', hasta: 5.2 });
+  } else {
+    g.fillStyle = U.C.fondo; g.fillRect(0, 0, W, H); U.barra(g, W);
+    U.titulo(g, 'Satélites', 210, { fs: 76 });
+    U.txt(g, 'recibiendo señal ahora', 44, 280, 34, U.C.tenue, 500);
+    sats.forEach(([n, s], i) => { const a = K.ap(t, 5.7 + i * 0.12, 0.3); g.globalAlpha = a; U.fila(g, W, 420 + i * 132 + (1 - a) * 30, { icono: 'satellite', colorIcono: '#ff7a1a', texto: n, sub: 'en órbita a ~20 000 km' }); U.senal(g, W - 110, 430 + i * 132, s); g.globalAlpha = 1; });
+    const c = K.ap(t, 6.5, 0.5); g.globalAlpha = c; U.tarjeta(g, 44, 1150 + (1 - c) * 40, W - 88, 300, { colores: ['#ff7a1a', '#ff2a55'], texto: 'Con 4 satélites ya sabe dónde estás', fs: 36 }); U.txt(g, '4', 90, 1250 + (1 - c) * 40, 120, '#fff', 900); g.globalAlpha = 1;
+  }
+};
+
+window.renderAt = t => {
+  K.resplandor(BG, t, TR);
+  OV.limpiar();
+  const ent = K.easeOut(t / 1.1);
+  const giro = t < 2.8 ? K.lerp(0.75, 0.28, K.ease3(t / 2.4)) : t < 5.5 ? K.lerp(0.28, -0.32, K.ease3((t - 2.8) / 1.2)) : K.lerp(-0.32, 0.18, K.ease3((t - 5.5) / 1.3));
+  const col = t < 2.8 ? '#ff2a55' : t < 5.5 ? '#1f6bff' : '#ff7a1a';
+  CEL.dibujar(OV, t, { x: 540, y: K.lerp(1600, 1110, ent) + Math.sin(t * 1.3) * 10, escala: 0.68, giro, incl: Math.sin(t * 0.8) * 2, colorBrillo: col, pantalla: pantalla(t) });
+  K.titular(OV, 'Tu celular sabe\ndónde estás', t, 0.2, { hasta: 2.6, resalta: ['dónde', 'estás'], colorResalta: '#ff6b86' });
+  K.titular(OV, 'aunque no tengas\ninternet.', t, 2.9, { hasta: 5.3, resalta: ['internet'], colorResalta: '#6fd3ff' });
+  K.titular(OV, 'Solo escucha\nsatélites.', t, 5.6, { resalta: ['satélites'], colorResalta: '#ffb020' });
+  K.txt(OV, 'demo · módulo vitrina', 540, 1870, 24, 'rgba(255,255,255,0.35)', 1, 500);
+};
+window.listo = true;
+</script></body></html>
