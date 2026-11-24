@@ -1,0 +1,26 @@
+<!doctype html>
+<html><head><meta charset="utf-8"></head><body>
+<script>__KIT__</script>
+<script>__MOD:iconos__</script>
+<script>__MOD:vitrina__</script>
+<script>
+const D = __DATA__; K.datos(D);
+const BG = K.capa2D('bg', 1), OV = K.capa2D(), U = K.ui;
+const P = {
+  tableta: K.dispositivo('tableta'), monitor: K.dispositivo('monitor'), tele: K.dispositivo('tele'),
+  reloj: K.dispositivo('reloj', { corona: true }), tarjeta: K.dispositivo('tarjeta', { color: '#1d4ed8' }), placa: K.dispositivo('placa')
+};
+const barras = (g, W, H, t, col) => { [0.4, 0.7, 0.55, 0.9, 0.65].forEach((v, i) => { const h = H * 0.6 * v * K.ap(t, 0.2 + i * 0.1, 0.6); g.fillStyle = i === 3 ? col : 'rgba(255,255,255,0.25)'; U.rr(g, W * (0.1 + i * 0.17), H * 0.85 - h, W * 0.12, h, 12); g.fill(); }); };
+window.renderAt = t => {
+  K.resplandor(BG, t, [{ t: 0, c: ['#3d2bff', '#00c2d1'] }]); OV.limpiar();
+  const gi = Math.sin(t * 0.9) * 0.5;
+  P.tableta.dibujar(OV, t, { x: 300, y: 430, escala: 0.3, giro: gi, colorBrillo: '#00c2d1', pantalla: (g, _, W, H) => { U.barra(g, W); U.titulo(g, 'Consumo', 200, { fs: 90 }); barras(g, W, H, t, '#ff3b5c'); } });
+  P.monitor.dibujar(OV, t, { x: 780, y: 470, escala: 0.3, giro: -gi, colorBrillo: '#3d2bff', pantalla: (g, _, W, H) => { U.mapa(g, W, H, t, { progreso: (t % 3) / 3, ruta: [[100, 800], [500, 500], [900, 600], [1400, 150]] }); } });
+  P.tele.dibujar(OV, t, { x: 540, y: 960, escala: 0.42, giro: gi * 0.6, colorBrillo: '#00c2d1', pantalla: (g, _, W, H) => { const gr = g.createLinearGradient(0, 0, W, H); gr.addColorStop(0, '#ff7a1a'); gr.addColorStop(1, '#7a1cff'); g.fillStyle = gr; g.fillRect(0, 0, W, H); U.txt(g, 'MODO ESPERA', W / 2, H / 2, 120, '#fff', 900, 'center'); } });
+  P.reloj.dibujar(OV, t, { x: 230, y: 1420, escala: 0.42, giro: -gi, colorBrillo: '#ff3b5c', pantalla: (g, _, W, H) => { U.txt(g, '72', W / 2, H / 2 - 20, 150, '#ff3b5c', 900, 'center'); U.txt(g, 'lpm', W / 2, H / 2 + 90, 50, U.C.tenue, 600, 'center'); } });
+  P.tarjeta.dibujar(OV, t, { x: 560, y: 1450, escala: 0.38, giro: gi, colorBrillo: '#3d2bff', pantalla: (g, _, W, H) => { const gr = g.createLinearGradient(0, 0, W, H); gr.addColorStop(0, '#1d4ed8'); gr.addColorStop(1, '#7c3aed'); g.fillStyle = gr; g.fillRect(0, 0, W, H); U.rr(g, 70, 170, 120, 90, 14); g.fillStyle = '#e8c766'; g.fill(); if (K.ico) K.ico(g, 'wifi', 260, 215, 60, { color: '#fff' }); U.txt(g, '•••• 4417', 70, 400, 56, '#fff', 700); } });
+  P.placa.dibujar(OV, t, { x: 880, y: 1440, escala: 0.3, giro: -gi, brillo: false, pantalla: (g, _, W, H) => { U.txt(g, 'RECIBO DE LUZ', 60, 110, 64, '#1d1b18', 900); for (let i = 0; i < 7; i++) { g.fillStyle = 'rgba(29,27,24,0.18)'; g.fillRect(60, 220 + i * 110, W - 120 - (i % 3) * 120, 34); } U.txt(g, '$ 1,250', W - 60, H - 140, 90, '#c0392b', 900, 'right'); } });
+  K.txt(OV, 'tableta · monitor · tele · reloj · tarjeta · placa', 540, 1840, 30, 'rgba(255,255,255,0.5)', 1, 600);
+};
+window.listo = true;
+</script></body></html>

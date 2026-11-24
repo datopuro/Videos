@@ -1,7 +1,7 @@
 /* vitrina: acabado de anuncio de producto para Dato Puro (24 nov 2026).
    - K.resplandor(g, t, tramos, o): fondo negro con manchas de luz que flotan y cambian de color por tramo del guion.
    - K.titular(g, texto, t, t0, o): titular que entra palabra por palabra, de borroso a nítido, y sale suave.
-   - K.celular(o): celular con pantalla animada, giro en 3D (perspectiva real por franjas), canto, reflejo y brillo debajo.
+   - K.dispositivo(tipo, o): celular, tableta, monitor, tele, reloj, tarjeta o placa (papel, recibo, letrero) con contenido animado, giro en 3D (perspectiva real por franjas), canto, reflejo y brillo debajo. K.celular(o) = K.dispositivo('celular', o).
    - K.ui: piezas para dibujar la pantalla (barra, título, fila, tarjeta, botón, mapa, aviso, señal).
    Referencias:
    https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/filter : desenfoque por palabra (filter = 'blur(px)') en el titular.
@@ -119,42 +119,63 @@
     senal(g, x, y, nivel, o = {}) { for (let i = 0; i < 4; i++) { g.fillStyle = i < nivel ? (o.color || K.ui.C.verde) : 'rgba(255,255,255,0.15)'; K.ui.rr(g, x + i * 16, y - i * 9, 11, 14 + i * 9, 3); g.fill(); } }
   };
 
-  K.celular = (o = {}) => {
-    const PW = o.anchoPantalla ?? 780, PH = o.altoPantalla ?? 1690, B = o.bisel ?? 26, R = o.radio ?? 118;
-    const W = PW + B * 2, H = PH + B * 2;
+  const TIPOS = {
+    celular: { pw: 780, ph: 1690, bisel: 26, radio: 118, isla: true },
+    tableta: { pw: 1240, ph: 1700, bisel: 44, radio: 74, camara: true },
+    monitor: { pw: 1600, ph: 900, bisel: 22, radio: 20, pie: true, grosor: 22 },
+    tele: { pw: 1800, ph: 1012, bisel: 14, radio: 10, patas: true, grosor: 18 },
+    reloj: { pw: 420, ph: 500, bisel: 34, radio: 120, correa: true, grosor: 40 },
+    tarjeta: { pw: 856, ph: 540, bisel: 0, radio: 42, grosor: 6, fondo: null },
+    placa: { pw: 900, ph: 1200, bisel: 0, radio: 18, grosor: 4, fondo: '#f4efe6' }
+  };
+  K.dispositivo = (tipo = 'celular', o = {}) => {
+    const T0 = TIPOS[tipo]; if (!T0) throw new Error(`K.dispositivo: tipo "${tipo}" no existe; usa ${Object.keys(TIPOS).join(', ')}`);
+    const T = Object.assign({}, T0, o);
+    const PW = T.ancho ?? T.pw, PH = T.alto ?? T.ph, B = T.bisel, R = T.radio;
+    const W = PW + B * 2, Hc = PH + B * 2;
+    const extraArr = T.correa ? Hc * 0.55 : 0, extraAb = T.correa ? Hc * 0.55 : T.pie ? Hc * 0.42 : T.patas ? Hc * 0.12 : 0;
+    const H = Hc + extraArr + extraAb, y0 = extraArr;
     const pant = K.lienzo(PW, PH), gp = pant.getContext('2d');
     const plano = K.lienzo(W, H), gq = plano.getContext('2d');
-    const cuerpo = o.color || '#2b2b31', borde = o.borde || '#5a5a63';
-    const N = o.franjas ?? 120;
+    const cuerpo = T.color || (tipo === 'tarjeta' || tipo === 'placa' ? '#ffffff' : '#2b2b31'), borde = T.borde || '#5a5a63';
+    const N = T.franjas ?? 120, fondo = T.fondo === undefined ? K.ui.C.fondo : T.fondo;
+    const rr = K.ui.rr;
     return {
       pantalla: gp, W: PW, H: PH,
       dibujar(g, t, d = {}) {
-        gp.setTransform(1, 0, 0, 1, 0, 0); gp.globalAlpha = 1; gp.filter = 'none';
-        gp.fillStyle = K.ui.C.fondo; gp.fillRect(0, 0, PW, PH);
+        gp.setTransform(1, 0, 0, 1, 0, 0); gp.globalAlpha = 1; gp.filter = 'none'; gp.clearRect(0, 0, PW, PH);
+        if (fondo) { gp.fillStyle = fondo; gp.fillRect(0, 0, PW, PH); }
         if (d.pantalla) { gp.save(); d.pantalla(gp, t, PW, PH); gp.restore(); }
         gq.setTransform(1, 0, 0, 1, 0, 0); gq.clearRect(0, 0, W, H);
-        K.ui.rr(gq, 0, 0, W, H, R); gq.fillStyle = cuerpo; gq.fill();
-        gq.lineWidth = 6; gq.strokeStyle = borde; gq.stroke();
-        gq.save(); K.ui.rr(gq, B, B, PW, PH, R - B); gq.clip(); gq.drawImage(pant, B, B);
+        const metal = mezcla(cuerpo, '#000000', 0.25);
+        if (T.correa) { const cw = W * 0.62, gr = gq.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, mezcla(T.colorCorrea || '#3a3a44', '#000000', 0.4)); gr.addColorStop(0.5, T.colorCorrea || '#3a3a44'); gr.addColorStop(1, mezcla(T.colorCorrea || '#3a3a44', '#000000', 0.4)); gq.fillStyle = gr; rr(gq, (W - cw) / 2, 0, cw, H, 40); gq.fill(); }
+        if (T.pie) { gq.fillStyle = metal; gq.beginPath(); gq.moveTo(W / 2 - 60, y0 + Hc - 10); gq.lineTo(W / 2 + 60, y0 + Hc - 10); gq.lineTo(W / 2 + 80, H - 40); gq.lineTo(W / 2 - 80, H - 40); gq.fill(); rr(gq, W / 2 - 320, H - 52, 640, 44, 22); gq.fill(); }
+        if (T.patas) { gq.fillStyle = metal; [-1, 1].forEach(sg => { gq.beginPath(); gq.moveTo(W / 2 + sg * W * 0.36, y0 + Hc - 4); gq.lineTo(W / 2 + sg * W * 0.4, H - 4); gq.lineTo(W / 2 + sg * W * 0.4 - sg * 70, H - 4); gq.closePath(); gq.fill(); }); }
+        rr(gq, 0, y0, W, Hc, R); gq.fillStyle = cuerpo; gq.fill();
+        if (B > 0 || T.borde) { gq.lineWidth = B > 0 ? 6 : 3; gq.strokeStyle = B > 0 ? borde : 'rgba(0,0,0,0.15)'; gq.stroke(); }
+        gq.save(); rr(gq, B, y0 + B, PW, PH, Math.max(R - B, 6)); gq.clip(); gq.drawImage(pant, B, y0 + B);
         const s = d.reflejo ?? 0.5 + 0.5 * Math.sin(t * 0.4);
-        const gr = gq.createLinearGradient(0, 0, W, H * 0.6); const p = lerp(-0.3, 1.1, s);
-        gr.addColorStop(cl(p - 0.25), 'rgba(255,255,255,0)'); gr.addColorStop(cl(p), 'rgba(255,255,255,0.09)'); gr.addColorStop(cl(p + 0.25), 'rgba(255,255,255,0)');
+        const gr = gq.createLinearGradient(0, y0, W, y0 + Hc * 0.6); const p = lerp(-0.3, 1.1, s);
+        gr.addColorStop(cl(p - 0.25), 'rgba(255,255,255,0)'); gr.addColorStop(cl(p), `rgba(255,255,255,${T.brilloReflejo ?? 0.09})`); gr.addColorStop(cl(p + 0.25), 'rgba(255,255,255,0)');
         gq.fillStyle = gr; gq.fillRect(0, 0, W, H); gq.restore();
-        K.ui.rr(gq, W / 2 - 120, B + 26, 240, 70, 35); gq.fillStyle = '#000'; gq.fill();
+        if (T.isla) { rr(gq, W / 2 - 120, y0 + B + 26, 240, 70, 35); gq.fillStyle = '#000'; gq.fill(); }
+        if (T.camara) { gq.fillStyle = '#111'; gq.beginPath(); gq.arc(W / 2, y0 + B / 2, 9, 0, 7); gq.fill(); }
+        if (T.corona) { gq.fillStyle = metal; rr(gq, W - 6, y0 + Hc * 0.28, 26, 90, 10); gq.fill(); }
 
-        const esc = d.escala ?? 0.68, giro = cl(d.giro ?? 0, -1, 1) * (o.giroMax ?? 0.62), dist = (o.distancia ?? 2.4) * H;
+        const esc = d.escala ?? 0.68, giro = cl(d.giro ?? 0, -1, 1) * (T.giroMax ?? 0.62), dist = (T.distancia ?? 2.4) * Math.max(H, W);
         const cx = d.x ?? K.W / 2, cy = d.y ?? K.H * 0.58, co = Math.cos(giro), si = Math.sin(giro);
-        const proy = xp => { const z = xp * si, s = dist / (dist + z); return [xp * co * s, s]; };
+        const proy = xp => { const z = xp * si, sc = dist / (dist + z); return [xp * co * sc, sc]; };
         g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.translate(cx, cy); g.rotate((d.incl ?? 0) * Math.PI / 180); g.scale(esc, esc);
-        if (d.brillo !== false) { const c = d.colorBrillo || '#ff3b5c'; const gb = g.createRadialGradient(0, H * 0.45, 0, 0, H * 0.45, W * 1.1); gb.addColorStop(0, rgba(c, 0.55)); gb.addColorStop(1, rgba(c, 0)); g.fillStyle = gb; g.fillRect(-W * 1.2, -H * 0.2, W * 2.4, H * 1.4); }
-        const grosor = (o.grosor ?? 34);
-        if (Math.abs(si) > 0.02) {
-          const lado = si > 0 ? -1 : 1, xp = lado * W / 2, [x0, s0] = proy(xp), zf = xp * si + grosor * co, sf = dist / (dist + zf), xf = (xp * co - grosor * si * 1) * sf;
+        if (d.brillo !== false) { const c = d.colorBrillo || '#ff3b5c'; const gb = g.createRadialGradient(0, H * 0.45, 0, 0, H * 0.45, Math.max(W, H * 0.5) * 1.1); gb.addColorStop(0, rgba(c, 0.55)); gb.addColorStop(1, rgba(c, 0)); g.fillStyle = gb; g.fillRect(-W * 1.2, -H * 0.2, W * 2.4, H * 1.4); }
+        const grosor = T.grosor ?? 34, yc = y0 + Hc / 2 - H / 2;
+        if (Math.abs(si) > 0.02 && grosor > 0) {
+          const lado = si > 0 ? -1 : 1, xp = lado * W / 2, [x0, s0] = proy(xp), zf = xp * si + grosor * co, sf = dist / (dist + zf), xf = (xp * co - grosor * si) * sf;
+          const r = Math.min(R, Hc / 2);
           g.fillStyle = mezcla(cuerpo, '#000000', 0.35);
-          g.beginPath(); g.moveTo(x0, -H / 2 * s0 + R * s0); g.lineTo(xf, -H / 2 * sf + R * sf); g.lineTo(xf, H / 2 * sf - R * sf); g.lineTo(x0, H / 2 * s0 - R * s0); g.closePath(); g.fill();
+          g.beginPath(); g.moveTo(x0, (yc - Hc / 2 + r) * s0); g.lineTo(xf, (yc - Hc / 2 + r) * sf); g.lineTo(xf, (yc + Hc / 2 - r) * sf); g.lineTo(x0, (yc + Hc / 2 - r) * s0); g.closePath(); g.fill();
         }
         for (let i = 0; i < N; i++) {
-          const a = -W / 2 + W * i / N, b = -W / 2 + W * (i + 1) / N, [xa, sa] = proy(a), [xb] = proy(b), sm = (sa + proy(b)[1]) / 2;
+          const a = -W / 2 + W * i / N, b = -W / 2 + W * (i + 1) / N, [xa, sa] = proy(a), [xb, sb] = proy(b), sm = (sa + sb) / 2;
           const sw = W / N, dw = Math.max(xb - xa, 0) + 0.6;
           g.drawImage(plano, i * sw, 0, sw, H, Math.min(xa, xb), -H / 2 * sm, dw, H * sm);
         }
@@ -162,4 +183,5 @@
       }
     };
   };
+  K.celular = (o = {}) => K.dispositivo('celular', o);
 })();
