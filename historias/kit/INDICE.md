@@ -110,6 +110,9 @@ Regla (16 nov 2026): ningún tiempo se teclea a mano y ningún subtítulo se esc
 - Destellos: solo con `C.destello(g, t, t0)` (sube y baja en rampa, tope 0.6). Prohibido alternar claro/oscuro cuadro por cuadro (`Math.sin(t*90)` y similares).
 - Muestra: `kit/escenas/demo_voz` (el mp3 no está en el repo; sin él se ven los subtítulos pero no la boca).
 
+## Acabado de cine (25 nov 2026): desenfoque de movimiento, color final, destello en cortes, acercamiento parejo, animación "a dos"
+Ver `comun/LEEME.md`, sección "Acabado de cine". Resumen: `window.DESENFOQUE` en la escena, `"color"` en `formato.json`, `<script>__MOD:efectos__</script>` para `C.luzFuga`, `C.zoomParejo` y `C.posterizar(t, 12)` (personajes a 12 cuadros por segundo, cámara a 24).
+
 ## Notas de rig (de la guía técnica de lemo-opuscar, en nuestras palabras)
 - Brazo levantado: girar primero hacia afuera y luego hacia adelante; al revés, los brazos se cruzan en X.
 - Al subir el brazo, el hombro también sube y se adelanta un poco.

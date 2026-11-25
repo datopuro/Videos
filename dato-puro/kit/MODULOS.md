@@ -76,6 +76,8 @@ Inspirado en un anuncio de concepto hecho con código (celular flotando con inte
 - Cuidado: nada de logos ni interfaces reales de apps (Apple, Google Maps, WhatsApp): la interfaz es genérica e inventada; si se parece a una real, rotular "recreación". Hora de la barra: 12:30 (no 9:41, que es la de los anuncios de Apple).
 - Render: ~2 s por cuadro por proceso en la nube (desenfoque del titular y resplandores de pantalla completa): la demo de 8 s tardó 7 min 48 s con 2 procesos; un video de 45 s, unos 45 min. En la laptop con `KIT_GL=gpu` debería ser bastante menos (no medido).
 - Subtítulos: el celular a escala 0.68 baja hasta y≈1680 y queda bajo los subtítulos; usar estilo `caja` o `limpio` (con sombra) para que se lean encima.
+## Acabado de cine (comun, 25 nov 2026)
+`window.DESENFOQUE = [{desde, hasta, muestras:8, obturador:0.5}]` (desenfoque de movimiento real en tramos rápidos), `"color": {exposicion, temperatura, contraste, saturacion, vineta}` en `formato.json` (color final con ffmpeg), y `<script>__MOD:efectos__</script>` para `K.luzFuga(OV, K.W, K.H, u, {semilla})` (destello cálido en el corte más importante), `K.zoomParejo(a, b, u)` (acercamiento a velocidad pareja). Detalle en `comun/LEEME.md`. Demo: `galeria/acabado`.
 
 ## mod/objetos.js: objetos 3D frecuentes
 Demo: `galeria/objetos` (en estilo tinta). `const OB = K.objetos()` da materiales estándar; `K.objetos({pieza: TI.pieza})` los dibuja con contorno de tinta. Todos están en metros reales, con el origen en el piso (o en el centro si son de mano), y devuelven `{g, …partes}`.
