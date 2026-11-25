@@ -48,7 +48,17 @@ python3 /home/claude/repo/comun/sonidos.py copiar <carpeta_video> id1 id2 # copi
 - Para fondo musical se prefiere `musica/fondo.py`: las canciones de MacLeod se oyen en miles de videos.
 - **No escuchado por Claude**: los sonidos se eligen por etiqueta y duración. Escuchar el video antes de publicar.
 
+## Acabado de cine: `acabado.py` y `mod/efectos.js` (25 nov 2026)
+Ideas tomadas de las skills de Remotion (código propio, sin usar Remotion). Sirven igual en Dato Puro y en historias.
+- **Desenfoque de movimiento**: en la escena, `window.DESENFOQUE = [{desde: 0.4, hasta: 1.1, muestras: 8, obturador: 0.5}]`. En esos tramos cada cuadro se arma promediando 8 instantes dentro de medio cuadro (obturador de 180°, como cámara de cine): lo rápido deja estela en vez de verse a saltos. Cuesta tantas veces el render como muestras: solo en tramos rápidos (objetos que cruzan, transiciones, golpes de cámara). `render.py` lo aplica solo, también en `muestras`.
+- **Color final**: en `formato.json`, `"color": {"exposicion": 0.05, "temperatura": 0.25, "contraste": 1.08, "saturacion": 1.12, "vineta": 0.45}` (neutros 0, 0, 1, 1, 0; temperatura de −1 frío a 1 cálido). `render.py codificar` lo aplica con ffmpeg a todo el video; casi no cuesta. No se ve en `muestras`: revisar en el mp4. Valores suaves: arriba de contraste 1.15 o saturación 1.25 se ve exagerado.
+- **Destello de luz en un corte**: `<script>__MOD:efectos__</script>` y `EF.luzFuga(g, W, H, u, {semilla, colores, fuerza})` (también `K.luzFuga` / `C.luzFuga`) al final del cuadro, con `u` de 0 a 1 en ~0.8 s alrededor del corte; el corte de escena va en `u = 0.5`. Uno o dos por video, en el cambio más importante; en cada corte cansa.
+- **Acercamiento parejo**: `EF.zoomParejo(1, 3, u)` en vez de `lerp(1, 3, u)`: el acercamiento se siente a velocidad constante (la escala se percibe en proporción).
+- **Animación "a dos" (historias)**: `EF.posterizar(t, 12)` en el `t` de los personajes (no de la cámara): se mueven a 12 cuadros por segundo, como caricatura dibujada a mano. Probado: 72 cuadros, 36 distintos. Decisión de estilo: usar todo el video o nada.
+- Demo: `dato-puro/kit/galeria/acabado` (4 s). Para comparar, la misma escena sin acabado: poner `window.SIN_ACABADO = true` y quitar "color" de `formato.json`.
+
 ## Créditos
+- `acabado.py` y `mod/efectos.js`: ideas de las skills de Remotion (https://github.com/remotion-dev/remotion, `packages/skills`), reescritas; no se copió código.
 - `sonidos.py` usa la biblioteca de stickman-video-director (código MIT; cada grabación con su licencia): https://github.com/kaomei/stickman-video-director, fijada a un commit para que no cambie.
 - `look3d.js` reescribe para three.js los shaders `lensblur.ts` y `grade.ts`, y `medir_movimiento.py` copia `medir_30fps.py`, ambos de shorts-animados-claude (MIT): https://github.com/luispablovillasenor-afk/shorts-animados-claude — licencia en `LICENSE-MIT-shorts-animados.txt`.
 - Íconos: Tabler Icons (MIT). Gráficas: D3 (ISC) y d3-sankey (BSD-3). Física: matter-js (MIT). `circuito.js` es propio; la idea visual (puntos de corriente y colores por voltaje) viene de CircuitJS (GPL-2.0), del que no se copió código.
