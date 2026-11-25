@@ -114,3 +114,13 @@ Demo: `galeria/paisaje`. `const PA = K.paisaje({paleta: 'ocaso'|'dia'|'noche', p
 
 ## caricatura (mod/caricatura.js, 14 nov 2026)
 Copia de `historias/kit/caricatura.js` + `rig2.js` (objeto global `C`) con dos opciones nuevas en `C.personaje2`: `bigote` (color) y `gorra` (color, `gorraVisera`). Necesita `window.FORMATO={ancho:1080,alto:1920,fps:30}` antes del módulo, `C.datos(D)` y `g = C.lienzo()`. Firma completa y ejemplo en `kit/INDICE.md` del proyecto; uso real: video gasolinera.
+
+## cuaderno (mod/cuaderno.js, 25 nov 2026)
+Estilo 2D "cuaderno a mano" (sin WebGL): hoja cuadriculada con margen, trazos de pluma que tiemblan, relleno de marcador (multiply), resaltador bajo letra manuscrita (Caveat 700 embebida, licencia OFL) y post-it para fuentes. Hecho para videos de explicación ("así funciona"). Primer uso: guion-mareo-coche (versión descartada para ese tema: se sentía infantil para un video de sensación; guardado para explicaciones).
+- Incluir `__MOD:cuaderno__` y crear `const cu = K.cuaderno(g, {colores, cuadro:54, margen:true, fps:8})`.
+- La fuente carga sola: `K.cuadernoFuente.then(() => window.listo = true)` en vez de `window.listo = true`.
+- En renderAt: `cu.cuadro(t); cu.fondo(BG);` (BG = K.capa2D('bg', 1)).
+- Dibujo: `cu.trazo(pts, col, lw, a, prog, cerrado, id)` (el `id` fija el temblor de cada trazo), `cu.denso(pts, paso)`, `cu.circP(x,y,rx,ry,a0,a1)`, `cu.rectP(x,y,w,h)`, `cu.marcador(pts, col, a)`, `cu.resalta(x,y,w,h,col,a,prog)`.
+- Texto: `cu.mano(s, x, y, fs, col, a, {res: colorResaltador, resp: progreso, rot, k, al})`, `cu.nota(s, x, y, a, fs)`.
+- Piezas: `cu.flecha(x1,y1,x2,y2,col,a,prog,lw,id)`, `cu.espiral(x,y,r,col,a,rot)`, `cu.cara(x,y,r,{verde, id, pelo})` (verde = mareado), `cu.cuerpo(x,y,r,col,id)`, `cu.palomita(x,y,a,prog)`.
+- Colores en `cu.C` (tinta, verde, amarillo, rosa, azul, naranja, rojo, piel…).
