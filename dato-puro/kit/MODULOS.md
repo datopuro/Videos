@@ -67,6 +67,9 @@ Demo: `galeria/paisaje` (las 9, una tras otra) y `galeria/objetos`.
 - Suelta: `K.transicion(g, tipo, u, {color})` con `u` de 0 a 1.
 - No repetir la misma transición dos veces seguidas en un video ni usar el mismo juego que en el video anterior.
 
+## Acabado de cine (comun, 25 nov 2026)
+`window.DESENFOQUE = [{desde, hasta, muestras:8, obturador:0.5}]` (desenfoque de movimiento real en tramos rápidos), `"color": {exposicion, temperatura, contraste, saturacion, vineta}` en `formato.json` (color final con ffmpeg), y `<script>__MOD:efectos__</script>` para `K.luzFuga(OV, K.W, K.H, u, {semilla})` (destello cálido en el corte más importante), `K.zoomParejo(a, b, u)` (acercamiento a velocidad pareja). Detalle en `comun/LEEME.md`. Demo: `galeria/acabado`.
+
 ## mod/objetos.js: objetos 3D frecuentes
 Demo: `galeria/objetos` (en estilo tinta). `const OB = K.objetos()` da materiales estándar; `K.objetos({pieza: TI.pieza})` los dibuja con contorno de tinta. Todos están en metros reales, con el origen en el piso (o en el centro si son de mano), y devuelven `{g, …partes}`.
 - Grandes: `OB.coche({color, freno})` → `rodar(distancia)`; `OB.casa({ancho, fondo, alto, color, colorTecho})`; `OB.persona({color, piel, estatura})` → `caminar(fase)` (muñeco sin cara: no representa a nadie real); `OB.arbol({pino, escala})`; `OB.refri()` → `abrir(u)`; `OB.tele({pantalla: (ctx, w, h) => …})` → `redibujar(f)`; `OB.mesa()` → `alto`; `OB.pared({ancho, alto})`.
