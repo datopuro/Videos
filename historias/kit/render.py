@@ -10,6 +10,12 @@ import numpy as np
 from playwright.sync_api import sync_playwright
 
 KIT = os.path.dirname(os.path.abspath(__file__))
+
+try:
+    sys.path.insert(0, os.path.join(KIT, "..", "..", "comun"))
+    import acabado
+except ImportError:
+    acabado = None
 SR = 44100
 
 
@@ -121,8 +127,12 @@ def muestras(base, ts):
     with sync_playwright() as p:
         b, pg = abrir(p, base, fmt)
         for t in ts:
-            cuadro(pg, t)
-            pg.screenshot(path=f"{base}/m/m_{t:07.2f}.png")
+            des = acabado.tramos(pg) if acabado else []
+            if des:
+                acabado.captura(pg, t, formato(base)["fps"], cuadro, f"{base}/m/m_{t:07.2f}.png", des)
+            else:
+                cuadro(pg, t)
+                pg.screenshot(path=f"{base}/m/m_{t:07.2f}.png")
         b.close()
     hoja(sorted(glob.glob(f"{base}/m/m_*.png")), f"{base}/m/hoja.jpg")
 
@@ -137,10 +147,14 @@ def cuadros(base, desde=0, hasta=10 ** 9, paso=1, fase=0):
     t0 = time.time()
     with sync_playwright() as p:
         b, pg = abrir(p, base, fmt)
+        des = acabado.tramos(pg) if acabado else []
         for k, i in enumerate(pend):
-            cuadro(pg, i / fps)
             tmp = f"{car}/tmp{fase}.jpg"
-            pg.screenshot(path=tmp, type="jpeg", quality=94)
+            if des:
+                acabado.captura(pg, i / fps, fps, cuadro, tmp, des)
+            else:
+                cuadro(pg, i / fps)
+                pg.screenshot(path=tmp, type="jpeg", quality=94)
             os.replace(tmp, f"{car}/f_{i:06d}.jpg")
             if k % 200 == 0:
                 print(fase, i, n, round(time.time() - t0), flush=True)
@@ -159,10 +173,13 @@ def paralelo(base, procesos=2):
 
 def codificar(base, salida):
     fps = formato(base)["fps"]
+    vf = acabado.filtro_color(formato(base)) if acabado else None
+    if vf:
+        print("color final:", vf)
     entrada_audio = ["-i", f"{base}/mezcla.wav"] if os.path.exists(f"{base}/mezcla.wav") else []
     audio = ["-c:a", "aac", "-b:a", "192k", "-shortest"] if entrada_audio else ["-an"]
     subprocess.run(["ffmpeg", "-y", "-v", "error", "-framerate", str(fps), "-i", f"{base}/fr/f_%06d.jpg", *entrada_audio,
-                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p", *audio,
+                    *(["-vf", vf] if vf else []), "-c:v", "libx264", "-preset", "veryfast", "-crf", "18", "-pix_fmt", "yuv420p", *audio,
                     "-movflags", "+faststart", f"{base}/{salida}"], check=True)
     os.makedirs(f"{base}/chk", exist_ok=True)
     dur = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", f"{base}/{salida}"], capture_output=True, text=True).stdout)
