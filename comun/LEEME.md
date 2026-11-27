@@ -57,7 +57,19 @@ Ideas tomadas de las skills de Remotion (código propio, sin usar Remotion). Sir
 - **Animación "a dos" (historias)**: `EF.posterizar(t, 12)` en el `t` de los personajes (no de la cámara): se mueven a 12 cuadros por segundo, como caricatura dibujada a mano. Probado: 72 cuadros, 36 distintos. Decisión de estilo: usar todo el video o nada.
 - Demo: `dato-puro/kit/galeria/acabado` (4 s). Para comparar, la misma escena sin acabado: poner `window.SIN_ACABADO = true` y quitar "color" de `formato.json`.
 
+## Retención: `retencion.py` (26 nov 2026)
+Dónde se va la gente en un video y qué decía la voz en ese momento.
+```bash
+python3 /home/claude/repo/comun/retencion.py curva.csv --video <carpeta_con_timeline.json> [--duracion 45]
+python3 /home/claude/repo/comun/retencion.py comparar tabla.csv     # video,red,vistas,prom_s,duracion
+```
+- `curva.csv`: el CSV de YouTube Studio (Retención de público → descargar) o puntos "segundo,porcentaje" leídos de una captura de IG, FB o TikTok.
+- Da cuatro cosas: fuga del gancho (cuántos de cada 100 se van a 1, 3 y 5 s), las 3 caídas bruscas con las palabras de `timeline.json`, la pendiente de la parte media y cuántos llegan al final; y nombra el problema más grande.
+- `comparar`: cada video contra la mediana de su propio canal en cada red (vistas y segundos vistos). Con menos de 4 videos por red, la mediana todavía no dice mucho.
+- Para que sirva, guardar el `timeline.json` de cada video publicado.
+
 ## Créditos
+- `retencion.py`: ideas de youtube-agent-skill (MIT): https://github.com/Jakeschincariol/youtube-agent-skill (fuga, caídas y pendiente; comparar contra la mediana del canal). Código propio.
 - `acabado.py` y `mod/efectos.js`: ideas de las skills de Remotion (https://github.com/remotion-dev/remotion, `packages/skills`), reescritas; no se copió código.
 - `sonidos.py` usa la biblioteca de stickman-video-director (código MIT; cada grabación con su licencia): https://github.com/kaomei/stickman-video-director, fijada a un commit para que no cambie.
 - `look3d.js` reescribe para three.js los shaders `lensblur.ts` y `grade.ts`, y `medir_movimiento.py` copia `medir_30fps.py`, ambos de shorts-animados-claude (MIT): https://github.com/luispablovillasenor-afk/shorts-animados-claude — licencia en `LICENSE-MIT-shorts-animados.txt`.
